@@ -230,7 +230,7 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       token: event.token,
       created_at: toIso(event.at),
     };
-    // 같은 session+step은 PK로 한 번만. 중복이면 무시한다.
+    // 같은 session+step은 PK로 한 번만. 테이블 미생성·중복은 무시한다.
     try {
       await this.request(FUNNEL_TABLE, {
         method: "POST",
@@ -238,25 +238,35 @@ export class SupabaseAnalysisStore implements AnalysisStore {
         prefer: "return=minimal,resolution=ignore-duplicates",
       });
     } catch (error) {
-      // 테이블이 아직 없거나 충돌이면 운영에 영향 없게 삼킨다. 관리자 요약만 비게 된다.
-      if (error instanceof SupabaseStoreError && /HTTP 409|duplicate/i.test(error.message)) return;
-      throw error;
+      if (
+        error instanceof SupabaseStoreError &&
+        /HTTP (404|409)|duplicate|Could not find the table|PGRST/i.test(error.message)
+      ) {
+        return;
+      }
+      console.error("[funnel] track failed", error);
     }
   }
 
   async funnelSummary() {
     const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
-    await Promise.all(
-      FUNNEL_STEPS.map(async (step) => {
-        counts[step] = await this.countFunnelStep(step);
-      }),
-    );
+    try {
+      await Promise.all(
+        FUNNEL_STEPS.map(async (step) => {
+          counts[step] = await this.countFunnelStep(step);
+        }),
+      );
+    } catch (error) {
+      // funnel_events 테이블이 없으면 0으로 돌려 관리자 화면은 열리게 한다.
+      console.error("[funnel] summary failed", error);
+    }
     return buildFunnelSummary(counts);
   }
 
   private async countFunnelStep(step: FunnelStep): Promise<number> {
     const headers: Record<string, string> = {
       apikey: this.secretKey,
+      Authorization: `Bearer ${this.secretKey}`,
       Prefer: "count=exact",
       Range: "0-0",
     };
