@@ -14,7 +14,7 @@ export const BUSINESS = {
   /** 통신판매업 신고번호 (해당 시) */
   mailOrderNumber: "[제OOOO-OO-OOOO호]",
   /** 사업장 주소 */
-  address: "[사업장 주소 입력]",
+  address: "경기도 하남시 위례중앙로 185, 6309-1304",
   /** 고객 문의 이메일 */
   contactEmail: "yylee00@naver.com",
   /** 호스팅 서비스 제공자 */
