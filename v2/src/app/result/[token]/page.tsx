@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FreeResultScreen } from "@/components/result/FreeResultScreen";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
+import { isPayappConfigured } from "@/lib/server/payments";
 import { toFreeResultView } from "@/lib/server/resultView";
 import { getAnalysisStore } from "@/lib/server/store";
 
@@ -15,13 +16,12 @@ export default async function ResultPage({ params }: PageProps<"/result/[token]"
   if (!TOKEN_PATTERN.test(token)) notFound();
   const record = await getAnalysisStore().get(token);
   if (!record) notFound();
-  const tossClientKey = process.env.TOSS_CLIENT_KEY;
   return (
     <FreeResultScreen
       result={toFreeResultView(record)}
       token={token}
       paid={record.paidAt !== null}
-      tossClientKey={tossClientKey}
+      paymentsReady={isPayappConfigured()}
     />
   );
 }

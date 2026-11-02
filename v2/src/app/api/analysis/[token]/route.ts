@@ -13,7 +13,14 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/analysis/[t
   const { token } = await ctx.params;
   const record = TOKEN_PATTERN.test(token) ? await getAnalysisStore().get(token) : null;
   if (!record) return Response.json({ status: "not_found" }, { status: 404, headers: NO_STORE });
-  return Response.json({ status: record.status, reportReady: storedReport(record) !== null }, { headers: NO_STORE });
+  return Response.json(
+    {
+      status: record.status,
+      paid: record.paidAt !== null,
+      reportReady: storedReport(record) !== null,
+    },
+    { headers: NO_STORE },
+  );
 }
 
 /** 결제된 리포트의 생성이 실패했거나 멈췄을 때 다시 시작한다. 결제되지 않았으면 아무것도 하지 않는다. */

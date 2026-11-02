@@ -10,14 +10,13 @@ import { DETAILED_REPORT_LIST_PRICE, DETAILED_REPORT_PRICE, formatWon } from "@/
 type PaymentSheetProps = {
   open: boolean;
   onClose: () => void;
-  clientKey: string;
   token: string;
   title: string;
   buyerName: string;
 };
 
-/** 결제 CTA에서 아래에서 올라오는 시트. 할인·이메일·토스 결제를 담는다. */
-export function PaymentSheet({ open, onClose, clientKey, token, title, buyerName }: PaymentSheetProps) {
+/** 결제 CTA에서 아래에서 올라오는 시트. 할인·연락처·페이앱 결제를 담는다. */
+export function PaymentSheet({ open, onClose, token, title, buyerName }: PaymentSheetProps) {
   useEffect(() => {
     if (!open) return;
     trackFunnel("checkout", token);
@@ -108,7 +107,7 @@ export function PaymentSheet({ open, onClose, clientKey, token, title, buyerName
                 <CheckoutDealPrice align="center" showPrice={false} />
               </div>
 
-              <CheckoutWidget clientKey={clientKey} token={token} amount={DETAILED_REPORT_PRICE} />
+              <CheckoutWidget token={token} amount={DETAILED_REPORT_PRICE} />
             </div>
           </motion.div>
         </div>

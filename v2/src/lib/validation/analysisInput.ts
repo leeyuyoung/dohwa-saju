@@ -184,10 +184,18 @@ export function toAnalysisInput(
   return { ok: true, input: parsed.data };
 }
 
-/** 결제 직전에 받는 리포트 수신 이메일. 동의는 결제 화면 문구로 갈음한다. */
+/** 결제 직전 연락처. 이메일은 리포트 안내용, 휴대폰은 페이앱 결제요청(recvphone)용. */
 export const checkoutContactSchema = z.object({
   email: z
     .string({ error: "이메일을 입력해주세요." })
     .transform(sanitizeEmail)
     .pipe(z.string().min(1, "이메일을 입력해주세요.").max(254).pipe(z.email("올바른 이메일 주소를 입력해주세요."))),
+  phone: z
+    .string({ error: "휴대폰 번호를 입력해주세요." })
+    .transform((value) => value.replace(/\D/g, ""))
+    .pipe(
+      z
+        .string()
+        .regex(/^01[016789]\d{7,8}$/, "올바른 휴대폰 번호를 입력해주세요."),
+    ),
 });

@@ -23,9 +23,6 @@ export default async function CheckoutPage({ params }: PageProps<"/checkout/[tok
   if (!record) notFound();
   if (record.paidAt !== null) redirect(`/report/${token}`);
 
-  const clientKey = process.env.TOSS_CLIENT_KEY;
-  if (!clientKey) throw new Error("TOSS_CLIENT_KEY가 설정되지 않았습니다.");
-
   return (
     <PageShell>
       <FunnelBeacon step="checkout" token={token} />
@@ -52,7 +49,7 @@ export default async function CheckoutPage({ params }: PageProps<"/checkout/[tok
       </div>
 
       <div className="mt-6">
-        <CheckoutWidget clientKey={clientKey} token={token} amount={DETAILED_REPORT_PRICE} />
+        <CheckoutWidget token={token} amount={DETAILED_REPORT_PRICE} />
       </div>
 
       <p className="mt-6 text-center">

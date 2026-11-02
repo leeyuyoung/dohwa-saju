@@ -11,6 +11,8 @@ import { getAnalysisStore, type AnalysisRecord } from "./store";
 
 /** 이 시간보다 오래 generating이면 생성이 중단된 것으로 보고 다시 시작할 수 있다. 생성 제한 시간(300초)보다 길어야 한다. */
 const STALE_GENERATION_MS = 10 * 60 * 1000;
+/** 미결제 분석은 이 기간이 지나면 삭제한다. 개인정보 보관 최소화. */
+const UNPAID_ANALYSIS_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const TOKEN_PATTERN = /^[A-Za-z0-9_-]{22}$/;
 const newToken = () => randomBytes(16).toString("base64url");
@@ -39,7 +41,12 @@ export async function createAnalysis(input: AnalysisInput): Promise<AnalysisReco
     report: null,
     paidAt: null,
   };
-  await getAnalysisStore().create(record);
+  const store = getAnalysisStore();
+  await store.create(record);
+  // 미결제·오래된 건은 조용히 정리한다. 실패해도 새 제출은 막지 않는다.
+  void store.deleteUnpaidAnalysesBefore(now - UNPAID_ANALYSIS_TTL_MS).catch((error) => {
+    console.error("[analysis] unpaid cleanup failed", error);
+  });
   return record;
 }
 

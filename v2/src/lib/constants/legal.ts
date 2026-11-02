@@ -11,8 +11,6 @@ export const BUSINESS = {
   representative: "양흥미",
   /** 사업자등록번호 */
   businessNumber: "107-43-21676",
-  /** 통신판매업 신고번호 (해당 시) */
-  mailOrderNumber: "[제OOOO-OO-OOOO호]",
   /** 사업장 주소 */
   address: "경기도 하남시 위례중앙로 185, 6309-1304",
   /** 고객 문의 이메일 */

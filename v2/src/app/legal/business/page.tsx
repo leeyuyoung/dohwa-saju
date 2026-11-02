@@ -19,8 +19,6 @@ export default function BusinessInfoPage() {
           <dd className="text-paper">{BUSINESS.representative}</dd>
           <dt className="text-mist-dim">사업자등록번호</dt>
           <dd className="text-paper">{BUSINESS.businessNumber}</dd>
-          <dt className="text-mist-dim">통신판매업</dt>
-          <dd className="text-paper">{BUSINESS.mailOrderNumber}</dd>
           <dt className="text-mist-dim">사업장 주소</dt>
           <dd className="text-paper break-keep">{BUSINESS.address}</dd>
           <dt className="text-mist-dim">이메일</dt>

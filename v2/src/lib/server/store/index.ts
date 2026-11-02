@@ -20,6 +20,12 @@ function createStore(): AnalysisStore {
 }
 
 export function getAnalysisStore(): AnalysisStore {
-  globalForStore.__dohwaAnalysisStore ??= createStore();
-  return globalForStore.__dohwaAnalysisStore;
+  const existing = globalForStore.__dohwaAnalysisStore;
+  // HMR로 클래스가 바뀌면 예전 인스턴스에 새 메서드가 없어 깨지므로 다시 만든다.
+  if (existing && typeof existing.listAnalyses === "function" && typeof existing.deleteUnpaidAnalysesBefore === "function") {
+    return existing;
+  }
+  const created = createStore();
+  globalForStore.__dohwaAnalysisStore = created;
+  return created;
 }

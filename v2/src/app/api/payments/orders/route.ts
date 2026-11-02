@@ -1,16 +1,18 @@
 import { z } from "zod";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
 import { isSameOrigin, jsonError as fail, readJsonBody } from "@/lib/server/http";
-import { ORDER_NAME, PaymentError, createOrder } from "@/lib/server/payments";
+import { ORDER_NAME, PaymentError, createPayappOrder, isPayappConfigured } from "@/lib/server/payments";
 import { clientIp, consumeRateLimit } from "@/lib/server/rateLimit";
 import { checkoutContactSchema } from "@/lib/validation/analysisInput";
 
 const IP_LIMIT = { limit: 20, windowMs: 60 * 60 * 1000 };
 const bodySchema = checkoutContactSchema.extend({ token: z.string().regex(TOKEN_PATTERN) });
 
-/** 결제 직전에 주문을 만든다. 금액은 서버가 정해 돌려준다. */
+/** 주문을 만들고 페이앱 결제 URL을 돌려준다. */
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return fail(403, "허용되지 않은 요청입니다.");
+  if (!isPayappConfigured()) return fail(503, "결제 준비가 아직 되지 않았습니다. 잠시 후 다시 시도해주세요.");
+
   const parsed = bodySchema.safeParse(await readJsonBody(request));
   if (!parsed.success) return fail(400, parsed.error.issues[0]?.message ?? "잘못된 요청입니다.");
 
@@ -18,9 +20,9 @@ export async function POST(request: Request) {
   if (retryAfter !== null) return fail(429, "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", { "Retry-After": String(retryAfter) });
 
   try {
-    const order = await createOrder(parsed.data.token, parsed.data.email);
+    const { order, payurl } = await createPayappOrder(parsed.data.token, parsed.data.email, parsed.data.phone);
     return Response.json(
-      { orderId: order.orderId, amount: order.amount, orderName: ORDER_NAME },
+      { orderId: order.orderId, amount: order.amount, orderName: ORDER_NAME, payurl },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {

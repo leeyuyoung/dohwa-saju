@@ -7,7 +7,6 @@ import { PaymentSheet } from "@/components/payment/PaymentSheet";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 
 type CheckoutSheetConfig = {
-  clientKey: string;
   token: string;
   title: string;
   buyerName: string;
@@ -69,7 +68,6 @@ export function StickyCheckoutBar({ href, label, showAfterId, checkout }: Sticky
         <PaymentSheet
           open={sheetOpen}
           onClose={() => setSheetOpen(false)}
-          clientKey={checkout.clientKey}
           token={checkout.token}
           title={checkout.title}
           buyerName={checkout.buyerName}

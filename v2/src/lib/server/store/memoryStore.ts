@@ -70,6 +70,12 @@ export class MemoryAnalysisStore implements AnalysisStore {
     }
   }
 
+  async deleteUnpaidAnalysesBefore(createdBefore: number) {
+    for (const [token, record] of this.records) {
+      if (record.paidAt === null && record.createdAt < createdBefore) this.records.delete(token);
+    }
+  }
+
   async listAnalyses(limit: number) {
     this.sweep();
     return [...this.records.values()]

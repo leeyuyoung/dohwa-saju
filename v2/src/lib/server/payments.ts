@@ -1,25 +1,28 @@
 import "server-only";
 
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { DETAILED_REPORT_ORDER_NAME, DETAILED_REPORT_PRICE } from "@/lib/constants/service";
 import { markAnalysisPaid, revokeAnalysisPaid } from "./analysis";
 import { getAnalysisStore, type OrderRecord } from "./store";
 
-const TOSS_API = "https://api.tosspayments.com/v1/payments";
+const PAYAPP_API = "https://api.payapp.kr/oapi/v2";
 const REQUEST_TIMEOUT_MS = 30_000;
-/** 토스는 결제 인증 후 10분 안에 승인하지 않으면 만료시키므로, 하루 지난 대기 주문은 다시 쓰일 일이 없다. */
+/** 하루 지난 대기 주문은 다시 쓰일 일이 없다. */
 const STALE_ORDER_MS = 24 * 60 * 60 * 1000;
 
 export const ORDER_NAME = DETAILED_REPORT_ORDER_NAME;
 export const ORDER_ID_PATTERN = /^[A-Za-z0-9_-]{6,64}$/;
-export const PAYMENT_KEY_PATTERN = /^[A-Za-z0-9_-]{1,200}$/;
+
+/** 결제 완료(4). 그 외 취소·대기 등은 문서 기준. */
+const PAY_STATE_PAID = "4";
+const PAY_STATE_REQUEST = "1";
+const PAY_STATE_CANCEL = new Set(["8", "9", "32", "64"]);
 
 export class PaymentError extends Error {
   constructor(
     readonly status: number,
     readonly userMessage: string,
     detail?: string,
-    /** 같은 요청을 다시 보내면 해결될 수 있는 오류. 승인 요청은 멱등 키 덕분에 다시 보내도 중복 결제되지 않는다. */
     readonly retryable = false,
   ) {
     super(`[payment] ${detail ?? userMessage}`);
@@ -27,31 +30,79 @@ export class PaymentError extends Error {
   }
 }
 
-type TossPayment = { status: string; orderId: string; totalAmount: number; method?: string | null; approvedAt?: string | null };
-type TossError = { code?: string; message?: string };
-
-function secretAuthHeader() {
-  const secretKey = process.env.TOSS_SECRET_KEY;
-  if (!secretKey) throw new PaymentError(500, "결제 설정에 문제가 있습니다.", "TOSS_SECRET_KEY missing");
-  return `Basic ${Buffer.from(`${secretKey}:`).toString("base64")}`;
+function payappUserId() {
+  const userid = process.env.PAYAPP_USERID?.trim();
+  if (!userid) throw new PaymentError(500, "결제 설정에 문제가 있습니다.", "PAYAPP_USERID missing");
+  return userid;
 }
 
-async function callToss(path: string, init: RequestInit & { idempotencyKey?: string }) {
-  const headers: Record<string, string> = { Authorization: secretAuthHeader(), "Content-Type": "application/json" };
-  if (init.idempotencyKey) headers["Idempotency-Key"] = init.idempotencyKey;
+function payappLinkKey() {
+  const key = process.env.PAYAPP_LINKKEY?.trim();
+  if (!key) throw new PaymentError(500, "결제 설정에 문제가 있습니다.", "PAYAPP_LINKKEY missing");
+  return key;
+}
+
+function payappLinkVal() {
+  const val = process.env.PAYAPP_LINKVAL?.trim();
+  if (!val) throw new PaymentError(500, "결제 설정에 문제가 있습니다.", "PAYAPP_LINKVAL missing");
+  return val;
+}
+
+function appBaseUrl() {
+  const url = process.env.APP_URL?.replace(/\/+$/, "");
+  if (!url) throw new PaymentError(500, "결제 설정에 문제가 있습니다.", "APP_URL missing");
+  return url;
+}
+
+export function isPayappConfigured() {
+  return Boolean(
+    process.env.PAYAPP_USERID?.trim() &&
+      process.env.PAYAPP_LINKKEY?.trim() &&
+      process.env.PAYAPP_LINKVAL?.trim() &&
+      process.env.APP_URL?.trim(),
+  );
+}
+
+function parseFormBody(text: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const part of text.split("&")) {
+    if (!part) continue;
+    const eq = part.indexOf("=");
+    const rawKey = eq === -1 ? part : part.slice(0, eq);
+    const rawVal = eq === -1 ? "" : part.slice(eq + 1);
+    out[decodeURIComponent(rawKey.replace(/\+/g, " "))] = decodeURIComponent(rawVal.replace(/\+/g, " "));
+  }
+  return out;
+}
+
+async function callPayapp(fields: Record<string, string>) {
+  const body = new URLSearchParams(fields);
   try {
-    const response = await fetch(`${TOSS_API}${path}`, { ...init, headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
-    const body = (await response.json().catch(() => ({}))) as TossPayment & TossError;
-    return { ok: response.ok, status: response.status, body };
+    const response = await fetch(PAYAPP_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+      body,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+    const text = await response.text();
+    const parsed = parseFormBody(text);
+    return { ok: response.ok, status: response.status, parsed, raw: text };
   } catch (error) {
-    throw new PaymentError(502, "결제사와 통신하지 못했습니다. 잠시 후 다시 확인해주세요.", String(error), true);
+    throw new PaymentError(502, "결제사와 통신하지 못했습니다. 잠시 후 다시 시도해주세요.", String(error), true);
   }
 }
 
-const lookupPayment = (paymentKey: string) => callToss(`/${encodeURIComponent(paymentKey)}`, { method: "GET" });
+export type CreatePayappOrderResult = {
+  order: OrderRecord;
+  payurl: string;
+  mulNo: string;
+};
 
-/** 결제할 수 있는 분석에 대해 주문을 만든다. 금액은 항상 서버의 정가다. */
-export async function createOrder(token: string, email: string): Promise<OrderRecord> {
+/**
+ * 주문을 만들고 페이앱 결제 URL을 받는다.
+ * var1=orderId, var2=token 으로 웹훅에서 주문을 찾는다.
+ */
+export async function createPayappOrder(token: string, email: string, phone: string): Promise<CreatePayappOrderResult> {
   const store = getAnalysisStore();
   const record = await store.get(token);
   if (!record) throw new PaymentError(404, "결제할 리포트를 찾지 못했습니다.");
@@ -63,8 +114,9 @@ export async function createOrder(token: string, email: string): Promise<OrderRe
     console.error("[payment] stale order cleanup failed", error);
   });
 
+  const orderId = `dohwa_${randomBytes(16).toString("base64url")}`;
   const order: OrderRecord = {
-    orderId: `dohwa_${randomBytes(16).toString("base64url")}`,
+    orderId,
     token,
     amount: DETAILED_REPORT_PRICE,
     status: "pending",
@@ -75,117 +127,120 @@ export async function createOrder(token: string, email: string): Promise<OrderRe
     approvedAt: null,
   };
   await store.createOrder(order);
-  return order;
+
+  const base = appBaseUrl();
+  const feedbackurl = `${base}/api/payments/payapp/feedback`;
+  const returnurl = `${base}/payment/return?token=${encodeURIComponent(token)}&orderId=${encodeURIComponent(orderId)}`;
+
+  const pay = await callPayapp({
+    cmd: "payrequest",
+    userid: payappUserId(),
+    goodname: ORDER_NAME,
+    price: String(DETAILED_REPORT_PRICE),
+    recvphone: phone,
+    smsuse: "n",
+    reqaddr: "0",
+    feedbackurl,
+    checkretry: "y",
+    returnurl,
+    var1: orderId,
+    var2: token,
+    charset: "utf-8",
+    openpaytype: "card,kakaopay,naverpay",
+    redirectpay: "1",
+  });
+
+  if (pay.parsed.state !== "1" || !pay.parsed.payurl || !pay.parsed.mul_no) {
+    console.error("[payment] payapp payrequest failed", pay.raw.slice(0, 500));
+    throw new PaymentError(
+      502,
+      pay.parsed.errorMessage || "결제창을 열지 못했습니다. 잠시 후 다시 시도해주세요.",
+      `payapp state=${pay.parsed.state} errno=${pay.parsed.errorCode ?? ""}`,
+      true,
+    );
+  }
+
+  await store.updateOrder(orderId, { paymentKey: pay.parsed.mul_no });
+  return {
+    order: { ...order, paymentKey: pay.parsed.mul_no, updatedAt: Date.now() },
+    payurl: pay.parsed.payurl,
+    mulNo: pay.parsed.mul_no,
+  };
 }
 
-const matchesOrder = (payment: TossPayment, order: OrderRecord) =>
-  payment.status === "DONE" && payment.orderId === order.orderId && payment.totalAmount === order.amount;
-
-async function completeOrder(order: OrderRecord, paymentKey: string, payment: TossPayment) {
+async function completePaidOrder(order: OrderRecord, mulNo: string, method: string | null) {
   await getAnalysisStore().updateOrder(order.orderId, {
     status: "paid",
-    paymentKey,
-    method: payment.method ?? null,
-    approvedAt: payment.approvedAt ? Date.parse(payment.approvedAt) : Date.now(),
+    paymentKey: mulNo,
+    method,
+    approvedAt: Date.now(),
   });
   await markAnalysisPaid(order.token);
 }
 
 /**
- * 토스가 successUrl로 돌려준 값을 서버에서 검증하고 결제를 승인한다.
- * 금액·주문번호가 서버 기록과 다르면 승인하지 않는다. 같은 결제가 다시 들어오면 한 번만 처리한다.
+ * 페이앱 feedbackurl 본문을 검증하고 주문 상태를 맞춘다.
+ * 응답 본문은 반드시 평문 SUCCESS 여야 한다.
  */
-export async function confirmPayment(input: { paymentKey: string; orderId: string; amount: number }): Promise<string> {
+export async function handlePayappFeedback(fields: Record<string, string>): Promise<"ok" | "ignore"> {
+  const userid = fields.userid ?? "";
+  const linkkey = fields.linkkey ?? "";
+  const linkval = fields.linkval ?? "";
+  const payState = fields.pay_state ?? "";
+  const price = fields.price ?? "";
+  const orderId = fields.var1 ?? "";
+  const mulNo = fields.mul_no ?? "";
+
+  if (userid !== payappUserId() || linkkey !== payappLinkKey() || linkval !== payappLinkVal()) {
+    console.error("[payment] payapp feedback auth mismatch");
+    throw new PaymentError(403, "결제 통보 검증에 실패했습니다.", "linkkey/linkval mismatch");
+  }
+
+  // 결제 진행을 위해 요청 상태에도 SUCCESS를 돌려준다.
+  if (payState === PAY_STATE_REQUEST) return "ok";
+
+  if (!ORDER_ID_PATTERN.test(orderId) || !mulNo) return "ignore";
+
   const store = getAnalysisStore();
-  const order = await store.getOrder(input.orderId);
-  if (!order) throw new PaymentError(404, "주문 정보를 찾지 못했습니다.");
-  if (input.amount !== order.amount) {
-    throw new PaymentError(400, "결제 금액이 주문 정보와 일치하지 않습니다.", `amount mismatch ${input.amount} != ${order.amount}`);
-  }
-  if (order.status === "canceled") throw new PaymentError(409, "환불 처리된 주문입니다.");
-  if (order.status === "paid") {
-    if (order.paymentKey !== input.paymentKey) throw new PaymentError(409, "이미 처리된 주문입니다.");
-    await markAnalysisPaid(order.token);
-    return order.token;
+  const order = await store.getOrder(orderId);
+  if (!order) {
+    console.error(`[payment] payapp feedback unknown order ${orderId}`);
+    return "ignore";
   }
 
-  // 다른 탭에서 이미 결제했다면 이번 결제는 승인하지 않는다. 승인하지 않은 결제는 토스가 만료시키고 청구하지 않는다.
-  const record = await store.get(order.token);
-  if (!record) throw new PaymentError(404, "결제할 리포트를 찾지 못했습니다.");
-  if (record.paidAt !== null) {
-    throw new PaymentError(409, "이미 결제가 완료된 리포트입니다. 이번 결제는 승인하지 않았으므로 청구되지 않습니다.");
+  if (String(order.amount) !== String(price)) {
+    console.error(`[payment] payapp price mismatch order=${order.amount} feedback=${price}`);
+    throw new PaymentError(400, "결제 금액이 일치하지 않습니다.", "price mismatch");
   }
 
-  const confirmed = await callToss("/confirm", {
-    method: "POST",
-    body: JSON.stringify({ paymentKey: input.paymentKey, orderId: order.orderId, amount: order.amount }),
-    idempotencyKey: input.paymentKey,
-  });
-
-  let payment: TossPayment | null = confirmed.ok ? confirmed.body : null;
-  let upstreamStatus = confirmed.status;
-  if (!confirmed.ok && confirmed.body.code === "ALREADY_PROCESSED_PAYMENT") {
-    const lookup = await lookupPayment(input.paymentKey);
-    payment = lookup.ok ? lookup.body : null;
-    upstreamStatus = lookup.status;
-  }
-  if (!payment) {
-    const retryable = upstreamStatus >= 500;
-    const message = retryable
-      ? "결제사 응답이 지연되고 있습니다. 잠시 후 다시 확인해주세요."
-      : (confirmed.body.message ?? "결제를 승인하지 못했습니다.");
-    throw new PaymentError(retryable ? 502 : 400, message, `toss ${upstreamStatus} ${confirmed.body.code ?? "unknown"}`, retryable);
-  }
-  if (!matchesOrder(payment, order)) {
-    console.error(`[payment] verification mismatch for ${order.orderId}: status=${payment.status}`);
-    throw new PaymentError(400, "결제 정보를 확인하지 못했습니다. 고객센터로 문의해주세요.", "verification mismatch");
+  if (payState === PAY_STATE_PAID) {
+    if (order.status === "paid") {
+      await markAnalysisPaid(order.token);
+      return "ok";
+    }
+    if (order.status === "canceled") return "ignore";
+    const method = fields.pay_type ? `payapp:${fields.pay_type}` : "payapp";
+    await completePaidOrder(order, mulNo, method);
+    return "ok";
   }
 
-  try {
-    await completeOrder(order, input.paymentKey, payment);
-  } catch (error) {
-    throw new PaymentError(
-      503,
-      "결제는 승인되었지만 리포트를 여는 중 문제가 생겼습니다. 다시 확인해주세요.",
-      `complete failed for ${order.orderId}: ${String(error)}`,
-      true,
-    );
+  if (PAY_STATE_CANCEL.has(payState)) {
+    if (order.status === "paid" && (order.paymentKey === mulNo || !order.paymentKey)) {
+      await store.updateOrder(order.orderId, { status: "canceled" });
+      await revokeAnalysisPaid(order.token);
+      console.info(`[payment] order ${order.orderId} canceled via payapp state=${payState}`);
+    }
+    return "ok";
   }
-  return order.token;
+
+  return "ok";
 }
 
-/**
- * 웹훅으로 알림받은 결제를 토스에 직접 조회해 주문 상태를 맞춘다. 웹훅 본문은 믿지 않고 paymentKey만 쓴다.
- * 승인 직후 사용자가 창을 닫아 리포트가 안 열린 경우와, 환불된 경우를 처리한다.
- */
-export async function syncPaymentFromToss(paymentKey: string): Promise<"updated" | "ignored"> {
-  const lookup = await lookupPayment(paymentKey);
-  if (!lookup.ok) {
-    if (lookup.status < 500) return "ignored";
-    throw new PaymentError(502, "결제사 조회 실패", `lookup ${lookup.status} ${lookup.body.code ?? ""}`, true);
-  }
-  const payment = lookup.body;
-  if (typeof payment.orderId !== "string" || !ORDER_ID_PATTERN.test(payment.orderId)) return "ignored";
+/** 레거시 토스 성공 URL 검증용. */
+export const PAYMENT_KEY_PATTERN = /^[A-Za-z0-9_-]{1,200}$/;
 
-  const order = await getAnalysisStore().getOrder(payment.orderId);
-  if (!order) return "ignored";
-
-  if (payment.status === "DONE" && matchesOrder(payment, order)) {
-    if (order.status === "pending") {
-      await completeOrder(order, paymentKey, payment);
-      return "updated";
-    }
-    if (order.status === "paid" && order.paymentKey === paymentKey) {
-      await markAnalysisPaid(order.token);
-      return "updated";
-    }
-  }
-
-  if (payment.status === "CANCELED" && order.status === "paid" && order.paymentKey === paymentKey) {
-    await getAnalysisStore().updateOrder(order.orderId, { status: "canceled" });
-    await revokeAnalysisPaid(order.token);
-    console.info(`[payment] order ${order.orderId} canceled; report locked again`);
-    return "updated";
-  }
-  return "ignored";
+/** 디버그·감사 로그용. 민감값은 넣지 않는다. */
+export function feedbackFingerprint(fields: Record<string, string>) {
+  const seed = `${fields.var1 ?? ""}|${fields.mul_no ?? ""}|${fields.pay_state ?? ""}|${fields.price ?? ""}`;
+  return createHash("sha256").update(seed).digest("hex").slice(0, 12);
 }

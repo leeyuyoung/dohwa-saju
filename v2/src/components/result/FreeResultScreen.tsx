@@ -22,14 +22,14 @@ export function FreeResultScreen({
   sample = false,
   token,
   paid = false,
-  tossClientKey,
+  paymentsReady = false,
 }: {
   result: FreeResultView;
   sample?: boolean;
   token?: string;
   paid?: boolean;
-  /** 있으면 결제 CTA가 아래에서 시트를 연다. */
-  tossClientKey?: string;
+  /** 결제 설정이 되어 있으면 CTA가 아래에서 시트를 연다. */
+  paymentsReady?: boolean;
 }) {
   const cta =
     paid && token
@@ -39,9 +39,8 @@ export function FreeResultScreen({
         : { href: `/checkout/${token}`, label: "숨겨진 색기 확인하기" };
 
   const checkout =
-    !paid && !sample && token && tossClientKey
+    !paid && !sample && token && paymentsReady
       ? {
-          clientKey: tossClientKey,
           token,
           title: DETAILED_REPORT_ORDER_NAME,
           buyerName: result.name,

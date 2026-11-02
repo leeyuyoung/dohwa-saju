@@ -217,6 +217,13 @@ export class SupabaseAnalysisStore implements AnalysisStore {
     );
   }
 
+  async deleteUnpaidAnalysesBefore(createdBefore: number) {
+    await this.request(
+      `${TABLE}?paid_at=is.null&created_at=lt.${encodeURIComponent(toIso(createdBefore))}`,
+      { method: "DELETE", prefer: "return=minimal" },
+    );
+  }
+
   async listAnalyses(limit: number) {
     const safeLimit = Math.min(Math.max(1, limit), 100);
     // report 본문은 목록에 필요 없고 용량이 커서 빼 둔다. 관리자 목록용 컬럼만 가져온다.

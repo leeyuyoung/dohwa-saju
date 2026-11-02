@@ -55,6 +55,11 @@ export interface AnalysisStore {
   updateOrder(orderId: string, patch: OrderPatch): Promise<void>;
   /** createdBefore 이전에 만들어지고 끝내 결제되지 않은 주문을 지운다. */
   deleteStalePendingOrders(createdBefore: number): Promise<void>;
+  /**
+   * createdBefore 이전에 만들어지고 결제되지 않은 분석을 지운다.
+   * 개인정보 보관 최소화를 위해 미결제 건만 지운다.
+   */
+  deleteUnpaidAnalysesBefore(createdBefore: number): Promise<void>;
   /** 최신 제출 건. 관리자 목록용. */
   listAnalyses(limit: number): Promise<AnalysisRecord[]>;
   /**
