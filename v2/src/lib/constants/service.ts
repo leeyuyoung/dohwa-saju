@@ -1,7 +1,7 @@
 export const SERVICE = {
-  name: "도화사주",
+  name: "도화신당",
   tagline: "숨겨진 색기력 확인하기",
-  englishName: "DOHWA SAJU",
+  englishName: "DOHWA SINDANG",
   englishTagline: "Your Peach Blossom Fate",
   description: "오늘 밤, 너의 도화 기운이 최고조에 달하는 시간이야.",
 } as const;
@@ -35,7 +35,7 @@ export const DETAILED_REPORT_PRICE = 29900;
 /** 결제 화면에 취소선으로 보여주는 정가. */
 export const DETAILED_REPORT_LIST_PRICE = 59900;
 /** 주문명·결제 시트 상품명. */
-export const DETAILED_REPORT_ORDER_NAME = "도화사주 연애·매력 리포트";
+export const DETAILED_REPORT_ORDER_NAME = "도화신당 연애·매력 리포트";
 
 export const formatPrice = (won: number) => `${won.toLocaleString("ko-KR")}원`;
 /** 숫자만(원 없이). 취소선·할인가 나란히 둘 때 쓴다. */
@@ -57,10 +57,13 @@ export const ANALYSIS_MISSING_COPY = {
 
 /** 결제 후 리포트를 쓰는 동안 보여주는 문구 */
 export const REPORT_WRITING_MESSAGES = [
-  "옷고름 하나씩 풀듯, 네 사주를 풀고 있다.",
+  "끈 하나 풀 때마다 네 기운이 드러나는구나.",
   "네가 숨긴 데까지 다 짚는 중이니, 얌전히 기다리거라.",
   "네게 감겨들 남자들의 때를 세고 있지.",
   "마음에 품은 그놈과 너, 꽤 재밌는 사이구나.",
+  "네 도화살이 언제 제일 짙어지는지, 달력을 펼쳐 보고 있다.",
+  "스치기만 해도 남을 인연인지, 오래 남을 인연인지 가르는 중이다.",
+  "네가 먼저 다가갈 때와, 가만히 있어도 올 때를 나누고 있지.",
   "마지막 장이다. 조금만 더 참거라.",
 ] as const;
 

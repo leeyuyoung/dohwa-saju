@@ -82,7 +82,7 @@ export function PaymentConfirm({ paymentKey, orderId, amount }: PaymentConfirmPr
       <div className="flex flex-col gap-3">
         <h1 className="font-serif text-2xl font-light">결제를 확인하고 있습니다</h1>
         <p className="text-sm leading-relaxed text-mist">
-          확인이 끝나면 당신의 책이 펼쳐집니다.
+          확인이 끝나면 당신의 도화력이 보여집니다.
           <br />
           이 화면을 닫지 말고 잠시만 기다려주세요.
         </p>

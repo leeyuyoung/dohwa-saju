@@ -10,7 +10,7 @@ export function LogoMark({ size = 56, className }: LogoMarkProps) {
   return (
     <Image
       src="/images/logo-sakura.png"
-      alt="도화사주 로고"
+      alt="도화신당 로고"
       width={size}
       height={size}
       className={className}

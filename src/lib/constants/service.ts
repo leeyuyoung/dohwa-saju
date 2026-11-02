@@ -1,7 +1,7 @@
 export const SERVICE = {
-  name: "도화사주",
+  name: "도화신당",
   tagline: "달빛 아래 도화",
-  englishName: "DOHWA SAJU",
+  englishName: "DOHWA SINDANG",
   englishTagline: "Your Peach Blossom Fate",
   description: "오늘 밤, 너의 도화 기운이 최고조에 달하는 시간이야.",
 } as const;

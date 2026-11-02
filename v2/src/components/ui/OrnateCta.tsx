@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 const CTA_FRAME_ASPECT = "2101 / 440";
 
 /**
- * 도화사주 CTA 바탕.
+ * 도화신당 CTA 바탕.
  * 벚꽃 동양풍 대화창에서 배경만 뺀 프레임을 원본 비율 그대로 쓰고, 글자만 올린다.
  */
 export function OrnateCtaSurface({ children, className }: { children: ReactNode; className?: string }) {

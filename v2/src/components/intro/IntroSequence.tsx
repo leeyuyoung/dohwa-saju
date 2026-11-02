@@ -176,7 +176,7 @@ export function IntroSequence() {
           >
             <Image
               src="/images/brand/dohwa-logo-blossom.png"
-              alt="도화사주"
+              alt="도화신당"
               width={2172}
               height={724}
               priority
