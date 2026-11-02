@@ -31,7 +31,8 @@ export const HERO_COPY = {
 } as const;
 
 /** 상세 리포트 결제 금액(실제 청구). */
-export const DETAILED_REPORT_PRICE = 29900;
+/** 테스트용 임시 금액. 페이앱 최소 결제액은 1,000원. 끝나면 29900으로 되돌릴 것. */
+export const DETAILED_REPORT_PRICE = 1000;
 /** 결제 화면에 취소선으로 보여주는 정가. */
 export const DETAILED_REPORT_LIST_PRICE = 59900;
 /** 주문명·결제 시트 상품명. */
