@@ -1,6 +1,6 @@
 export const SERVICE = {
   name: "도화사주",
-  tagline: "달빛 아래 도화",
+  tagline: "숨겨진 색기력 확인하기",
   englishName: "DOHWA SAJU",
   englishTagline: "Your Peach Blossom Fate",
   description: "오늘 밤, 너의 도화 기운이 최고조에 달하는 시간이야.",
@@ -44,7 +44,7 @@ export const formatWon = (won: number) => won.toLocaleString("ko-KR");
 /** 분석이 끝나면 로딩 화면 가운데에 뜨는 문구와 결과로 가는 버튼 */
 export const ANALYSIS_READY_COPY = {
   found: "다 찾았다. 네가 숨긴 데까지.",
-  tease: "이제… 하나씩 벗겨 주마.",
+  tease: "이것 참 재밌는 사주군",
   cta: "숨김없이 보여줘",
 } as const;
 

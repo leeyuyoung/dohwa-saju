@@ -184,12 +184,10 @@ export function toAnalysisInput(
   return { ok: true, input: parsed.data };
 }
 
-/** 결제 직전에 받는 리포트 수신 이메일과 동의 */
+/** 결제 직전에 받는 리포트 수신 이메일. 동의는 결제 화면 문구로 갈음한다. */
 export const checkoutContactSchema = z.object({
   email: z
     .string({ error: "이메일을 입력해주세요." })
     .transform(sanitizeEmail)
     .pipe(z.string().min(1, "이메일을 입력해주세요.").max(254).pipe(z.email("올바른 이메일 주소를 입력해주세요."))),
-  agreePrivacy: z.literal(true, { error: "개인정보 수집·이용에 동의해주세요." }),
-  agreeAge14: z.literal(true, { error: "만 19세 이상만 이용할 수 있습니다." }),
 });

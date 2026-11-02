@@ -1,8 +1,8 @@
 "use client";
 
 import { ANONYMOUS, loadTossPayments, type TossPaymentsWidgets } from "@tosspayments/tosspayments-sdk";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { CheckboxField } from "@/components/input/fields/CheckboxField";
 import { Field, INPUT_BASE, inputBorder } from "@/components/input/fields/Field";
 import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/constants/service";
@@ -14,7 +14,7 @@ type CheckoutWidgetProps = {
   amount: number;
 };
 
-type ContactErrors = Partial<Record<"email" | "agreePrivacy" | "agreeAge14", string>>;
+type ContactErrors = Partial<Record<"email", string>>;
 
 type OrderResponse = { orderId?: string; amount?: number; orderName?: string; message?: string };
 
@@ -31,8 +31,6 @@ export function CheckoutWidget({ clientKey, token, amount }: CheckoutWidgetProps
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
-  const [agreePrivacy, setAgreePrivacy] = useState(false);
-  const [agreeAge14, setAgreeAge14] = useState(false);
   const [contactErrors, setContactErrors] = useState<ContactErrors>({});
 
   useEffect(() => {
@@ -63,7 +61,7 @@ export function CheckoutWidget({ clientKey, token, amount }: CheckoutWidgetProps
   const pay = async () => {
     const widgets = widgetsRef.current;
     if (!widgets || paying) return;
-    const contact = checkoutContactSchema.safeParse({ email, agreePrivacy, agreeAge14 });
+    const contact = checkoutContactSchema.safeParse({ email });
     if (!contact.success) {
       const errors: ContactErrors = {};
       for (const issue of contact.error.issues) {
@@ -102,15 +100,9 @@ export function CheckoutWidget({ clientKey, token, amount }: CheckoutWidgetProps
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="glass-card flex flex-col gap-5 rounded-3xl px-6 py-6">
-        <Field
-          label="리포트를 받을 이메일"
-          htmlFor="checkout-email"
-          error={contactErrors.email}
-          errorId="checkout-email-error"
-          hint="결제가 끝나면 전체 리포트 링크를 이 주소로 보내드립니다."
-        >
+    <div className="flex flex-col gap-3.5">
+      <div className="glass-card flex flex-col gap-3 rounded-3xl px-5 py-4">
+        <Field label="리포트를 받을 이메일" htmlFor="checkout-email" error={contactErrors.email} errorId="checkout-email-error">
           <input
             id="checkout-email"
             type="email"
@@ -121,30 +113,24 @@ export function CheckoutWidget({ clientKey, token, amount }: CheckoutWidgetProps
             onChange={(event) => setEmail(event.target.value)}
             aria-invalid={!!contactErrors.email}
             aria-describedby={contactErrors.email ? "checkout-email-error" : undefined}
-            className={`${INPUT_BASE} ${inputBorder(!!contactErrors.email)}`}
+            className={`${INPUT_BASE} !h-11 text-[15px] ${inputBorder(!!contactErrors.email)}`}
           />
         </Field>
-        <div className="flex flex-col gap-3">
-          <CheckboxField
-            id="agree-privacy"
-            checked={agreePrivacy}
-            onChange={setAgreePrivacy}
-            hasError={!!contactErrors.agreePrivacy}
-          >
-            (필수) 개인정보 수집·이용에 동의합니다
-            <span className="mt-1 block text-xs text-mist-dim">
-              수집 항목: 생년월일·출생시간·성별·이름·연애 상태·고민, 이메일 / 목적: 사주 풀이와 리포트 발송
-            </span>
-          </CheckboxField>
-          <CheckboxField id="agree-age14" checked={agreeAge14} onChange={setAgreeAge14} hasError={!!contactErrors.agreeAge14}>
-            (필수) 만 19세 이상입니다
-          </CheckboxField>
-          {(contactErrors.agreePrivacy || contactErrors.agreeAge14) && (
-            <p role="alert" className="text-xs leading-relaxed text-fire">
-              {contactErrors.agreePrivacy ?? contactErrors.agreeAge14}
-            </p>
-          )}
-        </div>
+        <p className="whitespace-nowrap text-center text-[clamp(7.5px,2.4vw,10px)] leading-none tracking-[-0.02em] text-mist-dim">
+          결제 정보를 확인했으며{" "}
+          <Link href="/legal/privacy" target="_blank" className="underline underline-offset-2">
+            개인정보 처리방침
+          </Link>
+          ·
+          <Link href="/legal/terms" target="_blank" className="underline underline-offset-2">
+            이용약관
+          </Link>
+          ·
+          <Link href="/legal/refund" target="_blank" className="underline underline-offset-2">
+            환불정책
+          </Link>
+          에 동의합니다.
+        </p>
       </div>
 
       <div className="overflow-hidden rounded-2xl bg-white">
