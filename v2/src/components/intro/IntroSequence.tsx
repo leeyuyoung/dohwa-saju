@@ -216,7 +216,7 @@ export function IntroSequence() {
         )}
       </AnimatePresence>
 
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-end px-7 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-16">
+      <main className="relative z-10 mt-auto flex w-full justify-center px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
         <h1 className="sr-only">
           {HERO_COPY.lead} {HERO_COPY.invite}
         </h1>
@@ -226,12 +226,23 @@ export function IntroSequence() {
   );
 }
 
-/** 말풍선 두 개가 뜬 뒤 화면 아래쪽에 CTA가 툭 튀어나온다. 로고는 화면 맨 위에 따로 둔다. */
+/** 말풍선 두 개가 뜬 뒤, 입력 화면 하단 버튼과 같은 자리에 CTA가 툭 튀어나온다. */
 function FinalReveal({ landing, onReplay }: { landing: boolean; onReplay?: () => void }) {
   const ctaAt = landing ? CTA_AT * LANDING_PACE : CTA_AT;
 
   return (
-    <div className="mb-[1.5dvh] flex w-full max-w-sm flex-col items-center" onClick={(event) => event.stopPropagation()}>
+    <div className="flex w-full max-w-md flex-col items-center" onClick={(event) => event.stopPropagation()}>
+      {onReplay && (
+        <motion.button
+          type="button"
+          onClick={onReplay}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { delay: ctaAt + 0.4, duration: 0.6 } }}
+          className="mb-3 px-2 py-1 font-sans text-xs text-paper/60 underline-offset-4 transition-colors hover:text-paper hover:underline"
+        >
+          인트로 다시 보기
+        </motion.button>
+      )}
       <motion.div
         className="w-full"
         initial={{ opacity: 0, scale: 0.6, y: 16 }}
@@ -240,17 +251,6 @@ function FinalReveal({ landing, onReplay }: { landing: boolean; onReplay?: () =>
       >
         <MythicButtonLink href="/start">{HERO_COPY.cta}</MythicButtonLink>
       </motion.div>
-      {onReplay && (
-        <motion.button
-          type="button"
-          onClick={onReplay}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: { delay: ctaAt + 0.4, duration: 0.6 } }}
-          className="mt-4 px-2 py-1 font-sans text-xs text-paper/60 underline-offset-4 transition-colors hover:text-paper hover:underline"
-        >
-          인트로 다시 보기
-        </motion.button>
-      )}
     </div>
   );
 }
