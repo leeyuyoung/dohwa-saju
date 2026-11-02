@@ -21,7 +21,8 @@ export async function GET() {
     records = await store.listAnalyses(100);
   } catch (error) {
     console.error("[admin/overview] analyses", error);
-    return fail(500, "현황을 불러오지 못했습니다.");
+    const detail = error instanceof Error ? error.message.replace(/sb_secret_[^\s]+/g, "[secret]") : "unknown";
+    return fail(500, `제출 목록을 불러오지 못했습니다. (${detail.slice(0, 160)})`);
   }
 
   const analyses = records.flatMap((record) => {

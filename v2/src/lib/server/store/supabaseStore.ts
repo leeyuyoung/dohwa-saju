@@ -123,7 +123,11 @@ export class SupabaseAnalysisStore implements AnalysisStore {
   ) {}
 
   private async request(path: string, init: RequestInit & { prefer?: string }) {
-    const headers: Record<string, string> = { apikey: this.secretKey, "Content-Type": "application/json" };
+    const headers: Record<string, string> = {
+      apikey: this.secretKey,
+      Authorization: `Bearer ${this.secretKey}`,
+      "Content-Type": "application/json",
+    };
     if (init.prefer) headers.Prefer = init.prefer;
     let response: Response;
     try {
@@ -214,13 +218,26 @@ export class SupabaseAnalysisStore implements AnalysisStore {
   }
 
   async listAnalyses(limit: number) {
-    const safeLimit = Math.min(Math.max(1, limit), 200);
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+    // report 본문은 목록에 필요 없고 용량이 커서 빼 둔다. 관리자 목록용 컬럼만 가져온다.
+    const select = [
+      "token",
+      "status",
+      "created_at",
+      "updated_at",
+      "name",
+      "email",
+      "relationship_status",
+      "concern",
+      "profile",
+      "paid_at",
+    ].join(",");
     const response = await this.request(
-      `${TABLE}?select=*&order=created_at.desc&limit=${safeLimit}`,
+      `${TABLE}?select=${select}&order=created_at.desc&limit=${safeLimit}`,
       { method: "GET" },
     );
-    const rows = (await response.json()) as Row[];
-    return rows.map(fromRow);
+    const rows = (await response.json()) as Array<Omit<Row, "report"> & { report?: Row["report"] }>;
+    return rows.map((row) => fromRow({ ...row, report: null }));
   }
 
   async trackFunnelEvent(event: FunnelEvent) {
