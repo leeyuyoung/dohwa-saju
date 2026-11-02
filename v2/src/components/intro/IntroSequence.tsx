@@ -231,7 +231,7 @@ function FinalReveal({ landing, onReplay }: { landing: boolean; onReplay?: () =>
   const ctaAt = landing ? CTA_AT * LANDING_PACE : CTA_AT;
 
   return (
-    <div className="mb-[6dvh] flex w-full max-w-sm flex-col items-center" onClick={(event) => event.stopPropagation()}>
+    <div className="mb-[1.5dvh] flex w-full max-w-sm flex-col items-center" onClick={(event) => event.stopPropagation()}>
       <motion.div
         className="w-full"
         initial={{ opacity: 0, scale: 0.6, y: 16 }}
