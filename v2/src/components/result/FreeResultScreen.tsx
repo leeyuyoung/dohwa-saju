@@ -5,6 +5,7 @@ import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { StickyCheckoutBar } from "@/components/result/StickyCheckoutBar";
 import { BloomCard, FaceCard, PartnerCard, ScoreCard, SinseonLines, SinseonScene } from "@/components/result/TeaserCards";
 import { WebtoonPanel } from "@/components/webtoon/WebtoonPanel";
+import { DETAILED_REPORT_ORDER_NAME } from "@/lib/constants/service";
 import type { FreeResultView } from "@/types/result";
 
 const SEASONS = ["겨울", "봄", "여름", "가을"] as const;
@@ -21,11 +22,14 @@ export function FreeResultScreen({
   sample = false,
   token,
   paid = false,
+  tossClientKey,
 }: {
   result: FreeResultView;
   sample?: boolean;
   token?: string;
   paid?: boolean;
+  /** 있으면 결제 CTA가 아래에서 시트를 연다. */
+  tossClientKey?: string;
 }) {
   const cta =
     paid && token
@@ -33,6 +37,16 @@ export function FreeResultScreen({
       : sample || !token
         ? { href: "/start", label: "숨겨진 색기 확인하기" }
         : { href: `/checkout/${token}`, label: "숨겨진 색기 확인하기" };
+
+  const checkout =
+    !paid && !sample && token && tossClientKey
+      ? {
+          clientKey: tossClientKey,
+          token,
+          title: DETAILED_REPORT_ORDER_NAME,
+          buyerName: result.name,
+        }
+      : undefined;
 
   return (
     <PageShell withStickyBar>
@@ -160,7 +174,12 @@ export function FreeResultScreen({
         />
       </div>
 
-      <StickyCheckoutBar href={cta.href} label={cta.label} showAfterId={paid ? undefined : BLOOM_CARD_ID} />
+      <StickyCheckoutBar
+        href={cta.href}
+        label={cta.label}
+        showAfterId={paid ? undefined : BLOOM_CARD_ID}
+        checkout={checkout}
+      />
     </PageShell>
   );
 }

@@ -57,11 +57,11 @@ export function CheckoutDealPrice({ align = "end", showPrice = true }: CheckoutD
   return (
     <div className={`flex flex-col gap-1.5 ${centered ? "items-center text-center" : "items-end text-right"}`}>
       <div className="flex items-center gap-2">
-        <span className="rounded-full bg-cinnabar/90 px-2.5 py-0.5 font-gothic text-[11px] font-medium tracking-[-0.01em] text-paper">
+        <span className="rounded-full bg-[#e11d48] px-2.5 py-0.5 font-gothic text-[11px] font-medium tracking-[-0.01em] text-white">
           할인특가
         </span>
         <span
-          className="font-mono text-[13px] tabular-nums tracking-wide text-blossom-glow"
+          className="font-mono text-[13px] tabular-nums tracking-wide text-[#e11d48]"
           aria-live="polite"
           aria-label={remainMs === null ? "할인 남은 시간 불러오는 중" : `할인 남은 시간 ${formatRemain(remainMs)}`}
         >

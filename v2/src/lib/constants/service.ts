@@ -34,6 +34,8 @@ export const HERO_COPY = {
 export const DETAILED_REPORT_PRICE = 29900;
 /** 결제 화면에 취소선으로 보여주는 정가. */
 export const DETAILED_REPORT_LIST_PRICE = 59900;
+/** 주문명·결제 시트 상품명. */
+export const DETAILED_REPORT_ORDER_NAME = "도화사주 연애·매력 리포트";
 
 export const formatPrice = (won: number) => `${won.toLocaleString("ko-KR")}원`;
 /** 숫자만(원 없이). 취소선·할인가 나란히 둘 때 쓴다. */

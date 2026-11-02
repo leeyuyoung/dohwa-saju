@@ -15,5 +15,13 @@ export default async function ResultPage({ params }: PageProps<"/result/[token]"
   if (!TOKEN_PATTERN.test(token)) notFound();
   const record = await getAnalysisStore().get(token);
   if (!record) notFound();
-  return <FreeResultScreen result={toFreeResultView(record)} token={token} paid={record.paidAt !== null} />;
+  const tossClientKey = process.env.TOSS_CLIENT_KEY;
+  return (
+    <FreeResultScreen
+      result={toFreeResultView(record)}
+      token={token}
+      paid={record.paidAt !== null}
+      tossClientKey={tossClientKey}
+    />
+  );
 }
