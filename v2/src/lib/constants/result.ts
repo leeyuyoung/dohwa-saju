@@ -198,27 +198,6 @@ const CHAPTERS = [
       },
     ],
   },
-  {
-    key: "night",
-    title: "[19금] 밤의 너",
-    subtitle: "불이 꺼지면 드러나는 네 진짜 얼굴",
-    image: "/images/result/chapter-4.jpg",
-    sections: [
-      {
-        title: "한 번 맛보면 못 헤어나오게 만드는 비법",
-        guide:
-          "연인이 이 사람에게 한 번 빠지면 헤어나오지 못하는 밤의 매력(낮과 다른 반전, 주도하는 쪽인지 맡기는 쪽인지, 속도와 리듬), 상대가 잊지 못하게 여운을 남기는 이 사람만의 방식",
-      },
-      {
-        title: "내 몸이 가장 젖어드는 히든 성감대",
-        guide: "일간·오행으로 본 이 사람이 가장 민감하게 반응하는 성감대와 몸이 달아오르는 자극의 결(속도, 온도, 분위기), 스스로도 몰랐던 숨은 반응",
-      },
-      {
-        title: "너를 달아오르게 하는 남자",
-        guide: "이 사람의 마음보다 본능이 먼저 끌리는 사내의 분위기·태도·상황(말투, 눈빛, 거리감 같은 것으로)과 속궁합이 잘 맞는 사내의 결",
-      },
-    ],
-  },
 ] as const;
 
 export type ReportChapterKey = (typeof CHAPTERS)[number]["key"];
@@ -245,11 +224,11 @@ export const LOVE_TIMELINE_YEARS = 3;
  */
 export const REVIEWS = [
   {
-    name: "익명",
+    name: "김**",
     zodiac: { hanja: "卯", label: "토끼띠" },
     rating: 5,
-    date: "26. 10. 07.",
-    body: "제 표정이랑 분위기 지적해주셨는데 소름 돋았어요..ㅋㅋㅋ 그동안 제 매력을 완전 잘못 쓰고 있었더라고요 읽는 내내 너무 감탄햇어요 ❤️",
+    date: "26. 10. 17.",
+    body: "아니 남자 얼굴 뭐임 진짜 내 이상형;;;",
     sample: false,
   },
   {
@@ -257,7 +236,7 @@ export const REVIEWS = [
     zodiac: { hanja: "酉", label: "닭띠" },
     rating: 5,
     date: "26. 10. 05.",
-    body: "학교 다닐 때 인기 많았거든요? 이유를 알았어요;; 매력을 더 끌어올리는 법도 배울 수 있어서 좋았습니다. 알려주신 플러팅 쓰니까 진짜 반응이 와요",
+    body: "ㅋㅋㅋ얼굴 이미지이랑 분위기 짚어주신 거 진짜 소름 돋았어요..",
     sample: false,
   },
   {
@@ -265,7 +244,7 @@ export const REVIEWS = [
     zodiac: { hanja: "亥", label: "돼지띠" },
     rating: 5,
     date: "26. 10. 04.",
-    body: "도화 지수랑 무료 분량 보고 내 얘기 같아서 에라 모르겠다 하고 결제했는데 분량이 너무 알차요!! 나중에 인연 들어오는 시기 맞춰서 다시 찾아볼 생각입니다. 강추합니다!",
+    body: "학창 시절에 인기 많았던 이유를 드디어 알았네요,, 나중에 인연 들어올 때 또 보러 올게요!",
     sample: false,
   },
   {
@@ -281,7 +260,7 @@ export const REVIEWS = [
     zodiac: { hanja: "申", label: "원숭이띠" },
     rating: 5,
     date: "26. 09. 13.",
-    body: "선녀님이 직접 이야기해 주는 듯한 반말 톤이 은근히 중독성 있고 몰입감이 미쳤어요. 진짜 잘 맞춰서 놀랬고, 자존감도 엄청 올라가네요. 밤마다 꺼내보고 있습니다.ㅎㅎ",
+    body: "몰입 감이 미쳤어요. 밤마다 꺼내보고 있습니다.ㅎㅎ",
     sample: false,
   },
 ] as const;

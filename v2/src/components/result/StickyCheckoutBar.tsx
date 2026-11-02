@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { CheckoutDealPrice } from "@/components/payment/CheckoutDealPrice";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 
 type StickyCheckoutBarProps = {
@@ -11,7 +12,7 @@ type StickyCheckoutBarProps = {
   showAfterId?: string;
 };
 
-/** 화면 아래에 떠 있는 결제 버튼 */
+/** 화면 아래에 떠 있는 결제 버튼. 할인특가·타이머·가격을 버튼 위에 둔다. */
 export function StickyCheckoutBar({ href, label, showAfterId }: StickyCheckoutBarProps) {
   const [reached, setReached] = useState(false);
 
@@ -37,7 +38,8 @@ export function StickyCheckoutBar({ href, label, showAfterId }: StickyCheckoutBa
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
           className="pointer-events-none fixed inset-x-0 bottom-0 z-40 bg-gradient-to-t from-ink via-ink/90 to-transparent px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-8"
         >
-          <div className="pointer-events-auto mx-auto max-w-xl">
+          <div className="pointer-events-auto mx-auto flex max-w-xl flex-col items-center gap-2.5">
+            <CheckoutDealPrice align="center" showPrice={false} />
             <MythicButtonLink href={href}>{label}</MythicButtonLink>
           </div>
         </motion.div>

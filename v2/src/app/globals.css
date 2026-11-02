@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 
 @theme {
   /* 달밤의 도화: 깊은 남색 밤, 한지빛 글자, 옛 금색, 복숭아빛 분홍과 자두색 */
@@ -29,6 +30,8 @@
 
   --font-serif: var(--font-noto-serif-kr), serif;
   --font-sans: var(--font-noto-sans-kr), system-ui, sans-serif;
+  /** 말풍선·대화 UI용. 캡처처럼 가볍고 읽기 쉬운 고딕 */
+  --font-gothic: "Pretendard Variable", Pretendard, var(--font-noto-sans-kr), system-ui, sans-serif;
   --font-display: var(--font-cormorant), var(--font-noto-serif-kr), serif;
   --font-brush: var(--font-classic-kr), var(--font-noto-serif-kr), serif;
   --font-eerie: var(--font-classic-kr), var(--font-noto-serif-kr), serif;

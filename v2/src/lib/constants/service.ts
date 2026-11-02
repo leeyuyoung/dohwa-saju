@@ -26,13 +26,18 @@ export const INTRO_SCRIPT = {
 /** 인트로 마지막 장면. lead와 invite는 말풍선으로 뜨고, 줄을 바꿀 자리에 \n을 넣는다. */
 export const HERO_COPY = {
   lead: "오늘 밤, 네 몸에 핀 꽃\n하나하나 벗겨서 읽어주마.",
-  invite: "도화신선이 직접.",
+  invite: "네 색기력이 어떤지\n궁금하지 않니?",
   cta: "도화신선에게 사주 내어주기",
 } as const;
 
+/** 상세 리포트 결제 금액(실제 청구). */
 export const DETAILED_REPORT_PRICE = 29900;
+/** 결제 화면에 취소선으로 보여주는 정가. */
+export const DETAILED_REPORT_LIST_PRICE = 59900;
 
 export const formatPrice = (won: number) => `${won.toLocaleString("ko-KR")}원`;
+/** 숫자만(원 없이). 취소선·할인가 나란히 둘 때 쓴다. */
+export const formatWon = (won: number) => won.toLocaleString("ko-KR");
 
 /** 분석이 끝나면 로딩 화면 가운데에 뜨는 문구와 결과로 가는 버튼 */
 export const ANALYSIS_READY_COPY = {

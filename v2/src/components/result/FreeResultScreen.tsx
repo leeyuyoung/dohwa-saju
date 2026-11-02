@@ -1,14 +1,11 @@
+import { FunnelBeacon } from "@/components/analytics/FunnelBeacon";
 import { PageShell } from "@/components/layout/PageShell";
-import { ComingSoonNotice } from "@/components/result/ComingSoonNotice";
 import { ReportToc } from "@/components/result/FreeResultParts";
 import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { StickyCheckoutBar } from "@/components/result/StickyCheckoutBar";
-import { AdultCard, BloomCard, FaceCard, PartnerCard, ScoreCard, SinseonLines, SinseonScene } from "@/components/result/TeaserCards";
+import { BloomCard, FaceCard, PartnerCard, ScoreCard, SinseonLines, SinseonScene } from "@/components/result/TeaserCards";
 import { WebtoonPanel } from "@/components/webtoon/WebtoonPanel";
 import type { FreeResultView } from "@/types/result";
-
-/** 이 버전엔 결제가 없어서, 이 주소로 가는 버튼은 누르면 "준비 중" 안내만 뜬다. */
-export const COMING_SOON_HREF = "/coming-soon";
 
 const SEASONS = ["겨울", "봄", "여름", "가을"] as const;
 const seasonOf = (month: number) => SEASONS[Math.floor((month % 12) / 3)];
@@ -19,11 +16,27 @@ const BLOOM_CARD_ID = "dohwa-bloom";
 const glow = (text: string) => <span className="text-blossom-glow">{text}</span>;
 
 /** 무료 결과 화면. 도화신선의 대사와 반만 열린 카드가 번갈아 나온다. 샘플이면 버튼이 입력 화면으로 간다. */
-export function FreeResultScreen({ result, sample = false }: { result: FreeResultView; sample?: boolean }) {
-  const cta = { href: sample ? "/start" : COMING_SOON_HREF, label: "숨겨진 색기 쓰는 법" };
+export function FreeResultScreen({
+  result,
+  sample = false,
+  token,
+  paid = false,
+}: {
+  result: FreeResultView;
+  sample?: boolean;
+  token?: string;
+  paid?: boolean;
+}) {
+  const cta =
+    paid && token
+      ? { href: `/report/${token}`, label: "내 리포트 보러 가기" }
+      : sample || !token
+        ? { href: "/start", label: "숨겨진 색기 확인하기" }
+        : { href: `/checkout/${token}`, label: "숨겨진 색기 확인하기" };
 
   return (
     <PageShell withStickyBar>
+      {token && !sample ? <FunnelBeacon step="result" token={token} /> : null}
       <h1 className="sr-only">{result.name}의 도화 풀이</h1>
 
       <WebtoonPanel
@@ -31,12 +44,12 @@ export function FreeResultScreen({ result, sample = false }: { result: FreeResul
         src="/images/result/opening.jpg"
         alt="달밤의 복숭아꽃 정원에서 한 손에 사주가 적힌 종이를 들어 보이고, 다른 팔로 여자주인공의 허리를 감싸며 웃는 도화신선"
         bubbles={[
-          { kind: "speech", text: "이것 봐라…", at: 0.4, place: { top: "4%", left: "5%" } },
-          { kind: "whisper", text: `${result.name}.`, at: 1.4, place: { top: "31%", right: "3%" }, big: true },
+          { kind: "speech", text: "이것 봐라…", at: 0.15, place: { top: "4%", left: "5%" } },
+          { kind: "whisper", text: `${result.name}.`, at: 0.65, place: { top: "31%", right: "3%" }, big: true },
           {
             kind: "caption",
             text: `${result.birth.year}년 ${seasonOf(result.birth.month)}에 태어난 꽃이로구나`,
-            at: 2.4,
+            at: 1.3,
             place: { top: "84%", left: "5%" },
           },
         ]}
@@ -46,12 +59,14 @@ export function FreeResultScreen({ result, sample = false }: { result: FreeResul
       <ScoreCard result={result} />
 
       <SinseonScene
+        className="mt-2"
         src="/images/sinseon/hero.jpg"
         alt="달밤의 복숭아꽃 아래에서 꽃가지를 입가에 대고 웃는 도화신선"
+        headroom={0.14}
         cropBottom={0.12}
         bubbles={[
-          { kind: "speech", text: "이 정도면…\n남자들이 가만 안 뒀겠는데?", at: 0.3, place: { top: "6%", left: "3%" } },
-          { kind: "speech", text: "근데 꽃은\n아무 때나 피는 게 아니야.", at: 1.4, place: { top: "64%", right: "3%" } },
+          { kind: "speech", text: "이 정도면…\n남자들이 가만 안 뒀겠는데?", at: 0.2, place: { top: "2%", right: "3%" } },
+          { kind: "speech", text: "근데 꽃은\n아무 때나 피는 게 아니야.", at: 1.2, place: { top: "64%", left: "3%" } },
         ]}
         lines={[
           <>
@@ -66,11 +81,13 @@ export function FreeResultScreen({ result, sample = false }: { result: FreeResul
       </div>
 
       <SinseonScene
+        className="mt-2"
         src="/images/result/chapter-1.jpg"
         alt="보름달 아래 복숭아나무에 기대어 팔짱을 낀 채, 돌아보는 여자주인공을 내려다보며 웃는 도화신선"
+        headroom={0.02}
         cropBottom={0.12}
         bubbles={[
-          { kind: "speech", text: "얼마 안 남았지?", at: 0.3, place: { top: "10%", left: "8%" } },
+          { kind: "speech", text: "얼마 안 남았지?", at: 0.3, place: { top: "8%", left: "8%" } },
           { kind: "speech", text: "그 달엔 가만있어도\n남자들이 안달 나지.", at: 1.4, place: { top: "66%", right: "3%" } },
         ]}
         lines={[
@@ -126,32 +143,12 @@ export function FreeResultScreen({ result, sample = false }: { result: FreeResul
         ]}
       />
 
-      <SinseonScene
-        src="/images/result/chapter-4.jpg"
-        alt="촛불이 켜진 방, 두 손목이 묶인 채 누운 여자주인공에게 얼굴을 기대고 웃는 도화신선"
-        headroom={0.25}
-        bubbles={[
-          { kind: "speech", text: "아직 안 보여준 게\n하나 있다.", at: 0.3, place: { top: "2%", left: "3%" } },
-          { kind: "speech", text: "불이 꺼지면 드러나는\n네 진짜 얼굴.", at: 1.4, place: { top: "19%", right: "3%" } },
-          { kind: "whisper", text: "은밀한 부분까지\n다 보여줄게.", at: 2.5, place: { top: "75%", left: "6%" }, big: true },
-        ]}
-        lines={[
-          <>
-            이걸 알고 나면,
-            <br />
-            {glow("네 밤이 달라질 것이야.")}
-          </>,
-        ]}
-      />
-      <AdultCard />
-      <span aria-hidden className="mx-auto mt-10 block h-14 w-px bg-gradient-to-b from-transparent via-cinnabar/70 to-transparent" />
-
-      <div className="mt-10 flex flex-col gap-16">
+      <div className="mt-16 flex flex-col gap-16">
         <ReportToc gender={result.gender} />
         <ReviewCarousel />
       </div>
 
-      <div className="mt-16 mb-3">
+      <div className="mt-8 mb-3">
         <WebtoonPanel
           src="/images/result/closing.jpg"
           alt="한 팔로 여자주인공의 어깨를 감싸 귓가에 속삭이며, 다른 손을 내밀어 함께 가자고 청하는 도화신선"
@@ -163,8 +160,7 @@ export function FreeResultScreen({ result, sample = false }: { result: FreeResul
         />
       </div>
 
-      <StickyCheckoutBar href={cta.href} label={cta.label} showAfterId={BLOOM_CARD_ID} />
-      {!sample && <ComingSoonNotice href={COMING_SOON_HREF} />}
+      <StickyCheckoutBar href={cta.href} label={cta.label} showAfterId={paid ? undefined : BLOOM_CARD_ID} />
     </PageShell>
   );
 }

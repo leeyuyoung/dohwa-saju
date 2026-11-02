@@ -1,13 +1,12 @@
 import { SajuCalculationError } from "@/lib/saju";
+import { createAnalysis } from "@/lib/server/analysis";
 import { isSameOrigin, jsonError as fail, readJsonBody } from "@/lib/server/http";
-import { saveInputCookie } from "@/lib/server/inputCookie";
 import { clientIp, consumeRateLimit } from "@/lib/server/rateLimit";
-import { freeResultFromInput } from "@/lib/server/resultView";
 import { analysisInputSchema } from "@/lib/validation/analysisInput";
 
 const IP_LIMIT = { limit: 20, windowMs: 60 * 60 * 1000 };
 
-/** 만세력으로 계산이 되는지 확인하고, 결과 화면에서 다시 계산할 수 있게 입력값을 쿠키에 둔다. AI는 호출하지 않는다. */
+/** 만세력으로 무료 결과를 계산해 저장한다. AI는 호출하지 않는다. */
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return fail(403, "허용되지 않은 요청입니다.");
 
@@ -22,9 +21,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    freeResultFromInput(input);
-    await saveInputCookie(input);
-    return Response.json({ ok: true }, { status: 201, headers: { "Cache-Control": "no-store" } });
+    const record = await createAnalysis(input);
+    return Response.json({ token: record.token }, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof SajuCalculationError) {
       if (!error.isUserError) console.error(`[analysis] saju ${error.code}`, error.detail);

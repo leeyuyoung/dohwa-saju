@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>도화 점수 카드 미리보기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Noto+Serif+KR:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --title: #e9ddc9;
+      --type: #f0e2dc;
+      --label: #e6d4ce;
+      --value: #e2cfc6;
+      --frame-light: #e8c89a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px 48px;
+      font-family: "Song Myung", "Noto Serif KR", serif;
+      color: var(--title);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, #2a1848 0%, transparent 55%),
+        linear-gradient(180deg, #120b22 0%, #0a0714 100%);
+    }
+
+    .stage {
+      width: min(100%, 380px);
+      position: relative;
+    }
+
+    .hint {
+      text-align: center;
+      margin-bottom: 14px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      color: rgb(232 200 154 / 0.65);
+      font-family: "Noto Serif KR", serif;
+    }
+
+    .card {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      width: 100%;
+      isolation: isolate;
+    }
+
+    .card-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 4px;
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .inner {
+      position: absolute;
+      z-index: 1;
+      /* 프레임 안쪽 여백 — 배경 그림의 금테에 맞춤 */
+      inset: 9.5% 8.5% 14% 8.5%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 2%;
+      flex-shrink: 0;
+    }
+    .flourish {
+      width: 34px;
+      height: 13px;
+      color: var(--frame-light);
+      opacity: 0.8;
+      flex-shrink: 0;
+    }
+    .title {
+      font-family: "Song Myung", "Noto Serif KR", serif;
+      font-size: clamp(15px, 4.4vw, 17px);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--title);
+      text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
+    }
+
+    .score-block {
+      text-align: center;
+      position: relative;
+      margin-top: 6%;
+      flex-shrink: 0;
+    }
+    .score-block::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      width: 58%;
+      height: 90%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse, rgb(255 190 205 / 0.32), transparent 70%);
+      filter: blur(10px);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .score {
+      font-family: "Song Myung", "Noto Serif KR", serif;
+      font-size: clamp(72px, 22vw, 90px);
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      background: linear-gradient(180deg, #fff8f6 0%, #f4d4d4 42%, #e0b0b8 78%, #c9929c 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 18px rgb(244 180 190 / 0.5));
+    }
+    .score-unit {
+      font-family: "Song Myung", "Noto Serif KR", serif;
+      font-size: clamp(20px, 5.5vw, 24px);
+      font-weight: 400;
+      margin-left: 3px;
+      background: linear-gradient(180deg, #fff0f0 0%, #e0b0b8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      vertical-align: 20px;
+    }
+
+    .type-line {
+      margin-top: 4%;
+      font-family: "Song Myung", "Noto Serif KR", serif;
+      font-size: clamp(13px, 3.8vw, 15px);
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: var(--type);
+      text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
+    }
+    .type-line .alias {
+      font-weight: 300;
+      color: rgb(240 226 220 / 0.82);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 5% 2% 4%;
+      color: rgb(232 200 154 / 0.5);
+      flex-shrink: 0;
+    }
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgb(232 200 154 / 0.5), transparent);
+    }
+    .divider-diamond {
+      width: 6px;
+      height: 6px;
+      rotate: 45deg;
+      border: 1px solid rgb(232 200 154 / 0.65);
+      background: rgb(184 137 92 / 0.3);
+      flex-shrink: 0;
+    }
+
+    .stats {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      flex: 1;
+      gap: 3.2%;
+      padding: 0 1%;
+      min-height: 0;
+    }
+    .stat {
+      display: grid;
+      /* 바 너비 고정, 라벨은 오른쪽·점수는 왼쪽으로 바에 붙임 */
+      grid-template-columns: 1fr minmax(0, 70%) 0.7fr;
+      align-items: center;
+      column-gap: 4px;
+    }
+    .stat-label {
+      justify-self: end;
+      text-align: right;
+      font-family: "Song Myung", "Noto Serif KR", serif;
+      font-size: clamp(13px, 3.6vw, 14px);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--label);
+      text-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+    }
+    .stat-value {
+      justify-self: start;
+      text-align: left;
+      font-family: "Song Myung", "Noto Serif KR", serif;
+      font-size: clamp(14px, 3.8vw, 15px);
+      font-weight: 400;
+      color: var(--value);
+      text-shadow: 0 0 8px rgb(226 207 198 / 0.2);
+    }
+
+    .bar {
+      position: relative;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      padding: 0 1px;
+    }
+    .bar-cap {
+      width: 11px;
+      height: 16px;
+      flex-shrink: 0;
+      color: #e8c89a;
+      z-index: 2;
+    }
+    .bar-cap svg { width: 100%; height: 100%; display: block; }
+    .bar-track {
+      position: relative;
+      flex: 1;
+      height: 12px;
+      margin: 0 -2px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #2a1838 0%, #120a1c 100%);
+      border: 1.5px solid #c49a68;
+      box-shadow:
+        inset 0 2px 4px rgb(0 0 0 / 0.65),
+        0 0 0 1px rgb(90 55 30 / 0.4);
+      overflow: hidden;
+    }
+    .bar-fill {
+      position: absolute;
+      inset: 1.5px auto 1.5px 1.5px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        rgb(120 40 75 / 0.7) 0%,
+        rgb(200 90 130 / 0.85) 35%,
+        rgb(244 170 190 / 0.95) 75%,
+        rgb(255 220 230 / 1) 100%);
+      box-shadow:
+        0 0 12px rgb(255 160 190 / 0.5),
+        inset 0 1px 0 rgb(255 255 255 / 0.4);
+      overflow: hidden;
+    }
+    .bar-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 18% 45%, rgb(255 255 255 / 0.7) 0 1.1px, transparent 1.6px),
+        radial-gradient(circle at 40% 55%, rgb(255 255 255 / 0.45) 0 0.8px, transparent 1.2px),
+        radial-gradient(circle at 58% 35%, rgb(255 255 255 / 0.55) 0 1px, transparent 1.4px),
+        radial-gradient(circle at 76% 60%, rgb(255 230 240 / 0.65) 0 1.1px, transparent 1.6px),
+        radial-gradient(circle at 90% 40%, rgb(255 255 255 / 0.8) 0 1.3px, transparent 1.8px);
+    }
+
+    .note {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.6;
+      color: rgb(188 176 196 / 0.55);
+      letter-spacing: 0.04em;
+      font-family: "Noto Serif KR", serif;
+    }
+
+    .cap-svg { display: none; }
+  </style>
+</head>
+<body>
+  <svg class="cap-svg" aria-hidden="true">
+    <symbol id="bar-cap" viewBox="0 0 12 18">
+      <path d="M10 2 C6 4, 4 7, 4 9 C4 11, 6 14, 10 16" fill="none" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M7 3 C5 5, 4 7.5, 4 9 C4 10.5, 5 13, 7 15" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.65"/>
+      <circle cx="3.5" cy="9" r="1.4" fill="currentColor"/>
+    </symbol>
+  </svg>
+
+  <div class="stage">
+    <p class="hint">미리보기 · 결과 페이지 도화 점수 카드</p>
+
+    <article class="card">
+      <img class="card-bg" src="/images/ui/dohwa-score-bg.jpg" alt="" />
+
+      <div class="inner">
+        <div class="title-row">
+          <svg class="flourish" viewBox="0 0 36 14" aria-hidden="true">
+            <path d="M34 7 C24 7, 22 2, 18 2 C14 2, 12 7, 2 7" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M28 7 C22 7, 20 11, 18 11 C16 11, 14 7, 8 7" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.7"/>
+            <circle cx="18" cy="7" r="1.4" fill="currentColor"/>
+          </svg>
+          <h1 class="title">ㅇㅇ의 도화 점수</h1>
+          <svg class="flourish" viewBox="0 0 36 14" aria-hidden="true" style="transform:scaleX(-1)">
+            <path d="M34 7 C24 7, 22 2, 18 2 C14 2, 12 7, 2 7" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M28 7 C22 7, 20 11, 18 11 C16 11, 14 7, 8 7" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.7"/>
+            <circle cx="18" cy="7" r="1.4" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <div class="score-block">
+          <p>
+            <span class="score">90</span><span class="score-unit">점</span>
+          </p>
+          <p class="type-line">춘풍도화 <span class="alias">· 스며드는 봄바람</span></p>
+        </div>
+
+        <div class="divider" aria-hidden="true"><span class="divider-diamond"></span></div>
+
+        <ul class="stats">
+          <li class="stat">
+            <span class="stat-label">색기력</span>
+            <div class="bar">
+              <span class="bar-cap" aria-hidden="true"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+              <div class="bar-track"><div class="bar-fill" style="width:99%"></div></div>
+              <span class="bar-cap" aria-hidden="true" style="transform:scaleX(-1)"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+            </div>
+            <span class="stat-value">99</span>
+          </li>
+          <li class="stat">
+            <span class="stat-label">관능미</span>
+            <div class="bar">
+              <span class="bar-cap" aria-hidden="true"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+              <div class="bar-track"><div class="bar-fill" style="width:85%"></div></div>
+              <span class="bar-cap" aria-hidden="true" style="transform:scaleX(-1)"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+            </div>
+            <span class="stat-value">85</span>
+          </li>
+          <li class="stat">
+            <span class="stat-label">유혹력</span>
+            <div class="bar">
+              <span class="bar-cap" aria-hidden="true"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+              <div class="bar-track"><div class="bar-fill" style="width:78%"></div></div>
+              <span class="bar-cap" aria-hidden="true" style="transform:scaleX(-1)"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+            </div>
+            <span class="stat-value">78</span>
+          </li>
+          <li class="stat">
+            <span class="stat-label">신비력</span>
+            <div class="bar">
+              <span class="bar-cap" aria-hidden="true"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+              <div class="bar-track"><div class="bar-fill" style="width:85%"></div></div>
+              <span class="bar-cap" aria-hidden="true" style="transform:scaleX(-1)"><svg viewBox="0 0 12 18"><use href="#bar-cap"/></svg></span>
+            </div>
+            <span class="stat-value">85</span>
+          </li>
+        </ul>
+      </div>
+    </article>
+
+    <p class="note">컨펌 주시면 결과 페이지 ScoreCard에 적용합니다</p>
+  </div>
+</body>
+</html>

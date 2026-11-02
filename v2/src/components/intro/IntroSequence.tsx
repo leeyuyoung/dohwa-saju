@@ -1,10 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import Image from "next/image";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { HeroineBackdrop, type HeroineScene } from "@/components/night/HeroineBackdrop";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 import { SpeechBubble, type Bubble } from "@/components/webtoon/SpeechBubble";
+import { trackFunnel } from "@/lib/client/funnel";
 import { HERO_COPY, INTRO_SCRIPT } from "@/lib/constants/service";
 
 const LIGHT_DELAY_MS = 500;
@@ -16,10 +18,10 @@ const BEATS = [
   {
     key: "arrive",
     scene: "garden",
-    ms: 4000,
+    ms: 3000,
     bubbles: [
-      { kind: "caption", text: INTRO_SCRIPT.caption, at: 0.8, place: { top: "15%", left: "7%" } },
-      { kind: "monologue", text: INTRO_SCRIPT.wonder, at: 1.6, place: { top: "64%" } },
+      { kind: "caption", text: INTRO_SCRIPT.caption, at: 0.55, place: { top: "15%", left: "7%" } },
+      { kind: "monologue", text: INTRO_SCRIPT.wonder, at: 1.3, place: { top: "64%" } },
     ],
   },
   {
@@ -61,8 +63,8 @@ const BEATS = [
     scene: "main",
     ms: 0,
     bubbles: [
-      { kind: "speech", text: HERO_COPY.lead, at: 0.8, place: { top: "3%", left: "6%" } },
-      { kind: "whisper", text: HERO_COPY.invite, at: 2.3, place: { top: "47%", right: "5%" }, big: true },
+      { kind: "speech", text: HERO_COPY.lead, at: 0.8, place: { top: "50%", right: "4%" }, small: true },
+      { kind: "speech", text: HERO_COPY.invite, at: 2.3, place: { top: "62%", left: "4%" }, small: true },
     ],
   },
 ] as const satisfies readonly Beat[];
@@ -116,6 +118,7 @@ export function IntroSequence() {
   useEffect(() => {
     const timer = window.setTimeout(() => setLit(true), LIGHT_DELAY_MS);
     window.addEventListener("pagehide", markVisited);
+    trackFunnel("intro");
     return () => {
       window.clearTimeout(timer);
       window.removeEventListener("pagehide", markVisited);
@@ -147,7 +150,7 @@ export function IntroSequence() {
         lowVeil
       />
 
-      <div className="pointer-events-none absolute inset-y-0 left-1/2 z-10 w-full -translate-x-1/2 landscape:w-[56.25vh]">
+      <div className="pointer-events-none absolute inset-y-0 left-1/2 z-10 w-full -translate-x-1/2 opacity-[0.78] landscape:w-[56.25vh]">
         <AnimatePresence>
           {current.bubbles.map((bubble) => (
             <SpeechBubble
@@ -157,6 +160,31 @@ export function IntroSequence() {
           ))}
         </AnimatePresence>
       </div>
+
+      <AnimatePresence>
+        {isFinal && (
+          <motion.div
+            key="final-logo"
+            className="pointer-events-none absolute inset-x-0 top-[max(1.75rem,calc(env(safe-area-inset-top)+1rem))] z-20 flex justify-center px-6"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{
+              opacity: 0.78,
+              y: 0,
+              transition: { delay: landing ? 0.1 : 0.35, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+            }}
+            exit={{ opacity: 0, transition: { duration: 0.25 } }}
+          >
+            <Image
+              src="/images/brand/dohwa-logo-blossom.png"
+              alt="도화사주"
+              width={2172}
+              height={724}
+              priority
+              className="h-auto w-[min(82%,18.5rem)] drop-shadow-[0_8px_24px_rgb(0_0_0_/_0.45)]"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isFinal && !landing && (
@@ -198,12 +226,12 @@ export function IntroSequence() {
   );
 }
 
-/** 말풍선 두 개가 뜬 뒤 화면 아래쪽 가운데에 큰 버튼 하나만 툭 튀어나온다. */
+/** 말풍선 두 개가 뜬 뒤 화면 아래쪽에 CTA가 툭 튀어나온다. 로고는 화면 맨 위에 따로 둔다. */
 function FinalReveal({ landing, onReplay }: { landing: boolean; onReplay?: () => void }) {
   const ctaAt = landing ? CTA_AT * LANDING_PACE : CTA_AT;
 
   return (
-    <div className="mb-[8dvh] flex w-full max-w-sm flex-col items-center" onClick={(event) => event.stopPropagation()}>
+    <div className="mb-[6dvh] flex w-full max-w-sm flex-col items-center" onClick={(event) => event.stopPropagation()}>
       <motion.div
         className="w-full"
         initial={{ opacity: 0, scale: 0.6, y: 16 }}

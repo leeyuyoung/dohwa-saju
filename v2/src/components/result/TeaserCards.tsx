@@ -1,10 +1,13 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { DohwaScoreCard } from "@/components/result/DohwaScoreCard";
 import { LockIcon } from "@/components/result/ResultParts";
 import { Reveal } from "@/components/ui/Reveal";
 import type { Bubble } from "@/components/webtoon/SpeechBubble";
 import { WebtoonPanel } from "@/components/webtoon/WebtoonPanel";
 import type { FreeResultView } from "@/types/result";
+
+export { DohwaScoreCard as ScoreCard };
 
 /** 카드 사이에 끼는 도화신선의 대사. 문단마다 차례로 떠오른다. */
 export function SinseonLines({ lines, divided = false }: { lines: ReactNode[]; divided?: boolean }) {
@@ -33,6 +36,7 @@ export function SinseonScene({
   cropBottom,
   lines,
   divided,
+  className,
 }: {
   src: string;
   alt: string;
@@ -41,9 +45,10 @@ export function SinseonScene({
   cropBottom?: number;
   lines: ReactNode[];
   divided?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="mt-14">
+    <div className={className ?? "mt-14"}>
       <WebtoonPanel src={src} alt={alt} bubbles={bubbles} headroom={headroom} cropBottom={cropBottom} />
       {lines.length > 0 && (
         <div className="relative -mt-10">
@@ -98,57 +103,74 @@ function LockedRow({ label, mask = "■■■■■■" }: { label: string; mask
   );
 }
 
-/** 얼굴을 가린 그림 가운데에 자물쇠를 띄운다. */
-function LockedPicture({ src, alt, caption, lockY, ratio }: { src: string; alt: string; caption: string; lockY: string; ratio: string }) {
+/** 얼굴을 가린 그림 가운데에 자물쇠를 띄운다. revealLock이면 그림은 바로 두고 자물쇠·캡션만 천천히 뜬다. */
+function LockedPicture({
+  src,
+  alt,
+  caption,
+  lockY,
+  ratio,
+  revealLock = false,
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+  lockY: string;
+  ratio: string;
+  revealLock?: boolean;
+}) {
+  const lock = (
+    <figcaption className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2.5" style={{ top: lockY }}>
+      <span
+        aria-hidden
+        className="flex size-12 items-center justify-center rounded-full border border-gold/50 bg-ink/70 text-gold-soft shadow-[0_0_20px_rgb(232_137_155_/_0.45)] backdrop-blur-sm"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M8 11V8a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" />
+        </svg>
+      </span>
+      <span className="whitespace-nowrap rounded-full bg-ink/70 px-3 py-1 text-[11px] text-paper/90 backdrop-blur-sm">{caption}</span>
+    </figcaption>
+  );
+
   return (
     <figure className="relative overflow-hidden" style={{ aspectRatio: ratio }}>
       <Image src={src} alt={alt} fill sizes="(max-width: 640px) 100vw, 576px" className="object-cover object-top" />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-night to-transparent" />
-      <figcaption className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2.5" style={{ top: lockY }}>
-        <span
-          aria-hidden
-          className="flex size-12 items-center justify-center rounded-full border border-gold/50 bg-ink/70 text-gold-soft shadow-[0_0_20px_rgb(232_137_155_/_0.45)] backdrop-blur-sm"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.8" />
-            <path d="M8 11V8a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" />
-          </svg>
-        </span>
-        <span className="whitespace-nowrap rounded-full bg-ink/70 px-3 py-1 text-[11px] text-paper/90 backdrop-blur-sm">{caption}</span>
-      </figcaption>
+      {revealLock ? (
+        <Reveal delay={0.2} duration={1.7} className="absolute inset-0">
+          {lock}
+        </Reveal>
+      ) : (
+        lock
+      )}
     </figure>
   );
 }
 
-/** 도화 점수와 네 매력 지수를 막대로 보여준다. */
-export function ScoreCard({ result }: { result: FreeResultView }) {
-  const { dohwa } = result;
+/** 그림은 바로 두고, 제목·텍스트·자물쇠만 천천히 띄우는 카드. */
+function SlowTextTeaserCard({
+  title,
+  picture,
+  rows,
+}: {
+  title: ReactNode;
+  picture: ReactNode;
+  rows: ReactNode[];
+}) {
   return (
-    <TeaserCard title={`${result.name}의 도화 점수`}>
-      <div className="flex flex-col items-center gap-2 px-5 pb-5 pt-6">
-        <p className="font-serif leading-none">
-          <span className="text-blossom-glow text-[64px] font-light">{dohwa.score}</span>
-          <span className="ml-1 text-xl text-mist">점</span>
-        </p>
-        <p className="font-serif text-[15px] text-paper">
-          {dohwa.type.name} <span className="text-mist">· {dohwa.type.alias}</span>
-        </p>
-      </div>
-      <ul className="flex flex-col gap-3 border-t border-line/40 px-5 py-5">
-        {dohwa.indices.map((index) => (
-          <li key={index.key} className="flex items-center gap-3">
-            <span className="w-12 shrink-0 font-serif text-[14px] text-paper">{index.label}</span>
-            <span className="relative h-2 flex-1 overflow-hidden rounded-full bg-white/10">
-              <span
-                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-crimson to-blossom"
-                style={{ width: `${index.score}%` }}
-              />
-            </span>
-            <span className="w-7 text-right font-serif text-[15px] text-gold-soft">{index.score}</span>
-          </li>
-        ))}
-      </ul>
-    </TeaserCard>
+    <section className="overflow-hidden rounded-2xl border border-gold/35 bg-night/80 shadow-[0_0_40px_rgb(232_137_155_/_0.08)]">
+      <Reveal duration={1.25}>
+        <h2 className="border-b border-gold/20 px-5 py-3.5 text-center font-serif text-[14px] tracking-[0.04em] text-gold-soft">{title}</h2>
+      </Reveal>
+      {picture}
+      {rows.map((row, index) => (
+        <Reveal key={index} delay={0.2 + index * 0.18} duration={1.2}>
+          {row}
+        </Reveal>
+      ))}
+    </section>
   );
 }
 
@@ -175,30 +197,64 @@ export function BloomCard({ result }: { result: FreeResultView }) {
 export function PartnerCard({ result }: { result: FreeResultView }) {
   const { partner } = result.teasers;
   return (
-    <TeaserCard title={`${result.name}에게 끌리는 남자`}>
-      <LockedPicture src="/images/result/chapter-5-locked.jpg" alt="얼굴을 흐리게 가린 남자" caption="그 남자의 얼굴" lockY="41%" ratio="1 / 1" />
-      <Row label="분위기">{partner.vibe}</Row>
-      <Row label="나이">{partner.age}</Row>
-      <LockedRow label="직업의 결" mask="■■■ ■■■■" />
-      <LockedRow label="체격·키" mask="■■■cm ■■" />
-      <LockedRow label="처음 만나는 곳" mask="■■ ■■■ ■■" />
-    </TeaserCard>
+    <SlowTextTeaserCard
+      title={`${result.name}에게 끌리는 남자`}
+      picture={
+        <LockedPicture
+          src="/images/result/chapter-5-locked.jpg"
+          alt="얼굴을 흐리게 가린 남자"
+          caption="그 남자의 얼굴"
+          lockY="42%"
+          ratio="9 / 8"
+          revealLock
+        />
+      }
+      rows={[
+        <Row key="vibe" label="분위기">{partner.vibe}</Row>,
+        <Row key="age" label="나이">{partner.age}</Row>,
+        <Row key="build" label="체격·키">{partner.build}</Row>,
+        <LockedRow key="job" label="직업" mask="■■■ ■■■■" />,
+        <LockedRow key="place" label="처음 만나는 곳" mask="■■ ■■■ ■■" />,
+      ]}
+    />
   );
 }
 
 export function FaceCard({ result }: { result: FreeResultView }) {
   const { face } = result.teasers;
   return (
-    <div className="flex flex-col gap-6">
-      <TeaserCard title="남자들 눈에 비친 네 얼굴">
-        <LockedPicture src="/images/result/chapter-2-locked.jpg" alt="거울 속 얼굴이 흐리게 가려진 모습" caption="그 남자가 보는 네 얼굴" lockY="53%" ratio="10 / 11" />
-        <Row label="첫인상" oneLine>
-          {face.impression}
-        </Row>
-        <LockedRow label="매력 포인트" mask="■■■ ■■■■" />
-        <LockedRow label="필살 멘트" mask="■■■ ■■ ■■" />
-        <LockedRow label="잊지 못할 장면" mask="■■■■ ■■■" />
-      </TeaserCard>
+    <div className="flex flex-col">
+      <SlowTextTeaserCard
+        title="남자들 눈에 비친 네 얼굴"
+        picture={
+          <LockedPicture
+            src="/images/result/chapter-2-locked.jpg"
+            alt="거울 속 얼굴이 흐리게 가려진 모습"
+            caption="그 남자가 보는 네 얼굴"
+            lockY="53%"
+            ratio="10 / 11"
+            revealLock
+          />
+        }
+        rows={[
+          <Row key="impression" label="첫인상" oneLine>
+            {face.impression}
+          </Row>,
+          <LockedRow key="point" label="매력 포인트" mask="■■■ ■■■■" />,
+          <LockedRow key="line" label="필살 멘트" mask="■■■ ■■ ■■" />,
+          <LockedRow key="scene" label="잊지 못할 장면" mask="■■■■ ■■■" />,
+        ]}
+      />
+
+      <SinseonLines
+        lines={[
+          <>
+            사주에 따라 보여지는
+            <br />
+            <span className="text-blossom-glow">얼굴 이미지</span>도 다른 거 알아?
+          </>,
+        ]}
+      />
 
       <TeaserCard title="이렇게만 바꾸면 남자들이 못 참을 텐데">
         <div className="flex items-center gap-4 px-5 py-3.5">
@@ -213,41 +269,5 @@ export function FaceCard({ result }: { result: FreeResultView }) {
         <LockedRow label="예뻐 보이는 때" mask="■■ ■시 ■■" />
       </TeaserCard>
     </div>
-  );
-}
-
-/** 19금 장을 통째로 잠가 보여주는 카드. 소개 한 줄만 열고 본문은 흐린 가짜 글자로 덮는다. */
-export function AdultCard() {
-  return (
-    <TeaserCard
-      title={
-        <>
-          <span className="text-[#ff3b55]">[19금]</span> 밤의 너
-        </>
-      }
-    >
-      <div className="flex flex-col items-center gap-4 px-5 pb-6 pt-6 text-center">
-        <span
-          aria-hidden
-          className="flex size-12 items-center justify-center rounded-full border border-[#ff3b55]/60 bg-ink/70 text-[#ff8a9a] shadow-[0_0_22px_rgb(255_59_85_/_0.4)]"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.8" />
-            <path d="M8 11V8a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" />
-          </svg>
-        </span>
-        <p className="font-serif text-[17px] text-paper break-keep">한 번 맛보면 못 헤어나오게 만드는 법</p>
-        <div aria-label="잠김" className="@container w-full select-none">
-          <div
-            aria-hidden
-            className="flex flex-col gap-[0.4em] overflow-hidden whitespace-nowrap text-left font-serif text-[length:calc(100cqw/19)] text-paper/80 blur-[5px]"
-          >
-            <p>처음엔 다 주지 말고 반만 열어 애를 태우다가 그가 참지 못할 때</p>
-            <p>귓가에 낮게 속삭이고 목덜미부터 천천히 내려가면 그는 숨을</p>
-            <p>그 밤을 한 번 맛본 남자는 다른 여자에게선 같은 걸 못 찾고</p>
-          </div>
-        </div>
-      </div>
-    </TeaserCard>
   );
 }

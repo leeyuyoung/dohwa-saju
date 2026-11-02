@@ -2,6 +2,23 @@
 
 import { useRef, useState } from "react";
 import { REVIEWS, REVIEWS_INCLUDE_SAMPLES, REVIEW_AVERAGE } from "@/lib/constants/result";
+
+/** 지지 한자 → 12장생 아이콘 */
+const ZODIAC_ICON: Record<string, string> = {
+  子: "🐭",
+  丑: "🐮",
+  寅: "🐯",
+  卯: "🐰",
+  辰: "🐲",
+  巳: "🐍",
+  午: "🐴",
+  未: "🐑",
+  申: "🐵",
+  酉: "🐔",
+  戌: "🐶",
+  亥: "🐷",
+};
+
 export function ReviewCarousel() {
   const listRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
@@ -50,9 +67,9 @@ export function ReviewCarousel() {
             <div className="flex items-center gap-3">
               <span
                 aria-label={review.zodiac.label}
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-cinnabar/40 bg-gradient-to-b from-crimson/60 to-crimson-deep font-serif text-xl text-blossom shadow-[0_0_18px_-6px_rgb(232_137_155_/_0.7)]"
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-cinnabar/40 bg-gradient-to-b from-crimson/60 to-crimson-deep text-[1.55rem] leading-none shadow-[0_0_18px_-6px_rgb(232_137_155_/_0.7)]"
               >
-                {review.zodiac.hanja}
+                {ZODIAC_ICON[review.zodiac.hanja] ?? "🌸"}
               </span>
               <div className="flex flex-1 flex-col gap-0.5">
                 <span className="flex items-center gap-1.5 text-[15px] font-medium text-paper">

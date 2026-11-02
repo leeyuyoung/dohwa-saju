@@ -16,7 +16,7 @@ export default function ComingSoonPage() {
           <br />
           <span className="text-blossom-glow">곧 열린단다.</span>
         </p>
-        <ButtonLink href="/result">내 결과로 돌아가기</ButtonLink>
+        <ButtonLink href="/start">처음부터 다시</ButtonLink>
       </div>
     </PageShell>
   );

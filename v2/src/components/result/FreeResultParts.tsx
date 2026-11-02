@@ -214,7 +214,7 @@ export function ChapterCoverImage({ src, whole = false }: { src: string; whole?:
 }
 
 /** 그림 위아래 장식까지 다 보여야 하는 장. 틀을 세로로 늘려 그림(3:4)을 자르지 않고 위에 붙이고, 제목은 그림 끝자락에 살짝 걸친다. */
-export const WHOLE_COVER_KEYS: ReadonlySet<ReportChapterKey> = new Set(["gaze", "night"]);
+export const WHOLE_COVER_KEYS: ReadonlySet<ReportChapterKey> = new Set(["gaze"]);
 
 export function coverFrameClass(key: ReportChapterKey) {
   return WHOLE_COVER_KEYS.has(key) ? "aspect-[3/4.65]" : "aspect-[4/5]";
@@ -246,62 +246,49 @@ function FaceLock({ x, y, caption }: { x: string; y: string; caption: string }) 
   );
 }
 
-const ADULT_TAG = "[19금]";
-
-/** 장 제목 앞의 [19금] 표시만 빨갛게 칠한다. */
-export function ChapterTitle({ title }: { title: string }) {
-  if (!title.startsWith(ADULT_TAG)) return title;
-  return (
-    <>
-      <span className="text-[#ff3b55]">{ADULT_TAG}</span>
-      {title.slice(ADULT_TAG.length)}
-    </>
-  );
-}
-
-/** 페이지 맨 아래의 리포트 목차. 장마다 그림·제목·한 줄 소개만 보이고, 소제목은 눌러야 펼쳐진다. */
+/** 페이지 맨 아래의 리포트 목차. 장마다 그림·제목·한 줄 소개만 보이고, 소제목은 눌러야 펼쳐진다. 스크롤하면 하나씩 떠오른다. */
 export function ReportToc({ gender }: { gender: "female" | "male" }) {
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex flex-col items-center gap-1.5 text-center">
+      <Reveal className="flex flex-col items-center gap-1.5 text-center">
         <p className="text-xs tracking-[0.3em] text-gold-soft">목차</p>
         <h2 className="font-serif text-[20px] text-paper">들킬 준비 됐지?</h2>
-      </div>
+      </Reveal>
       <ol className="flex flex-col gap-2.5">
         {REPORT_CHAPTERS.map((chapter) => (
           <li key={chapter.key}>
-            <details className="group overflow-hidden rounded-2xl border border-line/70 bg-night/70">
-              <summary className="flex cursor-pointer list-none items-center gap-4 p-3 [&::-webkit-details-marker]:hidden">
-                <span className="relative size-16 shrink-0 overflow-hidden rounded-xl">
-                  <Image
-                    src={LOCKED_FACES[chapter.key]?.image ?? chapter.image}
-                    alt=""
-                    fill
-                    sizes="64px"
-                    className="object-cover object-top"
-                  />
-                </span>
-                <span className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="text-[11px] tracking-[0.2em] text-gold-soft">제{chapter.chapter}장</span>
-                  <span className="font-serif text-[16px] leading-snug text-paper break-keep">
-                    <ChapterTitle title={chapter.title} />
+            <Reveal amount={0.55}>
+              <details className="group overflow-hidden rounded-2xl border border-line/70 bg-night/70">
+                <summary className="flex cursor-pointer list-none items-center gap-4 p-3 [&::-webkit-details-marker]:hidden">
+                  <span className="relative size-16 shrink-0 overflow-hidden rounded-xl">
+                    <Image
+                      src={LOCKED_FACES[chapter.key]?.image ?? chapter.image}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-cover object-top"
+                    />
                   </span>
-                  <span className="text-[12.5px] leading-snug text-mist break-keep">{chapter.subtitle}</span>
-                </span>
-                <svg aria-hidden viewBox="0 0 24 24" fill="none" className="size-4 shrink-0 text-mist transition-transform group-open:rotate-180">
-                  <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </summary>
-              <ol className="flex flex-col gap-2 border-t border-line/40 px-4 py-3.5">
-                {chapter.sections.map((section, index) => (
-                  <li key={section.title} className="flex items-center gap-2.5 text-[13.5px] text-paper/85">
-                    <span className="font-serif text-cinnabar">{index + 1}</span>
-                    <span className="flex-1 break-keep">{withPartner(section.title, gender)}</span>
-                    <LockIcon />
-                  </li>
-                ))}
-              </ol>
-            </details>
+                  <span className="flex min-w-0 flex-1 flex-col gap-1">
+                    <span className="text-[11px] tracking-[0.2em] text-gold-soft">제{chapter.chapter}장</span>
+                    <span className="font-serif text-[16px] leading-snug text-paper break-keep">{chapter.title}</span>
+                    <span className="text-[12.5px] leading-snug text-mist break-keep">{chapter.subtitle}</span>
+                  </span>
+                  <svg aria-hidden viewBox="0 0 24 24" fill="none" className="size-4 shrink-0 text-mist transition-transform group-open:rotate-180">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </summary>
+                <ol className="flex flex-col gap-2 border-t border-line/40 px-4 py-3.5">
+                  {chapter.sections.map((section, index) => (
+                    <li key={section.title} className="flex items-center gap-2.5 text-[13.5px] text-paper/85">
+                      <span className="font-serif text-cinnabar">{index + 1}</span>
+                      <span className="flex-1 break-keep">{withPartner(section.title, gender)}</span>
+                      <LockIcon />
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            </Reveal>
           </li>
         ))}
       </ol>
@@ -327,7 +314,7 @@ export function ChapterCovers({ gender }: { gender: "female" | "male" }) {
                     제{chapter.chapter}장
                   </span>
                   <h3 className="font-eerie text-[clamp(1.7rem,8vw,2.2rem)] leading-tight text-paper [text-shadow:0_0_24px_rgb(232_137_155_/_0.55)]">
-                    <ChapterTitle title={chapter.title} />
+                    {chapter.title}
                   </h3>
                   <p className="font-serif text-[15px] text-blossom-glow">{chapter.subtitle}</p>
                 </figcaption>

@@ -5,8 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { HeroineBackdrop } from "@/components/night/HeroineBackdrop";
 import { Button } from "@/components/ui/Button";
+import { trackFunnel } from "@/lib/client/funnel";
 import { clearDraft, loadDraft, saveDraft, savePendingAnalysis } from "@/lib/client/inputStorage";
+import type { FunnelStep } from "@/lib/funnelSteps";
 import { INPUT_STEPS, SERVICE } from "@/lib/constants/service";
+
+const STEP_FUNNEL: FunnelStep[] = ["birth_date", "birth_time", "name", "relationship"];
 import {
   toAnalysisInput,
   validateStep,
@@ -47,6 +51,15 @@ export default function InputWizard() {
   useEffect(() => {
     if (!submitting) saveDraft({ values, stepIndex });
   }, [values, stepIndex, submitting]);
+
+  useEffect(() => {
+    trackFunnel("start");
+  }, []);
+
+  useEffect(() => {
+    const step = STEP_FUNNEL[stepIndex];
+    if (step) trackFunnel(step);
+  }, [stepIndex]);
 
   const update = (patch: Partial<AnalysisFormValues>) => setValues((previous) => ({ ...previous, ...patch }));
 

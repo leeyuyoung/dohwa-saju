@@ -9,6 +9,7 @@ export function SceneVideo({ src, active }: { src: string; active: boolean }) {
   useEffect(() => {
     const video = ref.current;
     if (!video || !active) return;
+    video.playbackRate = 1.25;
     video.currentTime = 0;
     video.play().catch(() => {
       // 저전력 모드처럼 자동 재생이 막히면 영상 첫 프레임이 그림처럼 남는다.

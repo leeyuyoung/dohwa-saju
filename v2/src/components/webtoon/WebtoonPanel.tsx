@@ -44,7 +44,9 @@ export function WebtoonPanel({ id, src, alt, bubbles, priority = false, headroom
           style={{ maskImage: mask, WebkitMaskImage: mask }}
         />
       </div>
-      <AnimatePresence>{inView && bubbles.map((bubble) => <SpeechBubble key={bubble.text} bubble={bubble} />)}</AnimatePresence>
+      <div className="pointer-events-none absolute inset-0 opacity-[0.78]">
+        <AnimatePresence>{inView && bubbles.map((bubble) => <SpeechBubble key={bubble.text} bubble={bubble} />)}</AnimatePresence>
+      </div>
     </div>
   );
 }

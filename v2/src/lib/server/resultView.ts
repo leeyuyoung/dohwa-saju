@@ -1,10 +1,12 @@
 import "server-only";
 
-import { CHARM_INDICES, DOHWA_TYPES, gradeOf } from "@/lib/constants/result";
+import { CHARM_INDICES, DOHWA_TYPES, REPORT_CHAPTERS, gradeOf, withPartner } from "@/lib/constants/result";
 import { buildSajuProfile, calculateSaju, readDohwa, type DohwaReading, type SajuProfile } from "@/lib/saju";
 import { faceTeaser, nextBloomMonth, partnerTeaser } from "@/lib/saju/teasers";
-import type { AnalysisInput } from "@/lib/validation/analysisInput";
-import type { DohwaView, FreeResultView, PillarView } from "@/types/result";
+import type { CharmStarView, CurrentLuckView, DohwaView, FreeResultView, FullReportView, PillarView } from "@/types/result";
+import { storedReport } from "./analysis";
+import { reportPortraits } from "./portraits";
+import type { AnalysisRecord } from "./store";
 
 function pillarViews(profile: SajuProfile): PillarView[] {
   return [...profile.pillars].reverse().map((pillar) => ({
@@ -57,9 +59,65 @@ function freeView(name: string, profile: SajuProfile): FreeResultView {
   };
 }
 
-/** 입력값으로 바로 무료 결과를 계산한다. 계산 오류는 그대로 던진다(SajuCalculationError). */
-export function freeResultFromInput(input: AnalysisInput): FreeResultView {
-  return freeView(input.name, buildSajuProfile(calculateSaju({ birth: input.birth, gender: input.gender })));
+function currentLuckView(profile: SajuProfile): CurrentLuckView | null {
+  const period = profile.luck.periods.find((item) => item.isCurrent);
+  if (!period) return null;
+  return {
+    startAge: period.startAge,
+    endAge: period.startAge + 9,
+    stemElement: period.stem.element,
+    branchElement: period.branch.element,
+    stemTenGod: period.stem.tenGod,
+    twelveStage: period.branch.twelveStage,
+  };
+}
+
+const formatKoreanDate = (time: number) =>
+  new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", year: "numeric", month: "long", day: "numeric" }).format(time);
+
+/** 무료 화면용 값. 만세력 계산 결과만으로 만든다. */
+export const toFreeResultView = (record: AnalysisRecord): FreeResultView => freeView(record.name, record.profile);
+
+/** 결제가 확인되고 리포트가 완성된 기록만 전체 리포트로 변환한다. */
+export function toFullReportView(record: AnalysisRecord): FullReportView | null {
+  const report = storedReport(record);
+  if (record.paidAt === null || !report) return null;
+  const { profile } = record;
+  const stars: CharmStarView[] = readDohwa(profile).stars.map((star) => ({
+    key: star.key,
+    name: star.name,
+    hanja: star.hanja,
+    found: star.positions.length > 0,
+    positions: star.positions,
+    score: star.score,
+  }));
+  return {
+    ...toFreeResultView(record),
+    analyzedAt: formatKoreanDate(record.createdAt),
+    summary: report.summary,
+    keywords: report.keywords,
+    stars,
+    fiveElements: {
+      counts: profile.fiveElements.counts,
+      dominant: profile.fiveElements.dominant,
+      missing: profile.fiveElements.missing,
+    },
+    currentLuck: currentLuckView(profile),
+    chapters: REPORT_CHAPTERS.map((meta, index) => ({
+      chapter: meta.chapter,
+      key: meta.key,
+      title: meta.title,
+      subtitle: meta.subtitle,
+      image: meta.image,
+      headline: report.chapters[index].headline,
+      sections: meta.sections.map((section, sectionIndex) => ({
+        title: withPartner(section.title, profile.calculation.gender),
+        paragraphs: report.chapters[index].sections[sectionIndex].paragraphs,
+      })),
+    })),
+    loveTimeline: report.loveTimeline,
+    portraits: reportPortraits(),
+  };
 }
 
 /** 샘플 화면에서 도화 유형별로 보여 줄 생일. 유형은 태어난 날의 오행으로 정해진다. */

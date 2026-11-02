@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { HeroineBackdrop, type HeroineScene } from "@/components/night/HeroineBackdrop";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
+import { trackFunnel } from "@/lib/client/funnel";
 import { clearPendingAnalysis, loadPendingAnalysis } from "@/lib/client/inputStorage";
 import { ANALYSIS_MISSING_COPY, ANALYSIS_READY_COPY } from "@/lib/constants/service";
 import { analysisInputSchema } from "@/lib/validation/analysisInput";
@@ -15,20 +16,19 @@ const SCENE = "pinRaised" satisfies HeroineScene;
 const SCENES: HeroineScene[] = [SCENE];
 /** 계산은 금방 끝나지만, 의식처럼 보이도록 이 시간만큼은 그림을 보여준다. */
 const MIN_RITUAL_MS = 2000;
-const RESULT_PATH = "/result";
 /** 진행 바가 대략 이 시간에 63%쯤 차도록 한다. 실제 진행률이 아니라 기다림을 보여주는 장치다. */
 const PROGRESS_TIME_CONSTANT_MS = 700;
 const MAX_PENDING_PROGRESS = 0.95;
 
 type Phase =
   | { kind: "working" }
-  | { kind: "ready" }
+  | { kind: "ready"; token: string }
   | { kind: "error"; message: string; canRetry: boolean }
   | { kind: "missing" };
 
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
-/** 보관된 입력으로 무료 결과 계산을 요청한다. 서버는 결과 화면에서 쓸 입력값을 쿠키로 남긴다. */
+/** 보관된 입력으로 무료 결과를 저장하고 토큰을 받는다. AI는 호출하지 않는다. */
 async function runAnalysis(): Promise<Phase> {
   const pending = analysisInputSchema.safeParse(loadPendingAnalysis());
   if (!pending.success) return { kind: "missing" };
@@ -38,11 +38,12 @@ async function runAnalysis(): Promise<Phase> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(pending.data),
     });
-    if (response.ok) {
+    const data = (await response.json().catch(() => ({}))) as { token?: string; message?: string };
+    if (response.ok && data.token) {
       clearPendingAnalysis();
-      return { kind: "ready" };
+      trackFunnel("submit", data.token);
+      return { kind: "ready", token: data.token };
     }
-    const data = (await response.json().catch(() => ({}))) as { message?: string };
     return {
       kind: "error",
       message: data.message ?? "분석을 시작하지 못했습니다.",
@@ -162,7 +163,7 @@ export function AnalyzingExperience() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 16 }}
             >
-              <MythicButtonLink onClick={() => router.replace(RESULT_PATH)}>
+              <MythicButtonLink onClick={() => router.replace(`/result/${phase.token}`)}>
                 {ANALYSIS_READY_COPY.cta}
               </MythicButtonLink>
             </motion.div>

@@ -10,8 +10,8 @@ import { ELEMENT_ORDER, SIX_COMBINATIONS, THREE_HARMONIES, branchHanja } from ".
 
 export type BloomMonth = { year: number; month: number; hanja: string };
 
-/** 다음 달부터 몇 달 앞까지 볼지. 子·卯·午·酉 어느 도화 글자든 이 안에 깨우는 달이 하나 이상 든다. */
-const BLOOM_WINDOW = 4;
+/** 무료 화면의 도화 달을 고르는 해. 이 해 안에서만 고른다. */
+const BLOOM_YEAR = 2027;
 
 /** 양력 m월 초 절기부터 드는 월지. 12월이 子月, 1월이 丑月, 3월이 卯月이다. */
 const monthBranch = (month: number) => EARTHLY_BRANCHES[month % 12];
@@ -24,17 +24,29 @@ function awakening(branch: EarthlyBranch, peach: EarthlyBranch): number {
   return 0;
 }
 
-/** 다음 달부터 BLOOM_WINDOW달 안에서 도화살을 가장 세게 깨우는 달. 세기가 같으면 이른 달을 고른다. */
+/**
+ * BLOOM_YEAR 안에서 아직 오지 않은 달. 2026년에 보면 1~12월 전부,
+ * 2027년 3월에 보면 1~3월은 빼고 4~12월만 둔다. 그해 12월 이후면 남은 달이 없다.
+ */
+function remainingBloomMonths(reference: { year: number; month: number }): number[] {
+  const firstMonth = reference.year < BLOOM_YEAR ? 1 : reference.year === BLOOM_YEAR ? reference.month + 1 : 13;
+  return Array.from({ length: 12 }, (_, index) => index + 1).filter((month) => month >= firstMonth);
+}
+
+/** 남은 달 중 도화살을 가장 세게 깨우는 달. 세기가 같으면 이른 달을 고른다. */
 export function nextBloomMonth(profile: SajuProfile, reading: DohwaReading): BloomMonth {
   const triggers = reading.stars.find((star) => star.key === "dohwa")!.triggers;
-  const { year, month } = profile.referenceDate;
-  const candidates = Array.from({ length: BLOOM_WINDOW }, (_, index) => {
-    const offset = month + index;
-    const candidate = { year: year + Math.floor(offset / 12), month: (offset % 12) + 1 };
-    const branch = monthBranch(candidate.month);
-    return { ...candidate, hanja: branchHanja(branch), strength: Math.max(...triggers.map((peach) => awakening(branch, peach))) };
+  const candidateMonths = remainingBloomMonths(profile.referenceDate);
+  const months = (candidateMonths.length > 0 ? candidateMonths : [12]).map((month) => {
+    const branch = monthBranch(month);
+    return {
+      year: BLOOM_YEAR,
+      month,
+      hanja: branchHanja(branch),
+      strength: Math.max(...triggers.map((peach) => awakening(branch, peach))),
+    };
   });
-  const best = candidates.reduce((top, candidate) => (candidate.strength > top.strength ? candidate : top));
+  const best = months.reduce((top, candidate) => (candidate.strength > top.strength ? candidate : top));
   return { year: best.year, month: best.month, hanja: best.hanja };
 }
 
@@ -55,9 +67,17 @@ const PARTNER_VIBES: Record<FiveElementKey, string> = {
   water: "속을 알 수 없는 눈빛의, 머리 좋은 남자",
 };
 
-export type PartnerTeaser = { vibe: string; age: string };
+const PARTNER_BUILDS: Record<FiveElementKey, string> = {
+  wood: "183cm · 늘씬한 체형",
+  fire: "180cm · 탄탄한 체형",
+  earth: "182cm · 넓은 어깨",
+  metal: "181cm · 선이 곧은 체형",
+  water: "179cm · 마른 듯 단단한 체형",
+};
 
-/** 관성의 오행으로 분위기를, 관성이 놓인 자리(년·월이면 윗사람, 일·시면 가까운 사람)로 나이를 본다. */
+export type PartnerTeaser = { vibe: string; age: string; build: string };
+
+/** 관성의 오행으로 분위기·체격을, 관성이 놓인 자리(년·월이면 윗사람, 일·시면 가까운 사람)로 나이를 본다. */
 export function partnerTeaser(profile: SajuProfile): PartnerTeaser {
   const isOfficer = (tenGod: string) => tenGod === "정관" || tenGod === "편관";
   const seats = profile.pillars.filter((pillar) => isOfficer(pillar.stem.tenGod) || isOfficer(pillar.branch.tenGod));
@@ -66,7 +86,8 @@ export function partnerTeaser(profile: SajuProfile): PartnerTeaser {
     : seats.length > 0
       ? "동갑이거나 연하"
       : "나이보다 분위기에 끌리는 인연";
-  return { vibe: PARTNER_VIBES[CONTROLLED_BY[profile.dayMaster.element]], age };
+  const element = CONTROLLED_BY[profile.dayMaster.element];
+  return { vibe: PARTNER_VIBES[element], age, build: PARTNER_BUILDS[element] };
 }
 
 const CHARM_POINTS: Record<CharmIndexKey, string> = {
