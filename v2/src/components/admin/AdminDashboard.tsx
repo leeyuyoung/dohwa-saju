@@ -14,6 +14,8 @@ type AnalysisRow = {
   createdAt: number;
   name: string;
   email: string | null;
+  phone: string | null;
+  marketingOptIn: boolean | null;
   relationshipLabel: string;
   paidAt: number | null;
   status: string;
@@ -206,7 +208,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
           <section className="flex flex-col gap-3">
             <h2 className="font-serif text-base text-gold-soft">제출 목록 (최신 100건)</h2>
             <div className="overflow-x-auto rounded-2xl border border-line">
-              <table className="w-full min-w-[52rem] border-collapse text-left text-sm">
+              <table className="w-full min-w-[60rem] border-collapse text-left text-sm">
                 <thead className="bg-ink/60 text-xs text-mist">
                   <tr>
                     <th className="px-3 py-2 font-normal">시각</th>
@@ -215,6 +217,8 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                     <th className="px-3 py-2 font-normal">시간</th>
                     <th className="px-3 py-2 font-normal">연애</th>
                     <th className="px-3 py-2 font-normal">이메일</th>
+                    <th className="px-3 py-2 font-normal">휴대폰</th>
+                    <th className="px-3 py-2 font-normal">마케팅</th>
                     <th className="px-3 py-2 font-normal">결제</th>
                     <th className="px-3 py-2 font-normal">링크</th>
                   </tr>
@@ -222,7 +226,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                 <tbody>
                   {overview.analyses.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-3 py-6 text-center text-mist">
+                      <td colSpan={10} className="px-3 py-6 text-center text-mist">
                         아직 제출이 없습니다.
                       </td>
                     </tr>
@@ -235,6 +239,10 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                         <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.time}</td>
                         <td className="max-w-[9rem] px-3 py-2 text-mist break-keep">{row.relationshipLabel}</td>
                         <td className="px-3 py-2 text-mist break-all">{row.email ?? "—"}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-mist">{row.phone ?? "—"}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-mist">
+                          {row.marketingOptIn === true ? "동의" : row.marketingOptIn === false ? "거부" : "—"}
+                        </td>
                         <td className="whitespace-nowrap px-3 py-2 text-mist">
                           {row.paidAt ? formatWhen(row.paidAt) : "미결제"}
                         </td>

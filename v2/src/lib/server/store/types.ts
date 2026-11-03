@@ -15,6 +15,10 @@ export type AnalysisRecord = {
   name: string;
   /** 리포트 링크 발송용. 결제 직전에 받으며, 화면이나 AI 요청에는 쓰지 않는다. */
   email: string | null;
+  /** 결제 직전 휴대폰. 결제 요청·안내용. 마케팅 동의 시 수신 채널로도 쓴다. */
+  phone: string | null;
+  /** 마케팅 수신 동의(선택). null은 결제 전·미응답. */
+  marketingOptIn: boolean | null;
   relationshipStatus: RelationshipStatus;
   concern: string | null;
   profile: SajuProfile;

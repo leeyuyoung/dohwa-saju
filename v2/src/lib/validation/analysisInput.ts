@@ -198,4 +198,6 @@ export const checkoutContactSchema = z.object({
         .string()
         .regex(/^01[016789]\d{7,8}$/, "올바른 휴대폰 번호를 입력해주세요."),
     ),
+  /** 마케팅 수신 동의(선택). 없으면 false로 본다. */
+  marketingOptIn: z.boolean().optional().default(false),
 });

@@ -20,7 +20,12 @@ export async function POST(request: Request) {
   if (retryAfter !== null) return fail(429, "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", { "Retry-After": String(retryAfter) });
 
   try {
-    const { order, payurl } = await createPayappOrder(parsed.data.token, parsed.data.email, parsed.data.phone);
+    const { order, payurl } = await createPayappOrder(
+      parsed.data.token,
+      parsed.data.email,
+      parsed.data.phone,
+      parsed.data.marketingOptIn,
+    );
     return Response.json(
       { orderId: order.orderId, amount: order.amount, orderName: ORDER_NAME, payurl },
       { headers: { "Cache-Control": "no-store" } },

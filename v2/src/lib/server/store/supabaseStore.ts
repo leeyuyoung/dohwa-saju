@@ -16,6 +16,8 @@ type Row = {
   updated_at: string;
   name: string;
   email: string | null;
+  phone: string | null;
+  marketing_opt_in: boolean | null;
   relationship_status: AnalysisRecord["relationshipStatus"];
   concern: string | null;
   profile: AnalysisRecord["profile"];
@@ -71,6 +73,8 @@ function toRow(record: AnalysisRecord): Row {
     updated_at: toIso(record.updatedAt),
     name: record.name,
     email: record.email,
+    phone: record.phone,
+    marketing_opt_in: record.marketingOptIn,
     relationship_status: record.relationshipStatus,
     concern: record.concern,
     profile: record.profile,
@@ -87,6 +91,8 @@ function fromRow(row: Row): AnalysisRecord {
     updatedAt: Date.parse(row.updated_at),
     name: row.name,
     email: row.email,
+    phone: row.phone ?? null,
+    marketingOptIn: row.marketing_opt_in ?? null,
     relationshipStatus: row.relationship_status,
     concern: row.concern,
     profile: row.profile,
@@ -100,6 +106,8 @@ function patchToRow(patch: Patch): Partial<Row> {
   if (patch.status !== undefined) row.status = patch.status;
   if (patch.name !== undefined) row.name = patch.name;
   if (patch.email !== undefined) row.email = patch.email;
+  if (patch.phone !== undefined) row.phone = patch.phone;
+  if (patch.marketingOptIn !== undefined) row.marketing_opt_in = patch.marketingOptIn;
   if (patch.relationshipStatus !== undefined) row.relationship_status = patch.relationshipStatus;
   if (patch.concern !== undefined) row.concern = patch.concern;
   if (patch.profile !== undefined) row.profile = patch.profile;
@@ -234,6 +242,8 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       "updated_at",
       "name",
       "email",
+      "phone",
+      "marketing_opt_in",
       "relationship_status",
       "concern",
       "profile",

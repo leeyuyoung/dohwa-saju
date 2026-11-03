@@ -102,12 +102,19 @@ export type CreatePayappOrderResult = {
  * 주문을 만들고 페이앱 결제 URL을 받는다.
  * var1=orderId, var2=token 으로 웹훅에서 주문을 찾는다.
  */
-export async function createPayappOrder(token: string, email: string, phone: string): Promise<CreatePayappOrderResult> {
+export async function createPayappOrder(
+  token: string,
+  email: string,
+  phone: string,
+  marketingOptIn = false,
+): Promise<CreatePayappOrderResult> {
   const store = getAnalysisStore();
   const record = await store.get(token);
   if (!record) throw new PaymentError(404, "결제할 리포트를 찾지 못했습니다.");
   if (record.paidAt !== null) throw new PaymentError(409, "이미 결제가 완료된 리포트입니다.");
-  if (record.email !== email) await store.update(token, { email });
+  if (record.email !== email || record.phone !== phone || record.marketingOptIn !== marketingOptIn) {
+    await store.update(token, { email, phone, marketingOptIn });
+  }
 
   const now = Date.now();
   await store.deleteStalePendingOrders(now - STALE_ORDER_MS).catch((error) => {

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Field, INPUT_BASE, inputBorder } from "@/components/input/fields/Field";
+import { MarketingConsentModal } from "@/components/payment/MarketingConsentModal";
 import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/constants/service";
 import { checkoutContactSchema } from "@/lib/validation/analysisInput";
@@ -28,15 +29,26 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [contactErrors, setContactErrors] = useState<ContactErrors>({});
+  const [marketingOptIn, setMarketingOptIn] = useState(true);
+  const [marketingDetailOpen, setMarketingDetailOpen] = useState(false);
+
+  useEffect(() => {
+    if (!marketingDetailOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMarketingDetailOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [marketingDetailOpen]);
 
   const pay = async () => {
     if (paying) return;
-    const contact = checkoutContactSchema.safeParse({ email, phone });
+    const contact = checkoutContactSchema.safeParse({ email, phone, marketingOptIn });
     if (!contact.success) {
       const errors: ContactErrors = {};
       for (const issue of contact.error.issues) {
         const key = issue.path[0] as keyof ContactErrors;
-        errors[key] ??= issue.message;
+        if (key === "email" || key === "phone") errors[key] ??= issue.message;
       }
       setContactErrors(errors);
       return;
@@ -119,6 +131,41 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
       <Button onClick={pay} disabled={paying}>
         {paying ? "결제창으로 이동 중…" : `${formatPrice(amount)} 결제하기`}
       </Button>
+
+      <div className="flex items-center justify-between gap-3 px-0.5 pb-0.5">
+        <label className="flex min-w-0 cursor-pointer items-center gap-2.5">
+          <span className="relative inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+            <input
+              type="checkbox"
+              checked={marketingOptIn}
+              onChange={(event) => setMarketingOptIn(event.target.checked)}
+              className="peer absolute inset-0 z-10 cursor-pointer appearance-none"
+            />
+            <span
+              aria-hidden
+              className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border transition-colors ${
+                marketingOptIn ? "border-paper/55 bg-paper/25" : "border-paper/35 bg-transparent"
+              }`}
+            >
+              {marketingOptIn && (
+                <svg viewBox="0 0 16 16" className="h-2.5 w-2.5 text-paper" fill="none">
+                  <path d="M3.5 8.2 6.4 11l6-6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </span>
+          </span>
+          <span className="truncate font-sans text-[13px] tracking-[-0.02em] text-paper">마케팅 수신 동의 (선택)</span>
+        </label>
+        <button
+          type="button"
+          onClick={() => setMarketingDetailOpen(true)}
+          className="shrink-0 font-sans text-[12px] tracking-[-0.02em] text-mist underline underline-offset-2 transition-colors hover:text-paper"
+        >
+          자세히보기
+        </button>
+      </div>
+
+      <MarketingConsentModal open={marketingDetailOpen} onClose={() => setMarketingDetailOpen(false)} />
     </div>
   );
 }
