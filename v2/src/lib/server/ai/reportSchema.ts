@@ -25,7 +25,7 @@ export const aiReportSchema = z.object({
       z.object({
         chapter: z.number().int(),
         headline: text(120),
-        sections: z.array(z.object({ paragraphs: z.array(text(1200)).min(PARAGRAPH_COUNT.min).max(PARAGRAPH_COUNT.max) })),
+        sections: z.array(z.object({ paragraphs: z.array(text(1800)).min(PARAGRAPH_COUNT.min).max(PARAGRAPH_COUNT.max) })),
       }),
     )
     .length(REPORT_CHAPTERS.length)
@@ -35,7 +35,7 @@ export const aiReportSchema = z.object({
       "장마다 소제목 수만큼 sections가 있어야 합니다.",
     ),
   loveTimeline: z
-    .array(z.object({ year: z.number().int(), mood: text(40), body: text(400) }))
+    .array(z.object({ year: z.number().int(), mood: text(40), body: text(700) }))
     .length(LOVE_TIMELINE_YEARS),
 });
 

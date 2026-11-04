@@ -5,7 +5,7 @@ import { buildSajuProfile, calculateSaju, readDohwa, type DohwaReading, type Saj
 import { faceTeaser, nextBloomMonth, partnerTeaser } from "@/lib/saju/teasers";
 import type { CharmStarView, CurrentLuckView, DohwaView, FreeResultView, FullReportView, PillarView } from "@/types/result";
 import { storedReport } from "./analysis";
-import { reportPortraits } from "./portraits";
+import { partnerPortraitSrc, reportPortraits, selfPortraitSrc } from "./portraits";
 import type { AnalysisRecord } from "./store";
 
 function pillarViews(profile: SajuProfile): PillarView[] {
@@ -53,8 +53,12 @@ function freeView(name: string, profile: SajuProfile): FreeResultView {
     birth: { year: profile.calculation.solarDate.year, month: profile.calculation.solarDate.month },
     teasers: {
       bloom: nextBloomMonth(profile, reading),
-      partner: partnerTeaser(profile),
-      face: { impression: dohwa.type.plain, ...faceTeaser(profile, reading) },
+      partner: { ...partnerTeaser(profile), portrait: partnerPortraitSrc(profile.dayMaster.element) },
+      face: {
+        impression: dohwa.type.plain,
+        ...faceTeaser(profile, reading),
+        portrait: selfPortraitSrc(reading.typeKey),
+      },
     },
   };
 }
@@ -116,7 +120,7 @@ export function toFullReportView(record: AnalysisRecord): FullReportView | null 
       })),
     })),
     loveTimeline: report.loveTimeline,
-    portraits: reportPortraits(),
+    portraits: reportPortraits(profile),
   };
 }
 

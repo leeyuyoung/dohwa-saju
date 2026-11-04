@@ -67,12 +67,13 @@ const PARTNER_VIBES: Record<FiveElementKey, string> = {
   water: "속을 알 수 없는 눈빛의, 머리 좋은 남자",
 };
 
+/** 키는 179~187cm 사이 숫자로 쓴다. */
 const PARTNER_BUILDS: Record<FiveElementKey, string> = {
-  wood: "183cm · 늘씬한 체형",
-  fire: "180cm · 탄탄한 체형",
+  wood: "183cm · 모델 비율",
+  fire: "180cm · 잔근육, 다부짐",
   earth: "182cm · 넓은 어깨",
-  metal: "181cm · 선이 곧은 체형",
-  water: "179cm · 마른 듯 단단한 체형",
+  metal: "185cm · 선이 곧은 체형",
+  water: "179cm · 슬림탄탄",
 };
 
 export type PartnerTeaser = { vibe: string; age: string; build: string };
@@ -91,11 +92,11 @@ export function partnerTeaser(profile: SajuProfile): PartnerTeaser {
 }
 
 const CHARM_POINTS: Record<CharmIndexKey, string> = {
-  allure: "눈웃음",
-  sensual: "입술",
-  flirt: "말끝을 흐리는 목소리",
-  popularity: "웃을 때 풀리는 얼굴",
-  mystery: "눈빛",
+  allure: "한 번 마주치면 헤어나오기 힘든 눈웃음",
+  sensual: "촉촉하고 관능적인 입술",
+  flirt: "밤에 생각나는 목소리와 말투",
+  popularity: "자기 전 생각나는 웃는 미소",
+  mystery: "긴장시키는 묘하고 깊은 눈빛",
 };
 
 /** 부족한 오행을 채워 주는 색 */

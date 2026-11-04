@@ -72,19 +72,41 @@ function TeaserCard({ title, children }: { title: ReactNode; children: ReactNode
 }
 
 /**
- * oneLine이면 글자를 줄 폭에 맞춰 줄여 좁은 화면에서도 한 줄로 남긴다.
+ * oneLine이면 글자를 줄 폭에 맞춰 줄여 한 줄로 남긴다.
+ * wrap이면 같은 반응형 크기를 쓰되, 좁아지면 줄어들다 두 줄까지 허용한다.
  * 13.8은 가장 긴 첫인상 문구의 폭을 글자 크기로 나눈 값이라, 문구가 더 길어지면 함께 키워야 한다.
  */
-function Row({ label, oneLine = false, children }: { label: string; oneLine?: boolean; children: ReactNode }) {
+const ROW_FLUID_SIZE = { fontSize: "clamp(11px, calc((100cqw - 7.5rem) / 13.8), 16px)" } as const;
+
+function Row({
+  label,
+  oneLine = false,
+  wrap = false,
+  children,
+}: {
+  label: string;
+  oneLine?: boolean;
+  wrap?: boolean;
+  children: ReactNode;
+}) {
+  const fluid = oneLine || wrap;
   return (
-    <div className={`flex items-center gap-4 border-t border-line/40 px-5 py-3.5 first:border-t-0 ${oneLine ? "[container-type:inline-size]" : ""}`}>
-      <span className="w-[6.5rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-2 py-0.5 text-center text-[12px] text-gold-soft">{label}</span>
+    <div
+      className={`flex items-center gap-4 border-t border-line/40 px-5 py-3.5 first:border-t-0 ${fluid ? "[container-type:inline-size]" : ""}`}
+    >
+      <span className="w-[6.5rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-2 py-0.5 text-center text-[12px] text-gold-soft">
+        {label}
+      </span>
       {oneLine ? (
-        <span className="flex-1 whitespace-nowrap font-serif text-paper" style={{ fontSize: "clamp(11px, calc((100cqw - 7.5rem) / 13.8), 16px)" }}>
+        <span className="flex-1 whitespace-nowrap font-serif text-paper" style={ROW_FLUID_SIZE}>
+          {children}
+        </span>
+      ) : wrap ? (
+        <span className="line-clamp-2 flex-1 break-keep font-serif leading-snug text-paper" style={ROW_FLUID_SIZE}>
           {children}
         </span>
       ) : (
-        <span className="flex-1 font-serif text-[16px] text-paper break-keep">{children}</span>
+        <span className="flex-1 break-keep font-serif text-[16px] text-paper">{children}</span>
       )}
     </div>
   );
@@ -111,6 +133,7 @@ function LockedPicture({
   lockY,
   ratio,
   revealLock = false,
+  blurFace = false,
 }: {
   src: string;
   alt: string;
@@ -118,6 +141,8 @@ function LockedPicture({
   lockY: string;
   ratio: string;
   revealLock?: boolean;
+  /** 결제 전 티저용. 사주별 얼굴을 쓰되 선명히 보이지 않게 한다. */
+  blurFace?: boolean;
 }) {
   const lock = (
     <figcaption className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2.5" style={{ top: lockY }}>
@@ -136,7 +161,13 @@ function LockedPicture({
 
   return (
     <figure className="relative overflow-hidden" style={{ aspectRatio: ratio }}>
-      <Image src={src} alt={alt} fill sizes="(max-width: 640px) 100vw, 576px" className="object-cover object-top" />
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 640px) 100vw, 576px"
+        className={`object-cover object-top ${blurFace ? "scale-110 blur-[14px]" : ""}`}
+      />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-night to-transparent" />
       {revealLock ? (
         <Reveal delay={0.2} duration={1.7} className="absolute inset-0">
@@ -201,12 +232,13 @@ export function PartnerCard({ result }: { result: FreeResultView }) {
       title={`${result.name}에게 끌리는 남자`}
       picture={
         <LockedPicture
-          src="/images/result/chapter-5-locked.jpg"
+          src={partner.portrait}
           alt="얼굴을 흐리게 가린 남자"
           caption="그 남자의 얼굴"
           lockY="42%"
           ratio="9 / 8"
           revealLock
+          blurFace
         />
       }
       rows={[
@@ -228,19 +260,22 @@ export function FaceCard({ result }: { result: FreeResultView }) {
         title="남자들 눈에 비친 네 얼굴"
         picture={
           <LockedPicture
-            src="/images/result/chapter-2-locked.jpg"
+            src={face.portrait}
             alt="거울 속 얼굴이 흐리게 가려진 모습"
             caption="그 남자가 보는 네 얼굴"
             lockY="53%"
             ratio="10 / 11"
             revealLock
+            blurFace
           />
         }
         rows={[
           <Row key="impression" label="첫인상" oneLine>
             {face.impression}
           </Row>,
-          <LockedRow key="point" label="매력 포인트" mask="■■■ ■■■■" />,
+          <Row key="point" label="매력 포인트" wrap>
+            {face.point}
+          </Row>,
           <LockedRow key="line" label="필살 멘트" mask="■■■ ■■ ■■" />,
           <LockedRow key="scene" label="잊지 못할 장면" mask="■■■■ ■■■" />,
         ]}
