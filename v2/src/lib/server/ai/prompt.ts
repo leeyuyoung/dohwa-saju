@@ -2,6 +2,7 @@ import "server-only";
 
 import { CHARM_INDICES, DOHWA_TYPES, LOVE_TIMELINE_YEARS, REPORT_CHAPTERS, gradeOf, withPartner } from "@/lib/constants/result";
 import { readDohwa, type SajuProfile } from "@/lib/saju";
+import { nextBloomMonth } from "@/lib/saju/teasers";
 import { ELEMENT_KOREAN } from "@/lib/saju/tables";
 import { relationshipLabel, type RelationshipStatus } from "@/lib/validation/analysisInput";
 import { KEYWORD_COUNT } from "./reportSchema";
@@ -47,6 +48,7 @@ export const REPORT_INSTRUCTIONS = `당신은 '도화신당'의 도화신선이�
 - 연애 상태(<life>)에 맞춰 장면을 바꾼다. 솔로면 만남·밀당, 연애 중이면 지금 남자와의 긴장·질투·밀착, 복잡한 관계면 흔들림의 신호와 선택 포인트.
 - 같은 비유를 여러 장에서 재탕하지 말고, 장마다 다른 장면·다른 근거를 쓴다.
 - 운명의 남자 키는 반드시 '182cm 전후'처럼 cm 숫자+전후 형식으로 쓰고, 179~187cm 사이만 고른다. 178 이하·188 이상, '170후반' 같은 모호한 표현은 쓰지 않는다.
+- 「그 남자가 나타나는 때와 장소」 소제목에서는 <dohwa>의 bloomMonth만 만남의 달로 쓴다. 무료 화면과 다른 달·다른 해로 바꾸지 말고, 그 달의 초반·중순·말 중 하나로 좁혀 언제·어디서·어떻게 만나는지 장면으로 쓴다.
 
 [출력 형식]
 - summary: 이 사람의 꽃을 그리는 한 줄. 비유 하나를 담은 30~60자 한 문장.
@@ -65,11 +67,19 @@ const POSITION_LABEL = { year: "년지", month: "월지", day: "일지", hour: "
 function dohwaPayload(profile: SajuProfile) {
   const reading = readDohwa(profile);
   const type = DOHWA_TYPES[reading.typeKey];
+  const bloom = nextBloomMonth(profile, reading);
   return {
     score: reading.score,
     grade: gradeOf(reading.score).label,
     type: `${type.name}(${type.hanja}) · ${type.alias}`,
     indices: Object.fromEntries(CHARM_INDICES.map((index) => [index.label, reading.indices[index.key]])),
+    /** 무료 화면에 이미 보여 준 도화가 피는 달. 만남 시기 소제목은 이 값만 쓴다. */
+    bloomMonth: {
+      year: bloom.year,
+      month: bloom.month,
+      label: `${bloom.year}년 ${bloom.month}월`,
+      branch: bloom.hanja,
+    },
     stars: reading.stars.map((star) =>
       star.positions.length > 0
         ? `${star.name} ${star.score}점: ${star.positions.map((position) => POSITION_LABEL[position]).join("·")}에 드러나 있음`
