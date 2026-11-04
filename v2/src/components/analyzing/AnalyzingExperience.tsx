@@ -7,6 +7,7 @@ import { HeroineBackdrop, type HeroineScene } from "@/components/night/HeroineBa
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 import { trackFunnel } from "@/lib/client/funnel";
+import { trackKarrot } from "@/lib/client/karrotPixel";
 import { clearPendingAnalysis, loadPendingAnalysis } from "@/lib/client/inputStorage";
 import { ANALYSIS_MISSING_COPY, ANALYSIS_READY_COPY } from "@/lib/constants/service";
 import { analysisInputSchema } from "@/lib/validation/analysisInput";
@@ -42,6 +43,7 @@ async function runAnalysis(): Promise<Phase> {
     if (response.ok && data.token) {
       clearPendingAnalysis();
       trackFunnel("submit", data.token);
+      trackKarrot("SubmitApplication");
       return { kind: "ready", token: data.token };
     }
     return {

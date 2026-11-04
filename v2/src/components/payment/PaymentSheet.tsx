@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { CheckoutDealPrice } from "@/components/payment/CheckoutDealPrice";
 import { CheckoutWidget } from "@/components/payment/CheckoutWidget";
 import { trackFunnel } from "@/lib/client/funnel";
+import { KARROT_PRODUCT, trackKarrot } from "@/lib/client/karrotPixel";
 import { DETAILED_REPORT_LIST_PRICE, DETAILED_REPORT_PRICE, formatWon } from "@/lib/constants/service";
 
 type PaymentSheetProps = {
@@ -20,6 +21,17 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
   useEffect(() => {
     if (!open) return;
     trackFunnel("checkout", token);
+    trackKarrot("Lead");
+    trackKarrot("AddToCart", {
+      products: [
+        {
+          id: KARROT_PRODUCT.id,
+          name: KARROT_PRODUCT.name,
+          quantity: "1",
+          price: KARROT_PRODUCT.price,
+        },
+      ],
+    });
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { trackFunnel } from "@/lib/client/funnel";
+import { trackKarrotPurchase } from "@/lib/client/karrotPixel";
 
 const POLL_MS = 2000;
 const GIVE_UP_MS = 3 * 60 * 1000;
@@ -31,6 +32,7 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
             if (!tracked.current) {
               tracked.current = true;
               trackFunnel("paid", token);
+              trackKarrotPurchase();
             }
             router.replace(`/report/${token}`);
             return;

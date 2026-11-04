@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Noto_Sans_KR, Noto_Serif_KR, Song_Myung } from "next/font/google";
 import localFont from "next/font/local";
+import { KarrotPixel } from "@/components/analytics/KarrotPixel";
 import { SERVICE } from "@/lib/constants/service";
 import "./globals.css";
 
@@ -64,7 +65,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ko"
       className={`${notoSerifKr.variable} ${notoSansKr.variable} ${classicKr.variable} ${handwriting.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <KarrotPixel />
+        {children}
+      </body>
     </html>
   );
 }

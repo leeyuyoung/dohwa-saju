@@ -2,12 +2,27 @@
 
 import { useEffect } from "react";
 import { trackFunnel } from "@/lib/client/funnel";
+import { KARROT_PRODUCT, trackKarrot } from "@/lib/client/karrotPixel";
 import type { FunnelStep } from "@/lib/funnelSteps";
 
 /** 서버 페이지에 심어 마운트 시 한 번 퍼널 단계를 기록한다. */
 export function FunnelBeacon({ step, token }: { step: FunnelStep; token?: string | null }) {
   useEffect(() => {
     trackFunnel(step, token);
+    if (step === "result") trackKarrot("ViewContent", { id: KARROT_PRODUCT.id });
+    if (step === "checkout") {
+      trackKarrot("Lead");
+      trackKarrot("AddToCart", {
+        products: [
+          {
+            id: KARROT_PRODUCT.id,
+            name: KARROT_PRODUCT.name,
+            quantity: "1",
+            price: KARROT_PRODUCT.price,
+          },
+        ],
+      });
+    }
   }, [step, token]);
   return null;
 }

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { trackFunnel } from "@/lib/client/funnel";
+import { trackKarrotPurchase } from "@/lib/client/karrotPixel";
 
 type PaymentConfirmProps = { paymentKey: string; orderId: string; amount: number };
 type ConfirmError = { message: string; retryable: boolean };
@@ -32,6 +33,7 @@ export function PaymentConfirm({ paymentKey, orderId, amount }: PaymentConfirmPr
         };
         if (response.ok && data.token) {
           trackFunnel("paid", data.token);
+          trackKarrotPurchase();
           router.replace(`/report/${data.token}`);
           return;
         }
