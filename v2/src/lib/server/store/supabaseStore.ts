@@ -232,8 +232,7 @@ export class SupabaseAnalysisStore implements AnalysisStore {
     );
   }
 
-  async listAnalyses(limit: number) {
-    const safeLimit = Math.min(Math.max(1, limit), 100);
+  async listAnalyses() {
     // report 본문은 목록에 필요 없고 용량이 커서 빼 둔다. 관리자 목록용 컬럼만 가져온다.
     const select = [
       "token",
@@ -249,12 +248,18 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       "profile",
       "paid_at",
     ].join(",");
-    const response = await this.request(
-      `${TABLE}?select=${select}&order=created_at.desc&limit=${safeLimit}`,
-      { method: "GET" },
-    );
-    const rows = (await response.json()) as Array<Omit<Row, "report"> & { report?: Row["report"] }>;
-    return rows.map((row) => fromRow({ ...row, report: null }));
+    const pageSize = 1000;
+    const records: AnalysisRecord[] = [];
+    for (let offset = 0; ; offset += pageSize) {
+      const response = await this.request(
+        `${TABLE}?select=${select}&order=created_at.desc&limit=${pageSize}&offset=${offset}`,
+        { method: "GET" },
+      );
+      const rows = (await response.json()) as Array<Omit<Row, "report"> & { report?: Row["report"] }>;
+      records.push(...rows.map((row) => fromRow({ ...row, report: null })));
+      if (rows.length < pageSize) break;
+    }
+    return records;
   }
 
   async trackFunnelEvent(event: FunnelEvent) {

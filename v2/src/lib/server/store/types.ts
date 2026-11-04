@@ -64,8 +64,8 @@ export interface AnalysisStore {
    * 개인정보 보관 최소화를 위해 미결제 건만 지운다.
    */
   deleteUnpaidAnalysesBefore(createdBefore: number): Promise<void>;
-  /** 최신 제출 건. 관리자 목록용. */
-  listAnalyses(limit: number): Promise<AnalysisRecord[]>;
+  /** 제출 전체. 관리자 목록용(최신순). */
+  listAnalyses(): Promise<AnalysisRecord[]>;
   /**
    * 퍼널 이벤트. 같은 sessionId+step은 한 번만 센다.
    * PII를 넣지 않는다. token은 제출 이후 단계에만 붙일 수 있다.

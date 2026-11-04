@@ -18,7 +18,7 @@ export async function GET() {
 
   let records;
   try {
-    records = await store.listAnalyses(100);
+    records = await store.listAnalyses();
   } catch (error) {
     console.error("[admin/overview] analyses", error);
     const detail = error instanceof Error ? error.message.replace(/sb_secret_[^\s]+/g, "[secret]") : "unknown";

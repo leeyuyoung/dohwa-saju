@@ -76,11 +76,10 @@ export class MemoryAnalysisStore implements AnalysisStore {
     }
   }
 
-  async listAnalyses(limit: number) {
+  async listAnalyses() {
     this.sweep();
     return [...this.records.values()]
       .sort((a, b) => b.createdAt - a.createdAt)
-      .slice(0, Math.max(0, limit))
       .map((record) => structuredClone(record));
   }
 

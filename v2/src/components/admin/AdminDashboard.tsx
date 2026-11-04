@@ -206,7 +206,9 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="font-serif text-base text-gold-soft">제출 목록 (최신 100건)</h2>
+            <h2 className="font-serif text-base text-gold-soft">
+              제출 목록{overview.analyses.length > 0 ? ` (${overview.analyses.length}건)` : ""}
+            </h2>
             <div className="overflow-x-auto rounded-2xl border border-line">
               <table className="w-full min-w-[60rem] border-collapse text-left text-sm">
                 <thead className="bg-ink/60 text-xs text-mist">
