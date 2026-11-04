@@ -5,7 +5,7 @@ import { FiveElementsCard } from "@/components/result/FiveElementsCard";
 import { ChapterCoverImage, coverFrameClass, DohwaRadarCard, WHOLE_COVER_KEYS } from "@/components/result/FreeResultParts";
 import { ManseryeokTable } from "@/components/result/ManseryeokTable";
 import { ReportWaiting } from "@/components/result/ReportWaiting";
-import { CharmStars, LoveTimeline, ReportPortrait, SectionTitle } from "@/components/result/ResultParts";
+import { CharmStars, ReportPortrait, SectionTitle } from "@/components/result/ResultParts";
 import { TypeHero } from "@/components/result/TypeHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
@@ -155,11 +155,6 @@ export default async function ReportPage({ params }: PageProps<"/report/[token]"
                     ))}
                   </div>
                 </Reveal>
-                {chapter.key === "fate" && index === 2 && (
-                  <Reveal>
-                    <LoveTimeline timeline={report.loveTimeline} />
-                  </Reveal>
-                )}
               </section>
             ))}
           </article>
