@@ -40,6 +40,8 @@ export async function GET() {
           relationshipLabel: relationshipLabel(record.relationshipStatus),
           paidAt: record.paidAt,
           status: record.status,
+          emailSentAt: record.emailSentAt,
+          emailError: record.emailError,
           birth: {
             solar: `${solarDate.year}-${String(solarDate.month).padStart(2, "0")}-${String(solarDate.day).padStart(2, "0")}`,
             lunar: `${lunarDate.year}-${String(lunarDate.month).padStart(2, "0")}-${String(lunarDate.day).padStart(2, "0")}${lunarDate.isLeapMonth ? "(윤)" : ""}`,
@@ -63,6 +65,8 @@ export async function GET() {
           relationshipLabel: relationshipLabel(record.relationshipStatus),
           paidAt: record.paidAt,
           status: record.status,
+          emailSentAt: record.emailSentAt,
+          emailError: record.emailError,
           birth: { solar: "—", lunar: "—", time: "—" },
         },
       ];

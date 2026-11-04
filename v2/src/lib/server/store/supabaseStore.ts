@@ -23,6 +23,8 @@ type Row = {
   profile: AnalysisRecord["profile"];
   report: AnalysisRecord["report"];
   paid_at: string | null;
+  email_sent_at: string | null;
+  email_error: string | null;
 };
 
 type Patch = Partial<Omit<AnalysisRecord, "token" | "createdAt">>;
@@ -80,6 +82,8 @@ function toRow(record: AnalysisRecord): Row {
     profile: record.profile,
     report: record.report,
     paid_at: record.paidAt === null ? null : toIso(record.paidAt),
+    email_sent_at: record.emailSentAt === null ? null : toIso(record.emailSentAt),
+    email_error: record.emailError,
   };
 }
 
@@ -98,6 +102,8 @@ function fromRow(row: Row): AnalysisRecord {
     profile: row.profile,
     report: row.report,
     paidAt: row.paid_at === null ? null : Date.parse(row.paid_at),
+    emailSentAt: row.email_sent_at == null ? null : Date.parse(row.email_sent_at),
+    emailError: row.email_error ?? null,
   };
 }
 
@@ -113,6 +119,8 @@ function patchToRow(patch: Patch): Partial<Row> {
   if (patch.profile !== undefined) row.profile = patch.profile;
   if (patch.report !== undefined) row.report = patch.report;
   if (patch.paidAt !== undefined) row.paid_at = patch.paidAt === null ? null : toIso(patch.paidAt);
+  if (patch.emailSentAt !== undefined) row.email_sent_at = patch.emailSentAt === null ? null : toIso(patch.emailSentAt);
+  if (patch.emailError !== undefined) row.email_error = patch.emailError;
   return row;
 }
 
@@ -247,6 +255,8 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       "concern",
       "profile",
       "paid_at",
+      "email_sent_at",
+      "email_error",
     ].join(",");
     const pageSize = 1000;
     const records: AnalysisRecord[] = [];

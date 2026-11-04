@@ -24,6 +24,10 @@ export type AnalysisRecord = {
   profile: SajuProfile;
   report: AiReport | null;
   paidAt: number | null;
+  /** 리포트 메일 발송 성공 시각. 아직 안 보냈으면 null. */
+  emailSentAt: number | null;
+  /** 마지막 메일 발송 실패/스킵 사유. 성공하면 null. */
+  emailError: string | null;
 };
 
 export type OrderStatus = "pending" | "paid" | "canceled";

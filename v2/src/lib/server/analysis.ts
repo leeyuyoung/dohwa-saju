@@ -35,6 +35,8 @@ export async function createAnalysis(input: AnalysisInput): Promise<AnalysisReco
     updatedAt: now,
     name: input.name,
     email: null,
+    emailSentAt: null,
+    emailError: null,
     phone: null,
     marketingOptIn: null,
     relationshipStatus: input.relationshipStatus,

@@ -19,8 +19,17 @@ type AnalysisRow = {
   relationshipLabel: string;
   paidAt: number | null;
   status: string;
+  emailSentAt: number | null;
+  emailError: string | null;
   birth: { solar: string; lunar: string; time: string };
 };
+
+function formatEmailStatus(row: AnalysisRow) {
+  if (row.emailSentAt) return { label: `발송 ${formatWhen(row.emailSentAt)}`, detail: null as string | null };
+  if (row.emailError) return { label: "실패", detail: row.emailError };
+  if (row.paidAt) return { label: "미발송", detail: null };
+  return { label: "—", detail: null };
+}
 
 type Overview = {
   funnel: FunnelRow[];
@@ -44,6 +53,8 @@ function formatDrop(dropOff: number | null) {
   return `${Math.round(dropOff * 100)}%`;
 }
 
+const ANALYSES_PAGE_SIZE = 10;
+
 /** 관리자 로그인·퍼널·제출 목록. 공개 UI와 분리된 운영 화면. */
 export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }) {
   const [authed, setAuthed] = useState(initiallyAuthed);
@@ -53,6 +64,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
   const [overview, setOverview] = useState<Overview | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(initiallyAuthed);
+  const [analysesPage, setAnalysesPage] = useState(1);
 
   const loadOverview = useCallback(async () => {
     setLoading(true);
@@ -70,6 +82,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
         return;
       }
       setOverview(data);
+      setAnalysesPage(1);
       setAuthed(true);
     } catch {
       setLoadError("네트워크 오류로 현황을 불러오지 못했습니다.");
@@ -111,7 +124,17 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
     await fetch("/api/admin/logout", { method: "POST", credentials: "same-origin" });
     setAuthed(false);
     setOverview(null);
+    setAnalysesPage(1);
   };
+
+  const analysesTotal = overview?.analyses.length ?? 0;
+  const analysesPageCount = Math.max(1, Math.ceil(analysesTotal / ANALYSES_PAGE_SIZE));
+  const currentAnalysesPage = Math.min(analysesPage, analysesPageCount);
+  const pageAnalyses =
+    overview?.analyses.slice(
+      (currentAnalysesPage - 1) * ANALYSES_PAGE_SIZE,
+      currentAnalysesPage * ANALYSES_PAGE_SIZE,
+    ) ?? [];
 
   if (!authed) {
     return (
@@ -207,7 +230,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
 
           <section className="flex flex-col gap-3">
             <h2 className="font-serif text-base text-gold-soft">
-              제출 목록{overview.analyses.length > 0 ? ` (${overview.analyses.length}건)` : ""}
+              제출 목록{analysesTotal > 0 ? ` (${analysesTotal}건)` : ""}
             </h2>
             <div className="overflow-x-auto rounded-2xl border border-line">
               <table className="w-full min-w-[60rem] border-collapse text-left text-sm">
@@ -219,6 +242,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                     <th className="px-3 py-2 font-normal">시간</th>
                     <th className="px-3 py-2 font-normal">연애</th>
                     <th className="px-3 py-2 font-normal">이메일</th>
+                    <th className="px-3 py-2 font-normal">메일발송</th>
                     <th className="px-3 py-2 font-normal">휴대폰</th>
                     <th className="px-3 py-2 font-normal">마케팅</th>
                     <th className="px-3 py-2 font-normal">결제</th>
@@ -226,14 +250,16 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                   </tr>
                 </thead>
                 <tbody>
-                  {overview.analyses.length === 0 ? (
+                  {analysesTotal === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-3 py-6 text-center text-mist">
+                      <td colSpan={11} className="px-3 py-6 text-center text-mist">
                         아직 제출이 없습니다.
                       </td>
                     </tr>
                   ) : (
-                    overview.analyses.map((row) => (
+                    pageAnalyses.map((row) => {
+                      const mail = formatEmailStatus(row);
+                      return (
                       <tr key={row.token} className="border-t border-line/70 align-top">
                         <td className="whitespace-nowrap px-3 py-2 text-mist">{formatWhen(row.createdAt)}</td>
                         <td className="px-3 py-2 text-paper">{row.name}</td>
@@ -241,6 +267,16 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                         <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.time}</td>
                         <td className="max-w-[9rem] px-3 py-2 text-mist break-keep">{row.relationshipLabel}</td>
                         <td className="px-3 py-2 text-mist break-all">{row.email ?? "—"}</td>
+                        <td className="max-w-[11rem] px-3 py-2 text-mist">
+                          <span className={row.emailError ? "text-fire" : row.emailSentAt ? "text-paper" : ""}>
+                            {mail.label}
+                          </span>
+                          {mail.detail && (
+                            <p className="mt-1 line-clamp-2 break-all text-[11px] text-fire/90" title={mail.detail}>
+                              {mail.detail}
+                            </p>
+                          )}
+                        </td>
                         <td className="whitespace-nowrap px-3 py-2 text-mist">{row.phone ?? "—"}</td>
                         <td className="whitespace-nowrap px-3 py-2 text-mist">
                           {row.marketingOptIn === true ? "동의" : row.marketingOptIn === false ? "거부" : "—"}
@@ -272,11 +308,35 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                           </div>
                         </td>
                       </tr>
-                    ))
+                      );
+                    })
                   )}
                 </tbody>
               </table>
             </div>
+            {analysesTotal > ANALYSES_PAGE_SIZE && (
+              <div className="flex items-center justify-center gap-3 pt-1 text-sm text-mist">
+                <button
+                  type="button"
+                  disabled={currentAnalysesPage <= 1}
+                  onClick={() => setAnalysesPage((page) => Math.max(1, page - 1))}
+                  className="rounded-full border border-line px-3 py-1.5 text-xs disabled:opacity-30 hover:text-paper"
+                >
+                  이전
+                </button>
+                <span className="tabular-nums text-paper">
+                  {currentAnalysesPage} / {analysesPageCount}
+                </span>
+                <button
+                  type="button"
+                  disabled={currentAnalysesPage >= analysesPageCount}
+                  onClick={() => setAnalysesPage((page) => Math.min(analysesPageCount, page + 1))}
+                  className="rounded-full border border-line px-3 py-1.5 text-xs disabled:opacity-30 hover:text-paper"
+                >
+                  다음
+                </button>
+              </div>
+            )}
           </section>
         </>
       )}
