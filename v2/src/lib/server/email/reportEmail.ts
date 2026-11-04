@@ -21,6 +21,8 @@ export function buildReportEmail({ name, reportUrl }: { name: string; reportUrl:
     "",
     "이 링크는 리포트를 여는 열쇠예요. 다른 사람과 공유하지 말아주세요.",
     "",
+    "문의는 yylee00@naver.com 으로 메일 주세요.",
+    "",
     `${SERVICE.tagline} | ${SERVICE.name}`,
   ].join("\n");
 
@@ -48,6 +50,9 @@ export function buildReportEmail({ name, reportUrl }: { name: string; reportUrl:
           </p>
           <p style="margin:20px 0 0;font-size:12px;line-height:1.7;color:#807590;">
             이 링크는 리포트를 여는 열쇠예요. 다른 사람과 공유하지 말아주세요.
+          </p>
+          <p style="margin:16px 0 0;font-size:12px;line-height:1.7;color:#807590;">
+            문의 시 <a href="mailto:yylee00@naver.com" style="color:#e8899b;">yylee00@naver.com</a> 으로 메일 주세요.
           </p>
         </td></tr>
       </table>
