@@ -1,12 +1,17 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CheckoutDealPrice } from "@/components/payment/CheckoutDealPrice";
 import { CheckoutWidget } from "@/components/payment/CheckoutWidget";
 import { trackFunnel } from "@/lib/client/funnel";
 import { KARROT_PRODUCT, trackKarrot } from "@/lib/client/karrotPixel";
-import { DETAILED_REPORT_LIST_PRICE, DETAILED_REPORT_PRICE, formatWon } from "@/lib/constants/service";
+import {
+  DETAILED_REPORT_LIST_PRICE,
+  DETAILED_REPORT_MID_PRICE,
+  DETAILED_REPORT_PRICE,
+  formatWon,
+} from "@/lib/constants/service";
 
 type PaymentSheetProps = {
   open: boolean;
@@ -16,10 +21,20 @@ type PaymentSheetProps = {
   buyerName: string;
 };
 
+const SLASH_STEPS = [DETAILED_REPORT_LIST_PRICE, DETAILED_REPORT_MID_PRICE, DETAILED_REPORT_PRICE] as const;
+const SLASH_STEP_MS = 420;
+
 /** 결제 CTA에서 아래에서 올라오는 시트. 할인·연락처·페이앱 결제를 담는다. */
 export function PaymentSheet({ open, onClose, token, title, buyerName }: PaymentSheetProps) {
+  const [slashIndex, setSlashIndex] = useState(0);
+  const displayPrice = SLASH_STEPS[slashIndex] ?? DETAILED_REPORT_PRICE;
+  const showFinal = slashIndex >= 2;
+
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setSlashIndex(0);
+      return;
+    }
     trackFunnel("checkout", token);
     trackKarrot("Lead");
     trackKarrot("AddToCart", {
@@ -38,9 +53,16 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
       if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
+
+    setSlashIndex(0);
+    const t1 = window.setTimeout(() => setSlashIndex(1), SLASH_STEP_MS);
+    const t2 = window.setTimeout(() => setSlashIndex(2), SLASH_STEP_MS * 2);
+
     return () => {
       document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
     };
   }, [open, onClose, token]);
 
@@ -95,9 +117,22 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
                     <p className="font-serif text-[14px] text-paper">{title}</p>
                     <p className="mt-0.5 text-[12px] text-mist">상세 리포트 전체 열람</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[12px] text-mist-dim line-through">{formatWon(DETAILED_REPORT_LIST_PRICE)}원</p>
-                    <p className="font-serif text-[17px] text-gold-soft">{formatWon(DETAILED_REPORT_PRICE)}원</p>
+                  <div className="min-w-[7.5rem] text-right" aria-live="polite">
+                    {slashIndex >= 1 && (
+                      <p className="text-[12px] text-mist-dim line-through">{formatWon(DETAILED_REPORT_LIST_PRICE)}원</p>
+                    )}
+                    {showFinal && (
+                      <p className="text-[12px] text-mist-dim line-through">{formatWon(DETAILED_REPORT_MID_PRICE)}원</p>
+                    )}
+                    <motion.p
+                      key={displayPrice}
+                      initial={{ opacity: 0.35, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: "spring", stiffness: 420, damping: 22 }}
+                      className={`font-serif text-[17px] ${showFinal ? "text-gold-soft" : "text-paper"}`}
+                    >
+                      {formatWon(displayPrice)}원
+                    </motion.p>
                   </div>
                 </div>
               </div>
@@ -116,7 +151,7 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
               </div>
 
               <div className="mb-2 mt-0.5 flex justify-center">
-                <CheckoutDealPrice align="center" showPrice={false} />
+                <CheckoutDealPrice align="center" showPrice={false} showUrgency />
               </div>
 
               <CheckoutWidget token={token} amount={DETAILED_REPORT_PRICE} />

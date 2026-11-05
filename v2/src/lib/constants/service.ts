@@ -29,10 +29,12 @@ export const HERO_COPY = {
   cta: "도화신선에게 사주 내어주기",
 } as const;
 
-/** 상세 리포트 결제 금액(실제 청구). */
-export const DETAILED_REPORT_PRICE = 27900;
+/** 상세 리포트 결제 금액(실제 청구). 다시 올릴 때 이 값만 바꾸면 된다. */
+export const DETAILED_REPORT_PRICE = 19900;
 /** 결제 화면에 취소선으로 보여주는 정가. */
 export const DETAILED_REPORT_LIST_PRICE = 59900;
+/** 3단 가격 UI 중간 단계(표시용). */
+export const DETAILED_REPORT_MID_PRICE = 27900;
 /** 주문명·결제 시트 상품명. */
 export const DETAILED_REPORT_ORDER_NAME = "도화신당 연애·매력 리포트";
 
