@@ -5,7 +5,7 @@ import { PetalCanvas } from "./PetalCanvas";
 import { SceneVideo } from "./SceneVideo";
 
 /** ratio는 그림의 가로/세로 비. 가로로 넓은 화면에서 그림 폭을 정한다. video가 있으면 그림은 영상이 뜨기 전 자리만 지킨다. */
-type SceneSpec = { src: string; ratio: number; alt: string; video?: string };
+type SceneSpec = { src: string; ratio: number; alt: string; video?: string; videoEndTrimSec?: number };
 
 const SCENES = {
   garden: {
@@ -118,7 +118,9 @@ export function HeroineBackdrop({
                         className="select-none object-cover object-[50%_22%]"
                         draggable={false}
                       />
-                      {spec.video && <SceneVideo src={spec.video} active={key === scene} />}
+                      {spec.video && (
+                        <SceneVideo src={spec.video} active={key === scene} endTrimSec={spec.videoEndTrimSec ?? 0} />
+                      )}
                       {key === "garden" && <GardenLife active={key === scene} />}
                     </div>
                   </SceneMotion>

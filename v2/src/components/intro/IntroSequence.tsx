@@ -13,49 +13,43 @@ const LIGHT_DELAY_MS = 500;
 
 type Beat = { key: string; scene: HeroineScene; ms: number; bubbles: Bubble[] };
 
-/** 약 20초 동안 저절로 넘어가는 웹툰 컷. 화면을 누르면 다음 컷으로 바로 넘어간다. */
+/** 약 7초 동안 저절로 넘어가는 웹툰 컷. 화면을 누르면 다음 컷으로 바로 넘어간다. */
 const BEATS = [
   {
     key: "arrive",
     scene: "garden",
-    ms: 3000,
+    ms: 1500,
     bubbles: [
-      { kind: "caption", text: INTRO_SCRIPT.caption, at: 0.55, place: { top: "15%", left: "7%" } },
-      { kind: "monologue", text: INTRO_SCRIPT.wonder, at: 1.3, place: { top: "64%" } },
+      { kind: "caption", text: INTRO_SCRIPT.caption, at: 0.15, place: { top: "15%", left: "7%" } },
+      { kind: "monologue", text: INTRO_SCRIPT.wonder, at: 0.45, place: { top: "64%" } },
     ],
   },
   {
     key: "found",
     scene: "sleeping",
-    ms: 3800,
+    ms: 1700,
     bubbles: [
-      { kind: "thought", text: INTRO_SCRIPT.found, at: 0.7, place: { top: "7%", left: "6%" } },
-      { kind: "sfx", text: INTRO_SCRIPT.rustle, at: 1.8, place: { top: "58%", left: "10%" } },
+      { kind: "thought", text: INTRO_SCRIPT.found, at: 0.2, place: { top: "7%", left: "6%" } },
+      { kind: "sfx", text: INTRO_SCRIPT.rustle, at: 0.7, place: { top: "58%", left: "10%" } },
     ],
-  },
-  {
-    key: "awake",
-    scene: "awake",
-    ms: 3000,
-    bubbles: [{ kind: "speech", text: INTRO_SCRIPT.who, at: 0.5, place: { top: "36%", left: "6%" } }],
   },
   {
     key: "trapped",
     scene: "trapped",
-    ms: 3200,
+    ms: 1700,
     bubbles: [
-      { kind: "speech", text: INTRO_SCRIPT.stop, at: 0.4, place: { top: "9%", right: "6%" } },
-      { kind: "thought", text: INTRO_SCRIPT.flustered, at: 1.6, place: { top: "52%", left: "7%" } },
+      { kind: "speech", text: INTRO_SCRIPT.who, at: 0.12, place: { top: "9%", right: "6%" } },
+      { kind: "thought", text: INTRO_SCRIPT.flustered, at: 0.8, place: { top: "52%", left: "7%" } },
     ],
   },
   {
     key: "scent",
     scene: "scent",
-    ms: 5200,
+    ms: 2400,
     bubbles: [
-      { kind: "speech", text: INTRO_SCRIPT.scent, at: 0.5, place: { top: "5%", left: "5%" } },
-      { kind: "thought", text: INTRO_SCRIPT.gasp, at: 1.9, place: { top: "47%", left: "8%" } },
-      { kind: "whisper", text: INTRO_SCRIPT.tease, at: 2.9, place: { top: "57%", right: "5%" } },
+      { kind: "speech", text: INTRO_SCRIPT.scent, at: 0.12, place: { top: "5%", left: "5%" } },
+      { kind: "thought", text: INTRO_SCRIPT.gasp, at: 0.7, place: { top: "47%", left: "8%" } },
+      { kind: "whisper", text: INTRO_SCRIPT.tease, at: 1.15, place: { top: "57%", right: "5%" } },
     ],
   },
   {
@@ -63,8 +57,8 @@ const BEATS = [
     scene: "main",
     ms: 0,
     bubbles: [
-      { kind: "speech", text: HERO_COPY.lead, at: 0.8, place: { top: "50%", right: "4%" }, small: true },
-      { kind: "speech", text: HERO_COPY.invite, at: 2.3, place: { top: "62%", left: "4%" }, small: true },
+      { kind: "speech", text: HERO_COPY.lead, at: 0.25, place: { top: "50%", right: "4%" }, small: true },
+      { kind: "speech", text: HERO_COPY.invite, at: 0.85, place: { top: "62%", left: "4%" }, small: true },
     ],
   },
 ] as const satisfies readonly Beat[];
@@ -75,7 +69,7 @@ const FINAL_INDEX = BEATS.length - 1;
 /** 메인 장면이 열릴 때 번쩍이는 흰 빛 */
 const FLASH_MS = 700;
 /** 말풍선 두 개가 뜬 뒤 버튼이 튀어나오는 시각(초) */
-const CTA_AT = 3.4;
+const CTA_AT = 1.45;
 /** 다시 온 사람은 이미 본 장면이라 말풍선과 버튼을 이 비율만큼 빨리 띄운다. */
 const LANDING_PACE = 0.4;
 
@@ -146,7 +140,7 @@ export function IntroSequence() {
         lit={landing || lit}
         scenes={SCENES}
         scene={current.scene}
-        fadeMs={isFinal ? 400 : 900}
+        fadeMs={isFinal ? 160 : 260}
         lowVeil
       />
 
@@ -168,7 +162,7 @@ export function IntroSequence() {
             className="pointer-events-none absolute inset-x-0 top-[max(1.75rem,calc(env(safe-area-inset-top)+1rem))] z-20 flex justify-center px-6"
             initial={{ opacity: 0, y: -8 }}
             animate={{
-              opacity: 0.78,
+              opacity: 0.7,
               y: 0,
               transition: { delay: landing ? 0.1 : 0.35, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
             }}
@@ -246,7 +240,7 @@ function FinalReveal({ landing, onReplay }: { landing: boolean; onReplay?: () =>
       <motion.div
         className="w-full"
         initial={{ opacity: 0, scale: 0.6, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0, transition: { delay: ctaAt, type: "spring", stiffness: 320, damping: 16 } }}
+        animate={{ opacity: 0.82, scale: 1, y: 0, transition: { delay: ctaAt, type: "spring", stiffness: 320, damping: 16 } }}
         onClickCapture={markVisited}
       >
         <MythicButtonLink href="/start">{HERO_COPY.cta}</MythicButtonLink>

@@ -23,18 +23,18 @@ export type Bubble = {
   small?: boolean;
 };
 
-/** 천천히 흐릿했다가 선명해지며 떠오른다. 튕기는 스프링 대신 긴 ease를 쓴다. */
+/** 흐릿했다가 선명해지며 떠오른다. 튕기는 스프링 대신 ease를 쓴다. */
 const softRise = (delay: number) =>
   ({
-    initial: { opacity: 0, filter: "blur(14px)", scale: 0.94, y: 10 },
+    initial: { opacity: 0, filter: "blur(12px)", scale: 0.95, y: 8 },
     animate: {
       opacity: 1,
       filter: "blur(0px)",
       scale: 1,
       y: 0,
-      transition: { delay, duration: 1.65, ease: [0.22, 1, 0.36, 1] },
+      transition: { delay, duration: 0.9, ease: [0.22, 1, 0.36, 1] },
     },
-    exit: { opacity: 0, filter: "blur(8px)", transition: { duration: 0.45, ease: "easeOut" } },
+    exit: { opacity: 0, filter: "blur(8px)", transition: { duration: 0.28, ease: "easeOut" } },
   }) as const;
 
 /** 웹툰 칸 위에 얹는 말풍선. 종류마다 모양을 달리한다. */
@@ -43,7 +43,7 @@ export function SpeechBubble({ bubble }: { bubble: Bubble }) {
     return (
       <motion.p
         {...softRise(bubble.at)}
-        className="absolute max-w-[78%] border border-paper/20 bg-ink/55 px-4 py-2.5 font-serif text-[14px] leading-relaxed tracking-[0.06em] text-paper/95 break-keep shadow-[0_8px_28px_rgb(0_0_0_/_0.35)] backdrop-blur-md"
+        className="absolute max-w-[74%] border border-paper/20 bg-ink/55 px-3.5 py-2 font-serif text-[13px] leading-relaxed tracking-[0.06em] text-paper/95 break-keep shadow-[0_8px_28px_rgb(0_0_0_/_0.35)] backdrop-blur-md"
         style={bubble.place}
       >
         {bubble.text}
@@ -55,12 +55,12 @@ export function SpeechBubble({ bubble }: { bubble: Bubble }) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 8, filter: "blur(8px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)", transition: { delay: bubble.at, duration: 1.4, ease: [0.22, 1, 0.36, 1] } }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)", transition: { delay: bubble.at, duration: 1.0, ease: [0.22, 1, 0.36, 1] } }}
         exit={{ opacity: 0, transition: { duration: 0.35 } }}
         className="absolute inset-x-0 flex justify-center"
         style={bubble.place}
       >
-        <p className="max-w-[calc(100%-2rem)] whitespace-pre-line rounded-[2rem] bg-[radial-gradient(closest-side,rgb(10_6_20_/_0.55),rgb(10_6_20_/_0.22)_75%,transparent)] px-6 py-4 text-center font-serif text-[clamp(16px,5vw,20px)] font-light leading-relaxed text-paper break-keep [text-shadow:0_1px_4px_rgba(10,6,20,0.95),0_0_14px_rgba(10,6,20,0.8)]">
+        <p className="max-w-[calc(100%-2.25rem)] whitespace-pre-line rounded-[2rem] bg-[radial-gradient(closest-side,rgb(10_6_20_/_0.55),rgb(10_6_20_/_0.22)_75%,transparent)] px-5 py-3.5 text-center font-serif text-[clamp(15px,4.6vw,18px)] font-light leading-relaxed text-paper break-keep [text-shadow:0_1px_4px_rgba(10,6,20,0.95),0_0_14px_rgba(10,6,20,0.8)]">
           {bubble.text}
         </p>
       </motion.div>
@@ -76,10 +76,10 @@ export function SpeechBubble({ bubble }: { bubble: Bubble }) {
           scale: 1,
           rotate: -8,
           filter: "blur(0px)",
-          transition: { delay: bubble.at, duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+          transition: { delay: bubble.at, duration: 0.65, ease: [0.22, 1, 0.36, 1] },
         }}
         exit={{ opacity: 0, transition: { duration: 0.25 } }}
-        className="absolute font-brush text-[clamp(2.4rem,12vw,3.4rem)] leading-none text-paper [-webkit-text-stroke:1.5px_#1a1424] [text-shadow:0_4px_18px_rgb(0_0_0_/_0.8)]"
+        className="absolute font-brush text-[clamp(2.1rem,10.5vw,3rem)] leading-none text-paper [-webkit-text-stroke:1.4px_#1a1424] [text-shadow:0_4px_18px_rgb(0_0_0_/_0.8)]"
         style={bubble.place}
       >
         {bubble.text}
@@ -89,20 +89,20 @@ export function SpeechBubble({ bubble }: { bubble: Bubble }) {
 
   if (bubble.kind === "thought") {
     return (
-      <motion.div {...softRise(bubble.at)} className="absolute max-w-[64%]" style={bubble.place}>
-        <p className="min-w-[8.5rem] whitespace-pre-line rounded-[50%] bg-[rgb(255_246_250_/_0.72)] px-8 py-5 text-center font-gothic text-[17px] font-normal leading-snug tracking-[-0.01em] text-[#333333] break-keep shadow-[0_10px_36px_rgb(60_30_55_/_0.18),inset_0_1px_0_rgb(255_255_255_/_0.55)] backdrop-blur-[10px]">
+      <motion.div {...softRise(bubble.at)} className="absolute max-w-[58%]" style={bubble.place}>
+        <p className="min-w-[7.5rem] whitespace-pre-line rounded-[50%] bg-[rgb(255_246_250_/_0.72)] px-6 py-4 text-center font-gothic text-[15px] font-normal leading-snug tracking-[-0.01em] text-[#333333] break-keep shadow-[0_10px_36px_rgb(60_30_55_/_0.18),inset_0_1px_0_rgb(255_255_255_/_0.55)] backdrop-blur-[10px]">
           {bubble.text}
         </p>
-        <span aria-hidden className="absolute -bottom-3 left-[26%] h-4 w-4 rounded-full bg-[rgb(255_246_250_/_0.7)] backdrop-blur-md" />
-        <span aria-hidden className="absolute -bottom-6 left-[20%] h-2.5 w-2.5 rounded-full bg-[rgb(255_246_250_/_0.65)] backdrop-blur-sm" />
+        <span aria-hidden className="absolute -bottom-3 left-[26%] h-3.5 w-3.5 rounded-full bg-[rgb(255_246_250_/_0.7)] backdrop-blur-md" />
+        <span aria-hidden className="absolute -bottom-5.5 left-[20%] h-2 w-2 rounded-full bg-[rgb(255_246_250_/_0.65)] backdrop-blur-sm" />
       </motion.div>
     );
   }
 
   const whisper = bubble.kind === "whisper";
   const small = Boolean(bubble.small);
-  /** 줄바꿈을 직접 정한 대사는 그 줄이 다시 꺾이지 않도록 조금 더 넓게 둔다. */
-  const width = bubble.text.includes("\n") ? (small ? "max-w-[72%]" : "max-w-[80%]") : small ? "max-w-[60%]" : "max-w-[68%]";
+  /** 줄바꿈을 직접 정한 대사는 그 줄이 다시 꺾이지 않도록 조금 더 넓게 둔다. CTA(small)는 기존 크기 유지. */
+  const width = bubble.text.includes("\n") ? (small ? "max-w-[72%]" : "max-w-[74%]") : small ? "max-w-[60%]" : "max-w-[62%]";
   return (
     <motion.div {...softRise(bubble.at)} className={`absolute ${width}`} style={bubble.place}>
       {/* 파스텔 글래스 타원. 외곽선 없이 불투명도를 조금 높여 글자가 읽히게 한다. */}
@@ -118,10 +118,8 @@ export function SpeechBubble({ bubble }: { bubble: Bubble }) {
         {bubble.tail && <BubbleTail tail={bubble.tail} inset={bubble.tailInset} whisper={whisper} layer="over" />}
       </div>
       <p
-        className={`relative z-10 whitespace-pre-line text-center font-gothic font-normal leading-snug tracking-[-0.01em] break-keep ${
-          small ? "min-w-[7.5rem] px-6 py-7" : "min-w-[9rem] px-8 py-10"
-        } ${
-          bubble.big ? "text-[23px]" : small ? "text-[15px]" : whisper ? "text-[17px]" : "text-[18px]"
+        className={`relative z-10 min-w-[7.5rem] whitespace-pre-line px-6 py-7 text-center font-gothic font-normal leading-snug tracking-[-0.01em] break-keep ${
+          bubble.big ? "text-[23px]" : small ? "text-[15px]" : whisper ? "text-[15px]" : "text-[16px]"
         } ${whisper ? "text-blossom-glow" : "text-[#333333]"}`}
       >
         {bubble.text}
