@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { HeroineBackdrop, type HeroineScene } from "@/components/night/HeroineBackdrop";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
@@ -102,10 +103,9 @@ export function IntroSequence() {
   const reducedMotion = !!useReducedMotion();
   /** 서버와 첫 렌더에서는 아직 모르므로 null */
   const visited = useSyncExternalStore(subscribeNothing, readVisited, () => null);
-  const [replay, setReplay] = useState(false);
   const [index, setIndex] = useState(0);
   const [lit, setLit] = useState(false);
-  const landing = !replay && (visited === true || reducedMotion);
+  const landing = visited === true || reducedMotion;
   const current = BEATS[landing ? FINAL_INDEX : index];
   const isFinal = current.key === "final";
 
@@ -121,10 +121,6 @@ export function IntroSequence() {
 
   const advance = useCallback(() => setIndex((value) => Math.min(value + 1, FINAL_INDEX)), []);
   const skip = useCallback(() => setIndex(FINAL_INDEX), []);
-  const replayIntro = useCallback(() => {
-    setIndex(0);
-    setReplay(true);
-  }, []);
 
   useEffect(() => {
     if (visited === null || landing || isFinal) return;
@@ -214,29 +210,30 @@ export function IntroSequence() {
         <h1 className="sr-only">
           {HERO_COPY.lead} {HERO_COPY.invite}
         </h1>
-        {isFinal && <FinalReveal landing={landing} onReplay={landing && !reducedMotion ? replayIntro : undefined} />}
+        {isFinal && <FinalReveal landing={landing} />}
       </main>
     </div>
   );
 }
 
 /** 말풍선 두 개가 뜬 뒤, 입력 화면 하단 버튼과 같은 자리에 CTA가 툭 튀어나온다. */
-function FinalReveal({ landing, onReplay }: { landing: boolean; onReplay?: () => void }) {
+function FinalReveal({ landing }: { landing: boolean }) {
   const ctaAt = landing ? CTA_AT * LANDING_PACE : CTA_AT;
 
   return (
     <div className="flex w-full max-w-md flex-col items-center" onClick={(event) => event.stopPropagation()}>
-      {onReplay && (
-        <motion.button
-          type="button"
-          onClick={onReplay}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: { delay: ctaAt + 0.4, duration: 0.6 } }}
-          className="mb-3 px-2 py-1 font-sans text-xs text-paper/60 underline-offset-4 transition-colors hover:text-paper hover:underline"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { delay: ctaAt + 0.4, duration: 0.6 } }}
+        className="mb-3"
+      >
+        <Link
+          href="/preview"
+          className="px-2 py-1 font-sans text-xs text-paper/60 underline-offset-4 transition-colors hover:text-paper hover:underline"
         >
-          인트로 다시 보기
-        </motion.button>
-      )}
+          결과 미리보기
+        </Link>
+      </motion.div>
       <motion.div
         className="w-full"
         initial={{ opacity: 0, scale: 0.6, y: 16 }}

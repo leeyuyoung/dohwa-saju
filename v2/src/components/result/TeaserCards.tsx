@@ -126,7 +126,7 @@ function LockedRow({ label, mask = "■■■■■■" }: { label: string; mask
 }
 
 /** 얼굴을 가린 그림 가운데에 자물쇠를 띄운다. revealLock이면 그림은 바로 두고 자물쇠·캡션만 천천히 뜬다. */
-function LockedPicture({
+export function LockedPicture({
   src,
   alt,
   caption,
@@ -134,6 +134,10 @@ function LockedPicture({
   ratio,
   revealLock = false,
   blurFace = false,
+  /** blurFace일 때 확대·블러 강도. 미리보기는 더 확대·약한 블러를 쓴다. */
+  faceFilterClass = "scale-110 blur-[14px]",
+  /** 자물쇠 아이콘만 줄인다. 캡션 글자 크기는 유지. */
+  compactLock = false,
 }: {
   src: string;
   alt: string;
@@ -143,14 +147,18 @@ function LockedPicture({
   revealLock?: boolean;
   /** 결제 전 티저용. 사주별 얼굴을 쓰되 선명히 보이지 않게 한다. */
   blurFace?: boolean;
+  faceFilterClass?: string;
+  compactLock?: boolean;
 }) {
   const lock = (
     <figcaption className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2.5" style={{ top: lockY }}>
       <span
         aria-hidden
-        className="flex size-12 items-center justify-center rounded-full border border-gold/50 bg-ink/70 text-gold-soft shadow-[0_0_20px_rgb(232_137_155_/_0.45)] backdrop-blur-sm"
+        className={`flex items-center justify-center rounded-full border border-gold/50 bg-ink/70 text-gold-soft shadow-[0_0_20px_rgb(232_137_155_/_0.45)] backdrop-blur-sm ${
+          compactLock ? "size-8" : "size-12"
+        }`}
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <svg width={compactLock ? 15 : 22} height={compactLock ? 15 : 22} viewBox="0 0 24 24" fill="none">
           <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.8" />
           <path d="M8 11V8a4 4 0 1 1 8 0v3" stroke="currentColor" strokeWidth="1.8" />
         </svg>
@@ -166,7 +174,7 @@ function LockedPicture({
         alt={alt}
         fill
         sizes="(max-width: 640px) 100vw, 576px"
-        className={`object-cover object-top ${blurFace ? "scale-110 blur-[14px]" : ""}`}
+        className={`object-cover object-top ${blurFace ? faceFilterClass : ""}`}
       />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-night to-transparent" />
       {revealLock ? (
