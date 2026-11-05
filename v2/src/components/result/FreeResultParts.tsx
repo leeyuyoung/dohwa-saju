@@ -109,6 +109,77 @@ export function StatementCut({ lines }: { lines: ReactNode[] }) {
   );
 }
 
+/**
+ * 무료에 열어 주는 도화유형·분위기·요약 티저.
+ * DOHWA_TYPES 상수 + 만세력 판정만 쓰고 AI는 쓰지 않는다.
+ * 요약·분위기는 일부만 보여 유료로 유도한다.
+ */
+export function FreeTypeTeaser({ type }: { type: DohwaView["type"] }) {
+  const openVibes = type.vibes.slice(0, 2);
+  const lockedVibes = type.vibes.slice(2);
+  /** 첫 문장만 공개하고 나머지는 잠근다. */
+  const [openLine, ...rest] = type.description.split(/(?<=[.。!?…])\s+/);
+  const lockedTail = rest.join(" ").trim() || type.story;
+
+  return (
+    <section className="rounded-3xl border border-line bg-night/70 px-5 py-6">
+      <p className="text-center text-[12px] tracking-[0.08em] text-cinnabar">네 도화유형</p>
+      <div className="relative mt-3 flex flex-col items-center gap-2 text-center">
+        <span aria-hidden className="absolute font-serif text-[96px] leading-none text-cinnabar/10">
+          {type.elementHanja}
+        </span>
+        <h3 className="relative font-eerie text-[clamp(2rem,10vw,2.6rem)] leading-none text-blossom-glow [text-shadow:0_0_24px_rgb(232_137_155_/_0.55)]">
+          {type.name}
+        </h3>
+        <p className="relative font-serif text-[14px] text-blossom">
+          {type.hanja}
+          <span className="mx-1.5 text-mist-dim">·</span>
+          {type.alias}
+        </p>
+        <p className="relative mt-1 font-serif text-[17px] text-paper">{type.headline}</p>
+      </div>
+
+      <div className="mt-6 border-t border-line/60 pt-5">
+        <p className="text-[12px] font-medium text-cinnabar">{type.name}의 분위기</p>
+        <ul className="mt-3 grid grid-cols-2 gap-2">
+          {openVibes.map((vibe) => (
+            <li
+              key={vibe}
+              className="flex flex-col gap-2 rounded-xl border border-line/70 bg-ink/50 px-3 py-3 text-[13px] leading-snug text-paper/90 break-keep"
+            >
+              <span className="h-1.5 w-1.5 shrink-0 rotate-45 bg-cinnabar" />
+              {vibe}
+            </li>
+          ))}
+          {lockedVibes.map((vibe) => (
+            <li
+              key={vibe}
+              className="flex flex-col gap-2 rounded-xl border border-line/50 bg-ink/40 px-3 py-3 text-[13px] leading-snug text-paper/50 break-keep"
+            >
+              <span className="flex items-center gap-1.5 text-[11px] text-mist-dim">
+                <LockIcon />
+                잠김
+              </span>
+              <span className="select-none blur-[5px]">{vibe}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-6 border-t border-line/60 pt-5">
+        <p className="text-[12px] font-medium text-cinnabar">유형 요약 · 일부 공개</p>
+        <p className="mt-2 font-serif text-[15px] leading-relaxed text-paper/90 break-keep">{openLine}</p>
+        {lockedTail ? (
+          <p className="mt-1 select-none font-serif text-[15px] leading-relaxed text-paper/40 break-keep blur-[6px]" aria-hidden>
+            {lockedTail}
+          </p>
+        ) : null}
+        <p className="mt-3 text-center text-[12px] text-mist">나머지는 상세 리포트에서 전부 열어 준다.</p>
+      </div>
+    </section>
+  );
+}
+
 /** 결제 전에 보여주는 무료 풀이. 유형 판정 다음에, 색기가 먹히는 모습 둘과 정작 못 쓰는 모습 하나를 체크리스트로 짚는다. */
 export function FreeReading({ type }: { type: DohwaView["type"] }) {
   const [charm1, charm2, flaw] = type.checks;

@@ -1,6 +1,7 @@
 import { FunnelBeacon } from "@/components/analytics/FunnelBeacon";
 import { PageShell } from "@/components/layout/PageShell";
-import { ReportToc } from "@/components/result/FreeResultParts";
+import { FreeTypeTeaser, ReportToc } from "@/components/result/FreeResultParts";
+import { ManseryeokTable } from "@/components/result/ManseryeokTable";
 import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { StickyCheckoutBar } from "@/components/result/StickyCheckoutBar";
 import { BloomCard, FaceCard, PartnerCard, ScoreCard, SinseonLines, SinseonScene } from "@/components/result/TeaserCards";
@@ -68,8 +69,35 @@ export function FreeResultScreen({
         ]}
       />
 
-      <SinseonLines lines={[<>자, 먼저 네 {glow("도화 점수")}부터 보자.</>]} />
+      <SinseonLines
+        lines={[
+          <>
+            자, 먼저 네 사주에 새겨진
+            <br />
+            {glow("여덟 글자")}부터 짚어 주지.
+          </>,
+        ]}
+      />
+      <ManseryeokTable
+        name={result.name}
+        dayPillarName={result.dayPillarName}
+        birthLabel={result.birthLabel}
+        pillars={result.pillars}
+      />
+
+      <SinseonLines lines={[<>이 글자들로 네 {glow("도화 점수")}를 읽어 보마.</>]} />
       <ScoreCard result={result} />
+
+      <SinseonLines
+        lines={[
+          <>
+            점수만으로는 모자라지.
+            <br />
+            네 {glow("도화유형")}도 살짝 열어 주마.
+          </>,
+        ]}
+      />
+      <FreeTypeTeaser type={result.dohwa.type} />
 
       <SinseonScene
         className="mt-2"
