@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
+import { PortraitVideo } from "@/components/ui/PortraitVideo";
 import { trackFunnel } from "@/lib/client/funnel";
 import { trackKarrot } from "@/lib/client/karrotPixel";
 import { clearPendingAnalysis, loadPendingAnalysis } from "@/lib/client/inputStorage";
@@ -128,15 +129,11 @@ export function AnalyzingExperience() {
 
   return (
     <div className="relative flex flex-1 flex-col text-center">
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-ink">
-        <video
-          ref={videoRef}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-black">
+        <PortraitVideo
           src={LOADING_VIDEO_SRC}
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          className="absolute inset-0 h-full w-full object-cover object-center [filter:contrast(0.94)_brightness(1.06)_saturate(0.9)_blur(0.55px)]"
+          videoRef={videoRef}
+          filterClassName="[filter:contrast(0.94)_brightness(1.06)_saturate(0.9)_blur(0.55px)]"
         />
       </div>
 

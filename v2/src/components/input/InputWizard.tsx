@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
+import { PortraitVideo } from "@/components/ui/PortraitVideo";
 import { trackFunnel } from "@/lib/client/funnel";
 import { clearDraft, loadDraft, saveDraft, savePendingAnalysis } from "@/lib/client/inputStorage";
 import type { FunnelStep } from "@/lib/funnelSteps";
@@ -121,16 +122,12 @@ export default function InputWizard() {
 
   return (
     <div className="relative isolate flex min-h-dvh w-full flex-col">
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-ink">
-        <video
-          ref={videoRef}
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-black">
+        <PortraitVideo
           src={INPUT_VIDEO_SRC}
-          autoPlay
-          muted
+          videoRef={videoRef}
           loop
-          playsInline
-          preload="auto"
-          className="absolute inset-0 h-full w-full object-cover object-center [filter:contrast(0.98)_brightness(1.04)_saturate(0.94)_blur(0.4px)]"
+          filterClassName="[filter:contrast(0.98)_brightness(1.04)_saturate(0.94)_blur(0.4px)]"
         />
       </div>
 

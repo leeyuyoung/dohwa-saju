@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { IntroHookRotate } from "@/components/intro/IntroHookRotate";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
+import { PortraitVideo } from "@/components/ui/PortraitVideo";
 import { trackFunnel } from "@/lib/client/funnel";
 import { HERO_COPY } from "@/lib/constants/service";
 
@@ -17,15 +18,11 @@ export function IntroSequence() {
 
   return (
     <div className="relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-ink">
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <video
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-black">
+        <PortraitVideo
           src="/videos/intro/hero.mp4"
-          autoPlay
-          muted
           loop
-          playsInline
-          preload="auto"
-          className="absolute inset-0 h-full w-full object-cover object-center [filter:contrast(0.98)_brightness(1.04)_saturate(0.94)_blur(0.4px)]"
+          filterClassName="[filter:contrast(0.98)_brightness(1.04)_saturate(0.94)_blur(0.4px)]"
         />
         {/* 상단 로고가 돋보이도록 은은한 검정 그라데이션 */}
         <div className="absolute inset-x-0 top-0 h-[38%] bg-gradient-to-b from-black/70 via-black/35 to-transparent" />
