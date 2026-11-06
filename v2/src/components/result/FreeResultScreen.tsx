@@ -13,7 +13,7 @@ const SEASONS = ["겨울", "봄", "여름", "가을"] as const;
 const seasonOf = (month: number) => SEASONS[Math.floor((month % 12) / 3)];
 
 /** 결제 버튼이 이 칸에 닿은 뒤부터 화면 아래에 따라다닌다. */
-const BLOOM_CARD_ID = "dohwa-bloom";
+const TYPE_TEASER_ID = "dohwa-type";
 
 const glow = (text: string) => <span className="text-blossom-glow">{text}</span>;
 
@@ -97,7 +97,9 @@ export function FreeResultScreen({
           </>,
         ]}
       />
-      <FreeTypeTeaser type={result.dohwa.type} />
+      <div id={TYPE_TEASER_ID}>
+        <FreeTypeTeaser type={result.dohwa.type} />
+      </div>
 
       <SinseonScene
         className="mt-2"
@@ -117,9 +119,7 @@ export function FreeResultScreen({
           </>,
         ]}
       />
-      <div id={BLOOM_CARD_ID}>
-        <BloomCard result={result} />
-      </div>
+      <BloomCard result={result} />
 
       <SinseonScene
         className="mt-2"
@@ -197,7 +197,7 @@ export function FreeResultScreen({
       <StickyCheckoutBar
         href={cta.href}
         label={cta.label}
-        showAfterId={paid ? undefined : BLOOM_CARD_ID}
+        showAfterId={paid ? undefined : TYPE_TEASER_ID}
         checkout={checkout}
       />
     </PageShell>

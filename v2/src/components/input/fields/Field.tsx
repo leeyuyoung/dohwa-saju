@@ -6,14 +6,19 @@ type FieldProps = {
   hint?: ReactNode;
   error?: string;
   errorId?: string;
+  /** 라벨 폰트 등 덮어쓰기. 결제창처럼 산세리프만 쓸 때 넘긴다. */
+  labelClassName?: string;
   children: ReactNode;
 };
 
-export function Field({ label, htmlFor, hint, error, errorId, children }: FieldProps) {
+export function Field({ label, htmlFor, hint, error, errorId, labelClassName, children }: FieldProps) {
   const LabelTag = htmlFor ? "label" : "p";
   return (
     <div className="flex flex-col gap-3">
-      <LabelTag {...(htmlFor ? { htmlFor } : {})} className="font-serif text-sm tracking-wide text-gold-soft">
+      <LabelTag
+        {...(htmlFor ? { htmlFor } : {})}
+        className={`font-serif text-sm tracking-wide text-gold-soft ${labelClassName ?? ""}`}
+      >
         {label}
       </LabelTag>
       {children}

@@ -76,7 +76,7 @@ export function CheckoutDealPrice({
           24시간 한정
         </span>
         <span
-          className="font-mono text-[13px] tabular-nums tracking-wide text-[#e11d48]"
+          className="font-gothic text-[13px] tabular-nums tracking-wide text-[#e11d48]"
           aria-live="polite"
           aria-label={remainMs === null ? "할인 남은 시간 불러오는 중" : `할인 남은 시간 ${remainLabel}`}
         >
@@ -85,9 +85,9 @@ export function CheckoutDealPrice({
       </div>
       {showPrice && (
         <div className="flex flex-wrap items-baseline justify-end gap-x-2 gap-y-0.5">
-          <span className="font-serif text-[13px] text-mist-dim line-through">{formatWon(DETAILED_REPORT_LIST_PRICE)}</span>
-          <span className="font-serif text-[13px] text-mist-dim line-through">{formatWon(DETAILED_REPORT_MID_PRICE)}</span>
-          <span className={`font-serif text-gold-soft ${centered ? "text-[17px]" : "text-lg"}`}>
+          <span className="font-gothic text-[13px] tracking-[-0.01em] text-mist-dim line-through">{formatWon(DETAILED_REPORT_LIST_PRICE)}</span>
+          <span className="font-gothic text-[13px] tracking-[-0.01em] text-mist-dim line-through">{formatWon(DETAILED_REPORT_MID_PRICE)}</span>
+          <span className={`font-gothic tracking-[-0.01em] text-gold-soft ${centered ? "text-[17px]" : "text-lg"}`}>
             {formatPrice(DETAILED_REPORT_PRICE)}
           </span>
         </div>

@@ -76,9 +76,15 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3.5">
+    <div className="flex flex-col gap-3.5 font-gothic">
       <div className="glass-card flex flex-col gap-3 rounded-3xl px-5 py-4">
-        <Field label="리포트를 받을 이메일" htmlFor="checkout-email" error={contactErrors.email} errorId="checkout-email-error">
+        <Field
+          label="리포트를 받을 이메일"
+          htmlFor="checkout-email"
+          error={contactErrors.email}
+          errorId="checkout-email-error"
+          labelClassName="!font-gothic tracking-[-0.01em]"
+        >
           <input
             id="checkout-email"
             type="email"
@@ -89,10 +95,16 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
             onChange={(event) => setEmail(event.target.value)}
             aria-invalid={!!contactErrors.email}
             aria-describedby={contactErrors.email ? "checkout-email-error" : undefined}
-            className={`${INPUT_BASE} !h-11 text-[15px] ${inputBorder(!!contactErrors.email)}`}
+            className={`${INPUT_BASE} !h-11 !font-gothic text-[15px] tracking-[-0.01em] ${inputBorder(!!contactErrors.email)}`}
           />
         </Field>
-        <Field label="휴대폰 번호" htmlFor="checkout-phone" error={contactErrors.phone} errorId="checkout-phone-error">
+        <Field
+          label="휴대폰 번호"
+          htmlFor="checkout-phone"
+          error={contactErrors.phone}
+          errorId="checkout-phone-error"
+          labelClassName="!font-gothic tracking-[-0.01em]"
+        >
           <input
             id="checkout-phone"
             type="tel"
@@ -103,10 +115,10 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
             onChange={(event) => setPhone(event.target.value)}
             aria-invalid={!!contactErrors.phone}
             aria-describedby={contactErrors.phone ? "checkout-phone-error" : undefined}
-            className={`${INPUT_BASE} !h-11 text-[15px] ${inputBorder(!!contactErrors.phone)}`}
+            className={`${INPUT_BASE} !h-11 !font-gothic text-[15px] tracking-[-0.01em] ${inputBorder(!!contactErrors.phone)}`}
           />
         </Field>
-        <p className="text-center text-[clamp(7.5px,2.4vw,10px)] leading-snug tracking-[-0.02em] text-mist-dim">
+        <p className="text-center font-gothic text-[clamp(7.5px,2.4vw,10px)] leading-snug tracking-[-0.02em] text-mist-dim">
           결제 정보를 확인했으며{" "}
           <Link href="/legal/privacy" target="_blank" className="underline underline-offset-2">
             개인정보 처리방침
@@ -128,13 +140,10 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
           {error}
         </p>
       )}
-      <Button onClick={pay} disabled={paying}>
-        {paying ? "결제창으로 이동 중…" : `${formatPrice(amount)} 결제하기`}
-      </Button>
 
-      <div className="flex items-center justify-between gap-3 px-0.5 pb-0.5">
-        <label className="flex min-w-0 cursor-pointer items-center gap-2.5">
-          <span className="relative inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+      <div className="flex items-center justify-between gap-3 px-0.5">
+        <label className="flex min-w-0 cursor-pointer items-center gap-2">
+          <span className="relative inline-flex h-4 w-4 shrink-0 items-center justify-center">
             <input
               type="checkbox"
               checked={marketingOptIn}
@@ -143,27 +152,31 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
             />
             <span
               aria-hidden
-              className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border transition-colors ${
+              className={`flex h-4 w-4 items-center justify-center rounded-full border transition-colors ${
                 marketingOptIn ? "border-paper/55 bg-paper/25" : "border-paper/35 bg-transparent"
               }`}
             >
               {marketingOptIn && (
-                <svg viewBox="0 0 16 16" className="h-2.5 w-2.5 text-paper" fill="none">
+                <svg viewBox="0 0 16 16" className="h-2 w-2 text-paper" fill="none">
                   <path d="M3.5 8.2 6.4 11l6-6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
             </span>
           </span>
-          <span className="truncate font-sans text-[13px] tracking-[-0.02em] text-paper">마케팅 수신 동의 (선택)</span>
+          <span className="truncate font-gothic text-[11px] tracking-[-0.02em] text-paper">마케팅 수신 동의 (선택)</span>
         </label>
         <button
           type="button"
           onClick={() => setMarketingDetailOpen(true)}
-          className="shrink-0 font-sans text-[12px] tracking-[-0.02em] text-mist underline underline-offset-2 transition-colors hover:text-paper"
+          className="shrink-0 font-gothic text-[10px] tracking-[-0.02em] text-mist underline underline-offset-2 transition-colors hover:text-paper"
         >
           자세히보기
         </button>
       </div>
+
+      <Button onClick={pay} disabled={paying}>
+        {paying ? "결제창으로 이동 중…" : `${formatPrice(amount)} 결제하기`}
+      </Button>
 
       <MarketingConsentModal open={marketingDetailOpen} onClose={() => setMarketingDetailOpen(false)} />
     </div>
