@@ -182,7 +182,7 @@ export function FreeResultScreen({
         <ReviewCarousel />
       </div>
 
-      <div className="mt-8 mb-3">
+      <div className="mt-4">
         <WebtoonPanel
           src="/images/sunnyeo/whisper-offer.jpg"
           alt="가까이 기대어 속삭이며 손을 내밀어 함께 가자고 청하는 도화선녀"

@@ -25,7 +25,7 @@ export function PageShell({
   withStickyBar = false,
 }: PageShellProps) {
   return (
-    <div className={`relative isolate flex min-h-dvh flex-col ${withStickyBar ? "pb-24" : ""}`}>
+    <div className={`relative isolate flex min-h-dvh flex-col ${withStickyBar ? "pb-34" : ""}`}>
       {background === "navy" ? <NavyDocumentBackground /> : <NightGardenBackground intensity={intensity} />}
       {showHeader && (
         <header
@@ -41,7 +41,7 @@ export function PageShell({
         </header>
       )}
       <main className="mx-auto flex w-full max-w-xl flex-1 flex-col px-5">{children}</main>
-      {showFooter && <SiteFooter />}
+      {showFooter && <SiteFooter compact={withStickyBar} />}
     </div>
   );
 }
@@ -58,10 +58,14 @@ function NavyDocumentBackground() {
   );
 }
 
-function SiteFooter() {
+function SiteFooter({ compact = false }: { compact?: boolean }) {
   return (
-    <footer className="mt-12 border-t border-line/50">
-      <div className="mx-auto flex max-w-xl flex-col gap-3 px-5 pt-8 pb-6 text-xs leading-relaxed text-mist-dim">
+    <footer className={`border-t border-line/50 ${compact ? "mt-3" : "mt-12"}`}>
+      <div
+        className={`mx-auto flex max-w-xl flex-col gap-3 px-5 pb-6 text-xs leading-relaxed text-mist-dim ${
+          compact ? "pt-4" : "pt-8"
+        }`}
+      >
         <p className="font-serif tracking-[0.2em] text-mist">
           {SERVICE.tagline} | {SERVICE.name}
         </p>

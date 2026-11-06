@@ -32,14 +32,14 @@ export function RadioList<T extends string>({
             <span
               aria-hidden
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-colors duration-300 ${
-                selected ? "border-paper" : hasError ? "border-fire/70" : "border-mist-dim"
+                selected ? "border-paper" : hasError ? "border-fire/70" : "border-paper/50"
               }`}
             >
               {selected && <span className="h-2.5 w-2.5 rounded-full bg-paper" />}
             </span>
             <span
               className={`font-serif text-base tracking-wide transition-colors duration-300 ${
-                selected ? "text-paper" : "text-mist"
+                selected ? "text-paper" : "text-paper/75"
               }`}
             >
               {option.label}

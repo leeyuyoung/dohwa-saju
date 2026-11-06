@@ -52,7 +52,7 @@ export function BirthTimeStep({ values, errors, update }: StepProps) {
         </button>
       </div>
       <div className="h-px bg-line" />
-      <p className="text-xs leading-relaxed text-mist-dim">
+      <p className="text-xs leading-relaxed text-paper/70">
         {unknown
           ? "괜찮다. 시각 없이도 여섯 글자면 충분하지."
           : hourBranch
