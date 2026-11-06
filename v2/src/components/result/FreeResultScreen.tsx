@@ -1,12 +1,14 @@
 import { FunnelBeacon } from "@/components/analytics/FunnelBeacon";
 import { PageShell } from "@/components/layout/PageShell";
-import { FreeTypeTeaser, ReportToc } from "@/components/result/FreeResultParts";
+import { CheckoutSheetProvider } from "@/components/payment/CheckoutSheetContext";
+import { FreeTypeTeaser, ReportToc, ReportVolume } from "@/components/result/FreeResultParts";
 import { ManseryeokTable } from "@/components/result/ManseryeokTable";
 import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { StickyCheckoutBar } from "@/components/result/StickyCheckoutBar";
 import { BloomCard, FaceCard, PartnerCard, ScoreCard, SinseonLines, SinseonScene } from "@/components/result/TeaserCards";
 import { WebtoonPanel } from "@/components/webtoon/WebtoonPanel";
 import { DETAILED_REPORT_ORDER_NAME } from "@/lib/constants/service";
+import { countPeachBranches } from "@/lib/saju/dohwa";
 import type { FreeResultView } from "@/types/result";
 
 const SEASONS = ["겨울", "봄", "여름", "가을"] as const;
@@ -48,7 +50,10 @@ export function FreeResultScreen({
         }
       : undefined;
 
+  const peachCount = countPeachBranches(result.pillars);
+
   return (
+    <CheckoutSheetProvider checkout={checkout} href={cta.href}>
     <PageShell withStickyBar>
       {token && !sample ? <FunnelBeacon step="result" token={token} /> : null}
       <h1 className="sr-only">{result.name}의 도화 풀이</h1>
@@ -76,6 +81,13 @@ export function FreeResultScreen({
             <br />
             {glow("여덟 글자")}부터 짚어볼게.
           </>,
+          ...(peachCount > 0
+            ? [
+                <>
+                  네 사주에 {glow("도화 글자")}가 {peachCount}개나 있어.
+                </>,
+              ]
+            : []),
         ]}
       />
       <ManseryeokTable
@@ -113,24 +125,15 @@ export function FreeResultScreen({
         ]}
         lines={[
           <>
-            네 사주엔 {glow("색기가 터지는 때")}가
+            네 사주엔 이미 정해져 있어.
             <br />
-            이미 정해져 있어.
+            가만 있어도 남자들이 {glow("꼬일 달")}.
           </>,
         ]}
       />
       <BloomCard result={result} />
 
-      <SinseonScene
-        className="mt-2"
-        src="/images/sunnyeo/tree-lean.jpg"
-        alt="보름달 아래 복숭아나무에 기대어 팔짱을 낀 채 내려다보며 웃는 도화선녀"
-        headroom={0.02}
-        cropBottom={0.12}
-        bubbles={[
-          { kind: "speech", text: "얼마 안 남았어.", at: 0.3, place: { top: "8%", left: "8%" } },
-          { kind: "speech", text: "그 달엔 가만있어도\n남자들이 꼬일걸.", at: 1.4, place: { top: "66%", right: "3%" } },
-        ]}
+      <SinseonLines
         lines={[
           <>
             그때 너한테 목맬 남자…
@@ -157,8 +160,10 @@ export function FreeResultScreen({
       <FaceCard result={result} />
 
       <SinseonScene
-        src="/images/sunnyeo/peach-bite.jpg"
-        alt="복숭아나무 아래 비스듬히 기대앉아 복숭아를 입에 문 도화선녀"
+        src="/images/sunnyeo/tree-lean.jpg"
+        alt="보름달 아래 복숭아나무에 기대어 팔짱을 낀 채 내려다보며 웃는 도화선녀"
+        headroom={0.02}
+        cropBottom={0.12}
         bubbles={[
           {
             kind: "speech",
@@ -180,6 +185,7 @@ export function FreeResultScreen({
       <div className="mt-16 flex flex-col gap-16">
         <ReportToc gender={result.gender} />
         <ReviewCarousel />
+        <ReportVolume />
       </div>
 
       <div className="mt-4">
@@ -198,8 +204,9 @@ export function FreeResultScreen({
         href={cta.href}
         label={cta.label}
         showAfterId={paid ? undefined : TYPE_TEASER_ID}
-        checkout={checkout}
+        sheetEnabled={Boolean(checkout)}
       />
     </PageShell>
+    </CheckoutSheetProvider>
   );
 }

@@ -1,4 +1,6 @@
+import { OrnateFrameCard } from "@/components/result/OrnateFrameCard";
 import { ELEMENT_LABELS, PILLAR_LABELS, TEN_GOD_LABELS, TWELVE_STAGE_LABELS } from "@/lib/constants/sajuLabels";
+import { isPeachBranch } from "@/lib/saju/dohwa";
 import type { FiveElementKey, PillarView } from "@/types/result";
 
 const ELEMENT_COLOR: Record<FiveElementKey, string> = {
@@ -23,26 +25,26 @@ export function ManseryeokTable({ name, dayPillarName, birthLabel, pillars }: Ma
   const me = pillars.find((pillar) => pillar.label === "일주")?.stem;
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-line bg-night/70">
-      <div className="flex items-center gap-4 border-b border-line/60 px-5 py-4">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-cinnabar/40 bg-crimson-deep/60 font-eerie text-lg text-blossom">
+    <OrnateFrameCard variant="medium" bodyClassName="justify-between">
+      <div className="flex shrink-0 items-center gap-3 border-b border-[rgb(232_200_154_/_0.22)] px-2 py-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cinnabar/40 bg-crimson-deep/60 font-eerie text-lg text-blossom">
           {me?.hanja}
         </span>
-        <div className="flex flex-col">
-          <span className="font-serif text-[15px] text-paper">
+        <div className="flex min-w-0 flex-col">
+          <span className="font-serif text-[14px] text-paper">
             {name}
-            {me && <span className="ml-1.5 text-xs text-blossom">· {ELEMENT_LABELS[me.element].name}의 기운을 타고난 아이</span>}
+            {me && <span className="ml-1.5 text-[11px] text-blossom">· {ELEMENT_LABELS[me.element].name}의 기운을 타고난 아이</span>}
           </span>
-          <span className="text-xs text-mist">
+          <span className="text-[11px] text-mist">
             {dayPillarName} · {birthLabel}
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-[2.5rem_repeat(4,1fr)] gap-x-2 gap-y-1.5 px-3 py-4 text-center">
+      <div className="grid min-h-0 flex-1 grid-cols-[2.2rem_repeat(4,1fr)] content-center gap-x-1.5 gap-y-1 px-1.5 py-2 text-center">
         <span />
         {COLUMN_ORDER.map((label) => (
-          <span key={label} className={`text-[11px] ${label === "일주" ? "text-cinnabar" : "text-mist-dim"}`}>
+          <span key={label} className={`text-[10px] ${label === "일주" ? "text-cinnabar" : "text-mist-dim"}`}>
             {PILLAR_LABELS[label]}
           </span>
         ))}
@@ -59,7 +61,11 @@ export function ManseryeokTable({ name, dayPillarName, birthLabel, pillars }: Ma
 
         <RowLabel>땅</RowLabel>
         {columns.map((pillar, index) => (
-          <GlyphTile key={index} glyph={pillar?.branch ?? null} />
+          <GlyphTile
+            key={index}
+            glyph={pillar?.branch ?? null}
+            peach={pillar ? isPeachBranch(pillar.branch.korean) : false}
+          />
         ))}
 
         <RowLabel>성향</RowLabel>
@@ -74,9 +80,11 @@ export function ManseryeokTable({ name, dayPillarName, birthLabel, pillars }: Ma
       </div>
 
       {!columns[0] && (
-        <p className="border-t border-line/60 px-5 py-3 text-[11px] leading-relaxed text-mist-dim">출생 시간을 몰라 태어난 시 칸은 비워 뒀다.</p>
+        <p className="shrink-0 border-t border-[rgb(232_200_154_/_0.22)] px-2 py-2 text-[10px] leading-relaxed text-mist-dim">
+          출생 시간을 몰라 태어난 시 칸은 비워 뒀다.
+        </p>
       )}
-    </div>
+    </OrnateFrameCard>
   );
 }
 
@@ -88,7 +96,16 @@ function SmallCell({ children }: { children: string }) {
   return <span className="py-1 text-[11px] text-mist break-keep">{children}</span>;
 }
 
-function GlyphTile({ glyph, highlight = false }: { glyph: PillarView["stem"] | null; highlight?: boolean }) {
+function GlyphTile({
+  glyph,
+  highlight = false,
+  peach = false,
+}: {
+  glyph: PillarView["stem"] | null;
+  highlight?: boolean;
+  /** 도화 글자(자·오·묘·유)일 때 꽃빛으로 짚어 준다 */
+  peach?: boolean;
+}) {
   if (!glyph) {
     return (
       <div className="flex aspect-square items-center justify-center rounded-2xl border border-dashed border-line/70 bg-ink/40">
@@ -97,22 +114,32 @@ function GlyphTile({ glyph, highlight = false }: { glyph: PillarView["stem"] | n
     );
   }
   const color = ELEMENT_COLOR[glyph.element];
-  const element = ELEMENT_LABELS[glyph.element];
   return (
     <div
-      className={`relative flex aspect-square items-center justify-center rounded-2xl border ${highlight ? "ring-1 ring-cinnabar/70" : ""}`}
+      className={`relative flex aspect-square items-center justify-center rounded-2xl border ${
+        peach
+          ? "ring-1 ring-blossom/80 shadow-[0_0_18px_rgb(232_137_155_/_0.45)]"
+          : highlight
+            ? "ring-1 ring-cinnabar/70"
+            : ""
+      }`}
       style={{
-        backgroundColor: `color-mix(in srgb, ${color} 16%, transparent)`,
-        borderColor: `color-mix(in srgb, ${color} 45%, transparent)`,
+        backgroundColor: peach
+          ? `color-mix(in srgb, ${color} 22%, rgb(232 137 155 / 0.18))`
+          : `color-mix(in srgb, ${color} 16%, transparent)`,
+        borderColor: peach
+          ? `color-mix(in srgb, var(--color-blossom) 55%, ${color})`
+          : `color-mix(in srgb, ${color} 45%, transparent)`,
       }}
     >
       <span className="font-serif text-[30px] leading-none" style={{ color }}>
         {glyph.hanja}
       </span>
-      <span className="absolute bottom-1 right-1.5 text-[9px] text-paper/70">
-        {glyph.korean}
-        {element.reading}
-      </span>
+      {peach && (
+        <span aria-label="도화" className="absolute top-0.5 left-1 text-[11px] leading-none">
+          🪷
+        </span>
+      )}
     </div>
   );
 }

@@ -29,7 +29,17 @@ const HONGYEOM: Record<HeavenlyStem, EarthlyBranch> = {
 };
 
 /** 子午卯酉. 그 자체로 도화의 기운이 강한 글자 */
-const PEACH_BRANCHES: EarthlyBranch[] = ["자", "오", "묘", "유"];
+export const PEACH_BRANCHES: EarthlyBranch[] = ["자", "오", "묘", "유"];
+
+/** 원국 지지 중 도화 글자(자·오·묘·유)인지 */
+export function isPeachBranch(korean: string): boolean {
+  return (PEACH_BRANCHES as readonly string[]).includes(korean);
+}
+
+/** 원국에 새겨진 도화 글자 개수 */
+export function countPeachBranches(pillars: { branch: { korean: string } }[]): number {
+  return pillars.filter((pillar) => isPeachBranch(pillar.branch.korean)).length;
+}
 
 export type CharmStarKey = "dohwa" | "hongyeom" | "hwagae";
 

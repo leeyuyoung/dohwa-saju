@@ -38,7 +38,7 @@ function CharmBar({ score }: { score: number }) {
       <BarCap />
       <div className="relative -mx-0.5 h-4 flex-1 overflow-hidden rounded-full border-[1.5px] border-[#c49a68] bg-gradient-to-b from-[#2a1838] to-[#120a1c] shadow-[inset_0_2px_4px_rgb(0_0_0_/_0.65),0_0_0_1px_rgb(90_55_30_/_0.4)]">
         <span
-          className="absolute inset-y-[1.5px] left-[1.5px] overflow-hidden rounded-full bg-gradient-to-r from-[rgb(120_40_75_/_0.7)] via-[rgb(200_90_130_/_0.85)] to-[rgb(255_220_230)] shadow-[0_0_12px_rgb(255_160_190_/_0.5),inset_0_1px_0_rgb(255_255_255_/_0.4)] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_18%_45%,rgb(255_255_255_/_0.7)_0_1.1px,transparent_1.6px),radial-gradient(circle_at_58%_35%,rgb(255_255_255_/_0.55)_0_1px,transparent_1.4px),radial-gradient(circle_at_90%_40%,rgb(255_255_255_/_0.8)_0_1.3px,transparent_1.8px)]"
+          className="absolute inset-y-[1.5px] left-[1.5px] overflow-hidden rounded-full bg-gradient-to-r from-[rgb(120_40_75_/_0.7)] via-[rgb(200_90_130_/_0.85)] to-[rgb(255_220_230)] shadow-[0_0_6px_rgb(255_160_190_/_0.28),inset_0_1px_0_rgb(255_255_255_/_0.4)] after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_18%_45%,rgb(255_255_255_/_0.7)_0_1.1px,transparent_1.6px),radial-gradient(circle_at_58%_35%,rgb(255_255_255_/_0.55)_0_1px,transparent_1.4px),radial-gradient(circle_at_90%_40%,rgb(255_255_255_/_0.8)_0_1.3px,transparent_1.8px)]"
           style={{ width: `calc(${Math.min(100, Math.max(0, score))}% - 3px)` }}
         />
       </div>
@@ -71,10 +71,10 @@ export function DohwaScoreCard({ result }: { result: FreeResultView }) {
           <Flourish flip />
         </div>
 
-        <div className="relative mt-[6%] shrink-0 text-center before:pointer-events-none before:absolute before:top-[40%] before:left-1/2 before:z-[-1] before:h-[90%] before:w-[58%] before:-translate-x-1/2 before:-translate-y-1/2 before:bg-[radial-gradient(ellipse,rgb(255_190_205_/_0.32),transparent_70%)] before:blur-[10px]">
+        <div className="relative mt-[6%] shrink-0 text-center before:pointer-events-none before:absolute before:top-[40%] before:left-1/2 before:z-[-1] before:h-[70%] before:w-[48%] before:-translate-x-1/2 before:-translate-y-1/2 before:bg-[radial-gradient(ellipse,rgb(255_190_205_/_0.16),transparent_72%)] before:blur-[8px]">
           <Reveal>
             <p className="leading-none">
-              <span className="bg-gradient-to-b from-[#fff8f6] via-[#f4d4d4] to-[#c9929c] bg-clip-text font-brush text-[clamp(72px,22vw,90px)] font-normal tracking-[-0.02em] text-transparent [filter:drop-shadow(0_0_18px_rgb(244_180_190_/_0.5))]">
+              <span className="bg-gradient-to-b from-[#fff8f6] via-[#f4d4d4] to-[#c9929c] bg-clip-text font-brush text-[clamp(72px,22vw,90px)] font-normal tracking-[-0.02em] text-transparent [filter:drop-shadow(0_0_8px_rgb(244_180_190_/_0.28))]">
                 {dohwa.score}
               </span>
               <span className="ml-[3px] align-[20px] bg-gradient-to-b from-[#fff0f0] to-[#e0b0b8] bg-clip-text font-brush text-[clamp(20px,5.5vw,24px)] font-normal text-transparent">
@@ -102,7 +102,7 @@ export function DohwaScoreCard({ result }: { result: FreeResultView }) {
               </span>
               <CharmBar score={index.score} />
               <Reveal delay={0.15 + i * 0.12} className="justify-self-start">
-                <span className="origin-left scale-y-[0.92] text-left font-brush text-[clamp(18px,4.7vw,19px)] font-extralight tracking-[0.03em] text-[#e2cfc6] [text-shadow:0_0_8px_rgb(226_207_198_/_0.2)]">
+                <span className="origin-left scale-y-[0.92] text-left font-brush text-[clamp(18px,4.7vw,19px)] font-extralight tracking-[0.03em] text-[#e2cfc6]">
                   {index.score}
                 </span>
               </Reveal>

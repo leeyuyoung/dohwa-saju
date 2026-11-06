@@ -216,6 +216,12 @@ export const chapterOf = (key: ReportChapterKey) => REPORT_CHAPTERS.find((chapte
 
 export const REPORT_SECTION_COUNT = REPORT_CHAPTERS.reduce((sum, chapter) => sum + chapter.sections.length, 0);
 
+/**
+ * 유료 리포트 본문 글자 수(공백 포함: 요약·헤드라인·문단·연애타임라인).
+ * 최근 결제 완료 리포트 실측 평균(~6,358자)을 반영해 6,500자로 표기. 프롬프트 목표 6,500~8,500자와 맞춘다.
+ */
+export const REPORT_BODY_CHARS = 6500;
+
 /** 문구 속 {partner}·{him}을 사용자의 성별에 맞는 호칭으로 바꾼다. 여성 사용자에게 끌리는 이는 남자, 남성 사용자에게는 여자다. */
 export function withPartner(text: string, gender: "female" | "male"): string {
   const female = gender === "female";
@@ -231,6 +237,14 @@ export const LOVE_TIMELINE_YEARS = 3;
  * zodiac은 작성자의 띠(지지 한자와 띠 이름), date는 작성일(YY. MM. DD.)
  */
 export const REVIEWS = [
+  {
+    name: "이**",
+    zodiac: { hanja: "巳", label: "뱀띠" },
+    rating: 5,
+    date: "26. 11. 06.",
+    body: "사주에 불이 없어서 레드 포인트 하고 다니라고 해서 버건디 케이스 샀어요 감사합니다 ㅎㅎㅎ",
+    sample: false,
+  },
   {
     name: "김**",
     zodiac: { hanja: "卯", label: "토끼띠" },

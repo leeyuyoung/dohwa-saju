@@ -1,6 +1,8 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { UnlockTap } from "@/components/payment/UnlockTap";
 import { DohwaScoreCard } from "@/components/result/DohwaScoreCard";
+import { OrnateFrameCard, type OrnateFrameVariant } from "@/components/result/OrnateFrameCard";
 import { LockIcon } from "@/components/result/ResultParts";
 import { Reveal } from "@/components/ui/Reveal";
 import type { Bubble } from "@/components/webtoon/SpeechBubble";
@@ -59,14 +61,24 @@ export function SinseonScene({
   );
 }
 
-/** 결과 화면의 카드 틀. 어두운 종이 위에 얇은 금테를 두른다. */
-function TeaserCard({ title, children }: { title: ReactNode; children: ReactNode }) {
+/** 결과 화면의 카드 틀. 점수 카드와 같은 장식 격자 프레임. */
+function TeaserCard({
+  title,
+  children,
+  variant = "short",
+}: {
+  title: ReactNode;
+  children: ReactNode;
+  variant?: OrnateFrameVariant;
+}) {
   return (
     <Reveal>
-      <section className="overflow-hidden rounded-2xl border border-gold/35 bg-night/80 shadow-[0_0_40px_rgb(232_137_155_/_0.08)]">
-        <h2 className="border-b border-gold/20 px-5 py-3.5 text-center font-serif text-[14px] tracking-[0.04em] text-gold-soft">{title}</h2>
-        {children}
-      </section>
+      <OrnateFrameCard variant={variant} bodyClassName="overflow-y-auto">
+        <h2 className="shrink-0 border-b border-[rgb(232_200_154_/_0.22)] px-2 py-3 text-center font-serif text-[13px] tracking-[0.04em] text-gold-soft">
+          {title}
+        </h2>
+        <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+      </OrnateFrameCard>
     </Reveal>
   );
 }
@@ -92,9 +104,9 @@ function Row({
   const fluid = oneLine || wrap;
   return (
     <div
-      className={`flex items-center gap-4 border-t border-line/40 px-5 py-3.5 first:border-t-0 ${fluid ? "[container-type:inline-size]" : ""}`}
+      className={`flex items-center gap-3 border-t border-[rgb(232_200_154_/_0.18)] px-2 py-3 ${fluid ? "[container-type:inline-size]" : ""}`}
     >
-      <span className="w-[6.5rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-2 py-0.5 text-center text-[12px] text-gold-soft">
+      <span className="w-[5.75rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-1.5 py-0.5 text-center text-[11px] text-gold-soft">
         {label}
       </span>
       {oneLine ? (
@@ -115,13 +127,15 @@ function Row({
 /** 잠긴 칸. 값 대신 흐린 가짜 글자를 깔아 둔다. */
 function LockedRow({ label, mask = "■■■■■■" }: { label: string; mask?: string }) {
   return (
-    <div className="flex items-center gap-4 border-t border-line/40 px-5 py-3.5">
-      <span className="w-[6.5rem] shrink-0 whitespace-nowrap rounded border border-line/60 px-2 py-0.5 text-center text-[12px] text-mist">{label}</span>
-      <span aria-label="잠김" className="flex-1 select-none font-serif text-[16px] text-paper/70 blur-[6px]">
+    <UnlockTap className="flex w-full items-center gap-3 border-t border-[rgb(232_200_154_/_0.18)] px-2 py-3" label={`${label} 잠금 해제`}>
+      <span className="w-[5.75rem] shrink-0 whitespace-nowrap rounded border border-[rgb(232_200_154_/_0.25)] px-1.5 py-0.5 text-center text-[11px] text-mist">
+        {label}
+      </span>
+      <span aria-hidden className="flex-1 select-none font-serif text-[15px] text-paper/70 blur-[6px]">
         {mask}
       </span>
       <LockIcon />
-    </div>
+    </UnlockTap>
   );
 }
 
@@ -143,7 +157,8 @@ export function LockedPicture({
   alt: string;
   caption: string;
   lockY: string;
-  ratio: string;
+  /** 부모에서 크기를 잡으면 비운다 */
+  ratio?: string;
   revealLock?: boolean;
   /** 결제 전 티저용. 사주별 얼굴을 쓰되 선명히 보이지 않게 한다. */
   blurFace?: boolean;
@@ -167,8 +182,8 @@ export function LockedPicture({
     </figcaption>
   );
 
-  return (
-    <figure className="relative overflow-hidden" style={{ aspectRatio: ratio }}>
+  const figure = (
+    <figure className="relative h-full w-full overflow-hidden" style={ratio ? { aspectRatio: ratio } : undefined}>
       <Image
         src={src}
         alt={alt}
@@ -186,6 +201,14 @@ export function LockedPicture({
       )}
     </figure>
   );
+
+  if (!blurFace) return figure;
+
+  return (
+    <UnlockTap className="relative block h-full w-full" label={`${caption} 잠금 해제`}>
+      {figure}
+    </UnlockTap>
+  );
 }
 
 /** 그림은 바로 두고, 제목·텍스트·자물쇠만 천천히 띄우는 카드. */
@@ -193,39 +216,45 @@ function SlowTextTeaserCard({
   title,
   picture,
   rows,
+  variant = "tall",
 }: {
   title: ReactNode;
   picture: ReactNode;
   rows: ReactNode[];
+  variant?: OrnateFrameVariant;
 }) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-gold/35 bg-night/80 shadow-[0_0_40px_rgb(232_137_155_/_0.08)]">
+    <OrnateFrameCard variant={variant} bodyClassName="overflow-hidden">
       <Reveal duration={1.25}>
-        <h2 className="border-b border-gold/20 px-5 py-3.5 text-center font-serif text-[14px] tracking-[0.04em] text-gold-soft">{title}</h2>
+        <h2 className="shrink-0 border-b border-[rgb(232_200_154_/_0.22)] px-2 py-2 text-center font-serif text-[13px] tracking-[0.04em] text-gold-soft">
+          {title}
+        </h2>
       </Reveal>
-      {picture}
-      {rows.map((row, index) => (
-        <Reveal key={index} delay={0.2 + index * 0.18} duration={1.2}>
-          {row}
-        </Reveal>
-      ))}
-    </section>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        {/* 높이는 유지하되, 좌우로만 들여 장식 테두리를 넘지 않게 */}
+        <div className="mx-2 shrink-0 overflow-hidden rounded-lg">{picture}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          {rows.map((row, index) => (
+            <Reveal key={index} delay={0.2 + index * 0.18} duration={1.2}>
+              {row}
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </OrnateFrameCard>
   );
 }
 
 export function BloomCard({ result }: { result: FreeResultView }) {
   const { bloom } = result.teasers;
   return (
-    <TeaserCard title={`${result.name}의 도화가 피는 달`}>
-      <div className="flex flex-col items-center gap-2 px-5 pb-6 pt-6 text-center">
-        <p className="font-serif text-[clamp(2.2rem,11vw,2.8rem)] leading-none text-paper">
+    <TeaserCard title={`${result.name}의 도화가 피는 달`} variant="short">
+      <div className="flex flex-col items-center px-2 pb-3 pt-4 text-center">
+        <p className="font-serif text-[clamp(1.9rem,9vw,2.4rem)] leading-none text-paper">
           {bloom.year}년 <span className="text-blossom-glow">{bloom.month}월</span>
         </p>
-        <p className="text-[13px] text-mist">
-          {bloom.month}월 초 ~ {(bloom.month % 12) + 1}월 초 · {bloom.hanja}月
-        </p>
       </div>
-      <div className="border-t border-line/40">
+      <div className="border-t border-[rgb(232_200_154_/_0.18)]">
         <LockedRow label="겹도화 해" mask="■■■■년 ■월" />
         <LockedRow label="조심할 남자" mask="■■■■ ■■■ ■■" />
       </div>
@@ -244,10 +273,10 @@ export function PartnerCard({ result }: { result: FreeResultView }) {
           alt="얼굴을 흐리게 가린 남자"
           caption="그 남자의 얼굴"
           lockY="42%"
-          ratio="9 / 8"
+          ratio="6 / 5"
           revealLock
           blurFace
-          faceFilterClass="scale-110 blur-[8px]"
+          faceFilterClass="blur-[8px]"
         />
       }
       rows={[
@@ -282,7 +311,7 @@ export function FaceCard({ result }: { result: FreeResultView }) {
             ratio="10 / 11"
             revealLock
             blurFace
-            faceFilterClass="scale-110 blur-[8px]"
+            faceFilterClass="blur-[8px]"
           />
         }
         rows={[
@@ -307,13 +336,13 @@ export function FaceCard({ result }: { result: FreeResultView }) {
         ]}
       />
 
-      <TeaserCard title="이렇게만 바꾸면 남자들이 못 참을 텐데">
-        <div className="flex items-center gap-4 px-5 py-3.5">
-          <span className="w-[6.5rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-2 py-0.5 text-center text-[12px] text-gold-soft">포인트 컬러</span>
-          <span aria-hidden className="size-5 shrink-0 rounded-full border border-white/30" style={{ backgroundColor: face.color.hex }} />
-          <span className="flex-1 font-serif text-[16px] text-paper">
-            {face.color.name}
+      <TeaserCard title="이렇게만 바꾸면 남자들이 못 참을 텐데" variant="medium">
+        <div className="flex items-center gap-3 px-2 py-3">
+          <span className="w-[5.75rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-1.5 py-0.5 text-center text-[11px] text-gold-soft">
+            포인트 컬러
           </span>
+          <span aria-hidden className="size-5 shrink-0 rounded-full border border-white/30" style={{ backgroundColor: face.color.hex }} />
+          <span className="flex-1 font-serif text-[15px] text-paper">{face.color.name}</span>
         </div>
         <LockedRow label="헤어·메이크업" mask="■■■ ■■ ■■■" />
         <LockedRow label="어울리는 향" mask="■■■ ■■" />

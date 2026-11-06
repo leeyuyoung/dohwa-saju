@@ -1,5 +1,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { UnlockTap } from "@/components/payment/UnlockTap";
+import { OrnateFrameCard } from "@/components/result/OrnateFrameCard";
 import { LockIcon } from "@/components/result/ResultParts";
 import { Reveal } from "@/components/ui/Reveal";
 import { REPORT_CHAPTERS, type ReportChapterKey, withPartner } from "@/lib/constants/result";
@@ -117,66 +119,70 @@ export function StatementCut({ lines }: { lines: ReactNode[] }) {
 export function FreeTypeTeaser({ type }: { type: DohwaView["type"] }) {
   const openVibes = type.vibes.slice(0, 2);
   const lockedVibes = type.vibes.slice(2);
-  /** 첫 문장만 공개하고 나머지는 잠근다. */
-  const [openLine, ...rest] = type.description.split(/(?<=[.。!?…])\s+/);
-  const lockedTail = rest.join(" ").trim() || type.story;
+  /** 앞 두 문장(대략 두 줄)은 열고, 나머지는 연한 블러로 가린다. */
+  const sentences = type.description.split(/(?<=[.。!?…])\s+/).filter(Boolean);
+  const openLines = sentences.slice(0, 2).join(" ");
+  const lockedTail = sentences.slice(2).join(" ").trim();
 
   return (
-    <section className="rounded-3xl border border-line bg-night/70 px-5 py-6">
-      <p className="text-center text-[12px] tracking-[0.08em] text-cinnabar">네 도화유형</p>
-      <div className="relative mt-3 flex flex-col items-center gap-2 text-center">
-        <span aria-hidden className="absolute font-serif text-[96px] leading-none text-cinnabar/10">
+    <OrnateFrameCard variant="medium" bodyClassName="overflow-y-auto px-1 py-1">
+      <p className="text-center text-[11px] tracking-[0.08em] text-cinnabar">네 도화유형</p>
+      <div className="relative mt-2 flex flex-col items-center gap-1.5 text-center">
+        <span aria-hidden className="absolute font-serif text-[72px] leading-none text-cinnabar/10">
           {type.elementHanja}
         </span>
-        <h3 className="relative font-eerie text-[clamp(2rem,10vw,2.6rem)] leading-none text-blossom-glow [text-shadow:0_0_24px_rgb(232_137_155_/_0.55)]">
+        <h3 className="relative font-eerie text-[clamp(1.7rem,8.5vw,2.2rem)] leading-none text-blossom-glow [text-shadow:0_0_24px_rgb(232_137_155_/_0.55)]">
           {type.name}
         </h3>
-        <p className="relative font-serif text-[14px] text-blossom">
+        <p className="relative font-serif text-[13px] text-blossom">
           {type.hanja}
           <span className="mx-1.5 text-mist-dim">·</span>
           {type.alias}
         </p>
-        <p className="relative mt-1 font-serif text-[17px] text-paper">{type.headline}</p>
+        <p className="relative mt-0.5 font-serif text-[15px] text-paper">{type.headline}</p>
       </div>
 
-      <div className="mt-6 border-t border-line/60 pt-5">
-        <p className="text-[12px] font-medium text-cinnabar">{type.name}의 분위기</p>
-        <ul className="mt-3 grid grid-cols-2 gap-2">
+      <div className="mt-4 border-t border-[rgb(232_200_154_/_0.22)] pt-3">
+        <p className="text-[11px] font-medium text-cinnabar">{type.name}의 분위기</p>
+        <ul className="mt-2 flex flex-col gap-1.5">
           {openVibes.map((vibe) => (
             <li
               key={vibe}
-              className="flex flex-col gap-2 rounded-xl border border-line/70 bg-ink/50 px-3 py-3 text-[13px] leading-snug text-paper/90 break-keep"
+              className="flex items-center gap-2.5 rounded-xl border border-[rgb(232_200_154_/_0.2)] bg-ink/40 px-3 py-2.5 text-[12px] leading-snug text-paper/90 break-keep"
             >
               <span className="h-1.5 w-1.5 shrink-0 rotate-45 bg-cinnabar" />
               {vibe}
             </li>
           ))}
           {lockedVibes.map((vibe) => (
-            <li
-              key={vibe}
-              className="flex flex-col gap-2 rounded-xl border border-line/50 bg-ink/40 px-3 py-3 text-[13px] leading-snug text-paper/50 break-keep"
-            >
-              <span className="flex items-center gap-1.5 text-[11px] text-mist-dim">
-                <LockIcon />
-                잠김
-              </span>
-              <span className="select-none blur-[5px]">{vibe}</span>
+            <li key={vibe}>
+              <UnlockTap
+                className="flex w-full items-center gap-2.5 rounded-xl border border-[rgb(232_200_154_/_0.12)] bg-ink/30 px-3 py-2.5 text-[12px] leading-snug text-paper/50 break-keep"
+                label="분위기 잠금 해제"
+              >
+                <span className="flex shrink-0 items-center gap-1 text-[10px] text-mist-dim">
+                  <LockIcon />
+                  잠김
+                </span>
+                <span className="min-w-0 flex-1 select-none blur-[5px]">{vibe}</span>
+              </UnlockTap>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="mt-6 border-t border-line/60 pt-5">
-        <p className="text-[12px] font-medium text-cinnabar">유형 요약 · 일부 공개</p>
-        <p className="mt-2 font-serif text-[15px] leading-relaxed text-paper/90 break-keep">{openLine}</p>
+      <div className="mt-4 border-t border-[rgb(232_200_154_/_0.22)] pt-3">
+        <p className="font-serif text-[14px] leading-relaxed text-paper/90 break-keep">{openLines}</p>
         {lockedTail ? (
-          <p className="mt-1 select-none font-serif text-[15px] leading-relaxed text-paper/40 break-keep blur-[6px]" aria-hidden>
-            {lockedTail}
-          </p>
+          <UnlockTap className="mt-1 block w-full" label="유형 요약 잠금 해제">
+            <p className="select-none font-serif text-[14px] leading-relaxed text-paper/70 break-keep blur-[2.5px]" aria-hidden>
+              {lockedTail}
+            </p>
+          </UnlockTap>
         ) : null}
-        <p className="mt-3 text-center text-[12px] text-mist">나머지는 상세 리포트에서 전부 열어줄게.</p>
+        <p className="mt-2 text-center text-[11px] text-mist">나머지는 상세 리포트에서 전부 열어줄게.</p>
       </div>
-    </section>
+    </OrnateFrameCard>
   );
 }
 
@@ -233,37 +239,39 @@ function CheckMark() {
   );
 }
 
-/** 분량 어필에 내세우는 본문 글자 수. 예시 리포트(public/images/result/report-columns.jpg)는 5,507자였다. 리포트 분량을 줄이면 함께 고친다. */
-const REPORT_MIN_CHARS = 4000;
-
-/** 결제 전에 보여주는 리포트 분량. 실제 예시 리포트를 흐리게 가려 여러 줄로 이어 붙인 그림 위에 글자 수를 크게 띄운다. */
+/** 유료 리포트 캡처 콜라주 가운데에 분량 카피를 올린다. */
 export function ReportVolume() {
+  const chapters = REPORT_CHAPTERS.length;
+
   return (
-    <section className="flex flex-col items-center gap-2 text-center">
-      <Reveal>
-        <h2 className="font-eerie text-[clamp(1.9rem,9vw,2.4rem)] leading-tight text-paper">
-          {REPORT_MIN_CHARS.toLocaleString()}자 이상의
-          <br />
-          <span className="text-blossom-glow">미친 분량</span>
-        </h2>
+    <UnlockTap className="block w-full" label="상세 리포트 열기">
+      <Reveal
+        className="relative -mx-5 w-[calc(100%+2.5rem)] overflow-hidden [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_88%,transparent_100%)] [mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_88%,transparent_100%)]"
+      >
+        {/* 유료 리포트 캡처 21장 = 7열 × 3행 · 상하만 투명 페이드 */}
+        <div className="relative w-full" style={{ aspectRatio: "1223 / 1127" }}>
+          <Image
+            src="/images/result/report-volume-collage.jpg?v=20261107f"
+            alt="흐리게 가린 실제 유료 리포트 화면들"
+            fill
+            sizes="(max-width: 640px) 100vw, 576px"
+            className="object-cover object-center"
+            unoptimized
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-5 text-center">
+            <p className="font-serif text-[clamp(1.05rem,4.6vw,1.3rem)] leading-snug tracking-[0.02em] text-paper [text-shadow:0_2px_18px_rgb(0_0_0_/_0.55)]">
+              총 <span className="text-blossom-glow">{chapters}개 챕터</span>의 심층 분석
+            </p>
+            <p className="font-eerie text-[clamp(2.1rem,11vw,2.7rem)] leading-none tracking-[0.04em] text-blossom-glow [text-shadow:0_2px_22px_rgb(0_0_0_/_0.6)]">
+              미친 분량
+            </p>
+            <p className="font-serif text-[15px] text-paper/90 [text-shadow:0_2px_14px_rgb(0_0_0_/_0.5)]">
+              깊이 있고 재밌는 풀이
+            </p>
+          </div>
+        </div>
       </Reveal>
-      <Reveal>
-        <p className="font-serif text-[16px] text-paper/85">네 색기 쓰는 법, 하나도 빼놓지 않았다</p>
-      </Reveal>
-      <div className="relative -mx-5 mt-4 aspect-[760/912] w-[calc(100%+2.5rem)]">
-        <Image
-          src="/images/result/report-columns.jpg"
-          alt="흐리게 가린 실제 예시 리포트를 여러 줄로 이어 붙인 화면"
-          fill
-          sizes="(max-width: 640px) 100vw, 576px"
-          className="object-cover object-top"
-          style={{
-            maskImage: "linear-gradient(180deg, transparent 0%, black 8%, black 72%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(180deg, transparent 0%, black 8%, black 72%, transparent 100%)",
-          }}
-        />
-      </div>
-    </section>
+    </UnlockTap>
   );
 }
 
@@ -342,10 +350,12 @@ export function ReportToc({ gender }: { gender: "female" | "male" }) {
                 </summary>
                 <ol className="flex flex-col gap-2 border-t border-line/40 px-4 py-3.5">
                   {chapter.sections.map((section, index) => (
-                    <li key={section.title} className="flex items-center gap-2.5 text-[13.5px] text-paper/85">
-                      <span className="font-serif text-cinnabar">{index + 1}</span>
-                      <span className="flex-1 break-keep">{withPartner(section.title, gender)}</span>
-                      <LockIcon />
+                    <li key={section.title}>
+                      <UnlockTap className="flex w-full items-center gap-2.5 text-[13.5px] text-paper/85" label={`${section.title} 잠금 해제`}>
+                        <span className="font-serif text-cinnabar">{index + 1}</span>
+                        <span className="flex-1 break-keep">{withPartner(section.title, gender)}</span>
+                        <LockIcon />
+                      </UnlockTap>
                     </li>
                   ))}
                 </ol>

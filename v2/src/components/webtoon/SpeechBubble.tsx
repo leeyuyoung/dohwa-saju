@@ -23,6 +23,11 @@ export type Bubble = {
   small?: boolean;
 };
 
+/** 인트로~유료결과 말풍선은 전부 이 흰 톤만 쓴다. (자주색 whisper 제거) */
+const BUBBLE_FILL = "bg-[rgb(255_255_255_/_0.9)]";
+const BUBBLE_SHADOW = "shadow-[0_12px_40px_rgb(0_0_0_/_0.18),inset_0_1px_0_rgb(255_255_255_/_0.7)]";
+const BUBBLE_TAIL_FILL = "rgba(255,255,255,0.9)";
+
 /** 흐릿했다가 선명해지며 떠오른다. 튕기는 스프링 대신 ease를 쓴다. */
 const softRise = (delay: number) =>
   ({
@@ -90,11 +95,13 @@ export function SpeechBubble({ bubble }: { bubble: Bubble }) {
   if (bubble.kind === "thought") {
     return (
       <motion.div {...softRise(bubble.at)} className="absolute max-w-[58%]" style={bubble.place}>
-        <p className="min-w-[7.5rem] whitespace-pre-line rounded-[50%] bg-[rgb(255_246_250_/_0.72)] px-6 py-4 text-center font-gothic text-[15px] font-normal leading-snug tracking-[-0.01em] text-[#333333] break-keep shadow-[0_10px_36px_rgb(60_30_55_/_0.18),inset_0_1px_0_rgb(255_255_255_/_0.55)] backdrop-blur-[10px]">
+        <p
+          className={`min-w-[7.5rem] whitespace-pre-line rounded-[50%] ${BUBBLE_FILL} px-6 py-4 text-center font-gothic text-[15px] font-normal leading-snug tracking-[-0.01em] text-[#333333] break-keep ${BUBBLE_SHADOW} backdrop-blur-[10px]`}
+        >
           {bubble.text}
         </p>
-        <span aria-hidden className="absolute -bottom-3 left-[26%] h-3.5 w-3.5 rounded-full bg-[rgb(255_246_250_/_0.7)] backdrop-blur-md" />
-        <span aria-hidden className="absolute -bottom-5.5 left-[20%] h-2 w-2 rounded-full bg-[rgb(255_246_250_/_0.65)] backdrop-blur-sm" />
+        <span aria-hidden className={`absolute -bottom-3 left-[26%] h-3.5 w-3.5 rounded-full ${BUBBLE_FILL} backdrop-blur-md`} />
+        <span aria-hidden className={`absolute -bottom-5.5 left-[20%] h-2 w-2 rounded-full ${BUBBLE_FILL} backdrop-blur-sm`} />
       </motion.div>
     );
   }
@@ -105,22 +112,16 @@ export function SpeechBubble({ bubble }: { bubble: Bubble }) {
   const width = bubble.text.includes("\n") ? (small ? "max-w-[72%]" : "max-w-[74%]") : small ? "max-w-[60%]" : "max-w-[62%]";
   return (
     <motion.div {...softRise(bubble.at)} className={`absolute ${width}`} style={bubble.place}>
-      {/* 파스텔 글래스 타원. 외곽선 없이 불투명도를 조금 높여 글자가 읽히게 한다. */}
+      {/* 흰 글래스 타원. speech·whisper 모두 같은 색. */}
       <div aria-hidden className="absolute inset-0">
-        {bubble.tail && <BubbleTail tail={bubble.tail} inset={bubble.tailInset} whisper={whisper} layer="under" />}
-        <div
-          className={`absolute inset-0 rounded-[50%] backdrop-blur-[10px] ${
-            whisper
-              ? "bg-[rgb(74_26_58_/_0.68)] shadow-[0_12px_40px_rgb(40_10_30_/_0.35),inset_0_1px_0_rgb(255_200_220_/_0.18)]"
-              : "bg-[rgb(255_255_255_/_0.9)] shadow-[0_12px_40px_rgb(60_30_55_/_0.16),inset_0_1px_0_rgb(255_255_255_/_0.7)]"
-          }`}
-        />
-        {bubble.tail && <BubbleTail tail={bubble.tail} inset={bubble.tailInset} whisper={whisper} layer="over" />}
+        {bubble.tail && <BubbleTail tail={bubble.tail} inset={bubble.tailInset} layer="under" />}
+        <div className={`absolute inset-0 rounded-[50%] backdrop-blur-[10px] ${BUBBLE_FILL} ${BUBBLE_SHADOW}`} />
+        {bubble.tail && <BubbleTail tail={bubble.tail} inset={bubble.tailInset} layer="over" />}
       </div>
       <p
-        className={`relative z-10 min-w-[7.5rem] whitespace-pre-line px-6 py-7 text-center font-gothic font-normal leading-snug tracking-[-0.01em] break-keep ${
+        className={`relative z-10 min-w-[7.5rem] whitespace-pre-line px-6 py-7 text-center font-gothic font-normal leading-snug tracking-[-0.01em] text-[#333333] break-keep ${
           bubble.big ? "text-[23px]" : small ? "text-[15px]" : whisper ? "text-[15px]" : "text-[16px]"
-        } ${whisper ? "text-blossom-glow" : "text-[#333333]"}`}
+        }`}
       >
         {bubble.text}
       </p>
@@ -132,17 +133,15 @@ const TAIL_PATH = "M5.5 0 L 7.4 24.5 Q 7.7 26, 8.4 24.8 L 16 0 Z";
 
 /**
  * 말풍선에서 곧게 뻗어 끝이 뾰족한 꼬리.
- * 글래스 말풍선과 맞추려고 불투명 칠 대신 옅은 파스텔 채우기를 쓴다.
+ * 몸통과 같은 흰 톤으로 맞춘다.
  */
 function BubbleTail({
   tail,
   inset = 0.24,
-  whisper,
   layer,
 }: {
   tail: Tail;
   inset?: number;
-  whisper: boolean;
   layer: "under" | "over";
 }) {
   const [vertical, horizontal] = tail.split("-") as ["top" | "bottom", "left" | "right"];
@@ -153,7 +152,6 @@ function BubbleTail({
     [horizontal]: `${inset * 100}%`,
     transform: `scale(${horizontal === "right" ? -1 : 1}, ${vertical === "top" ? -1 : 1})`,
   };
-  const fill = whisper ? "rgba(74,26,58,0.68)" : "rgba(255,246,250,0.72)";
 
   return (
     <svg
@@ -162,7 +160,7 @@ function BubbleTail({
       className={`pointer-events-none absolute h-[26px] w-[22px] overflow-visible ${layer === "over" ? "z-20" : "z-0"}`}
       style={style}
     >
-      <path d={TAIL_PATH} fill={fill} />
+      <path d={TAIL_PATH} fill={BUBBLE_TAIL_FILL} />
     </svg>
   );
 }
