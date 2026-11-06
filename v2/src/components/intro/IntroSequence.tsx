@@ -24,9 +24,9 @@ export function IntroSequence() {
           loop
           filterClassName="[filter:contrast(0.98)_brightness(1.04)_saturate(0.94)_blur(0.4px)]"
         />
-        {/* 상단 로고가 돋보이도록 은은한 검정 그라데이션 */}
-        <div className="absolute inset-x-0 top-0 h-[38%] bg-gradient-to-b from-black/70 via-black/35 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-ink/85 via-ink/35 to-transparent" />
+        {/* 로고·CTA 가독성용. 너무 검게 보이지 않게 옅게만 깐다. */}
+        <div className="absolute inset-x-0 top-0 h-[28%] bg-gradient-to-b from-black/35 via-black/15 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[34%] bg-gradient-to-t from-ink/55 via-ink/20 to-transparent" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center gap-2 px-6 pt-[max(3.25rem,calc(env(safe-area-inset-top)+2.5rem))]">
