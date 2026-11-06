@@ -6,7 +6,11 @@ import { clientIp, consumeRateLimit } from "@/lib/server/rateLimit";
 import { checkoutContactSchema } from "@/lib/validation/analysisInput";
 
 const IP_LIMIT = { limit: 20, windowMs: 60 * 60 * 1000 };
-const bodySchema = checkoutContactSchema.extend({ token: z.string().regex(TOKEN_PATTERN) });
+const bodySchema = checkoutContactSchema.extend({
+  token: z.string().regex(TOKEN_PATTERN),
+  /** 이탈 2단 비밀쿠폰. 금액은 서버가 정한다. */
+  couponApplied: z.boolean().optional().default(false),
+});
 
 /** 주문을 만들고 페이앱 결제 URL을 돌려준다. */
 export async function POST(request: Request) {
@@ -25,6 +29,7 @@ export async function POST(request: Request) {
       parsed.data.email,
       parsed.data.phone,
       parsed.data.marketingOptIn,
+      parsed.data.couponApplied,
     );
     return Response.json(
       { orderId: order.orderId, amount: order.amount, orderName: ORDER_NAME, payurl },

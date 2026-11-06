@@ -116,11 +116,11 @@ export function LoveTimeline({ timeline }: { timeline: { year: number; mood: str
   );
 }
 
-/** 리포트 본문 사이에 넣는 얼굴 그림. 아래에 짧은 설명을 단다. */
+/** 리포트 본문 사이에 넣는 얼굴 그림. 외곽은 마스크로 배경에 스며든다. */
 export function ReportPortrait({ portrait }: { portrait: ReportPortraitView }) {
   return (
     <figure className="flex flex-col items-center gap-3">
-      <div className="relative aspect-[3/4] w-full max-w-[340px] overflow-hidden rounded-3xl border border-gold/30 shadow-[0_0_40px_rgb(232_137_155_/_0.25)]">
+      <div className="relative aspect-[3/4] w-full max-w-[340px] overflow-hidden [-webkit-mask-image:radial-gradient(ellipse_at_center,black_52%,transparent_80%)] [mask-image:radial-gradient(ellipse_at_center,black_52%,transparent_80%)]">
         <Image src={portrait.src} alt={portrait.caption} fill sizes="340px" className="object-cover" />
       </div>
       <figcaption className="rounded-full border border-gold/40 bg-ink/60 px-3.5 py-1 font-serif text-[13px] text-gold-soft">

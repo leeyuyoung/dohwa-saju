@@ -1,7 +1,11 @@
 import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
-import { DETAILED_REPORT_ORDER_NAME, DETAILED_REPORT_PRICE } from "@/lib/constants/service";
+import {
+  DETAILED_REPORT_ALLOWED_AMOUNTS,
+  DETAILED_REPORT_ORDER_NAME,
+  reportCheckoutAmount,
+} from "@/lib/constants/service";
 import { markAnalysisPaid, revokeAnalysisPaid } from "./analysis";
 import { getAnalysisStore, type OrderRecord } from "./store";
 
@@ -107,6 +111,7 @@ export async function createPayappOrder(
   email: string,
   phone: string,
   marketingOptIn = false,
+  couponApplied = false,
 ): Promise<CreatePayappOrderResult> {
   const store = getAnalysisStore();
   const record = await store.get(token);
@@ -114,6 +119,11 @@ export async function createPayappOrder(
   if (record.paidAt !== null) throw new PaymentError(409, "이미 결제가 완료된 리포트입니다.");
   if (record.email !== email || record.phone !== phone || record.marketingOptIn !== marketingOptIn) {
     await store.update(token, { email, phone, marketingOptIn });
+  }
+
+  const amount = reportCheckoutAmount(couponApplied);
+  if (!(DETAILED_REPORT_ALLOWED_AMOUNTS as readonly number[]).includes(amount)) {
+    throw new PaymentError(400, "결제 금액이 올바르지 않습니다.", `amount not allowed: ${amount}`);
   }
 
   const now = Date.now();
@@ -125,7 +135,7 @@ export async function createPayappOrder(
   const order: OrderRecord = {
     orderId,
     token,
-    amount: DETAILED_REPORT_PRICE,
+    amount,
     status: "pending",
     paymentKey: null,
     method: null,
@@ -143,7 +153,7 @@ export async function createPayappOrder(
     cmd: "payrequest",
     userid: payappUserId(),
     goodname: ORDER_NAME,
-    price: String(DETAILED_REPORT_PRICE),
+    price: String(amount),
     recvphone: phone,
     smsuse: "n",
     reqaddr: "0",

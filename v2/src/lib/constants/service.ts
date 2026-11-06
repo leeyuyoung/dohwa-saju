@@ -35,12 +35,23 @@ export const DETAILED_REPORT_PRICE = 19900;
 export const DETAILED_REPORT_LIST_PRICE = 59900;
 /** 3단 가격 UI 중간 단계(표시용). */
 export const DETAILED_REPORT_MID_PRICE = 27900;
+/** 이탈 2단에서 받는 비밀쿠폰 할인액. */
+export const DETAILED_REPORT_SECRET_COUPON = 1000;
+/** 비밀쿠폰 적용 시 실제 청구액. */
+export const DETAILED_REPORT_COUPON_PRICE = DETAILED_REPORT_PRICE - DETAILED_REPORT_SECRET_COUPON;
 /** 주문명·결제 시트 상품명. */
 export const DETAILED_REPORT_ORDER_NAME = "도화신당 연애·매력 리포트";
 
+/** 서버가 받을 수 있는 결제 금액. 클라이언트 임의 금액은 거부한다. */
+export const DETAILED_REPORT_ALLOWED_AMOUNTS = [DETAILED_REPORT_PRICE, DETAILED_REPORT_COUPON_PRICE] as const;
+
 export const formatPrice = (won: number) => `${won.toLocaleString("ko-KR")}원`;
-/** 숫자만(원 없이). 취소선·할인가 나란히 둘 때 쓴다. */
+/** 숫자만(원 없이). 취소선·할인가 나란히 둔다. */
 export const formatWon = (won: number) => won.toLocaleString("ko-KR");
+
+export function reportCheckoutAmount(couponApplied: boolean) {
+  return couponApplied ? DETAILED_REPORT_COUPON_PRICE : DETAILED_REPORT_PRICE;
+}
 
 /** 분석이 끝나면 로딩 화면 가운데에 뜨는 문구와 결과로 가는 버튼 */
 /** 분석 로딩 중 하단에 보여 주는 짧은 상태 문구 */

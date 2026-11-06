@@ -183,7 +183,10 @@ export function LockedPicture({
   );
 
   const figure = (
-    <figure className="relative h-full w-full overflow-hidden" style={ratio ? { aspectRatio: ratio } : undefined}>
+    <figure
+      className="relative h-full w-full overflow-hidden [-webkit-mask-image:radial-gradient(ellipse_at_center,black_48%,transparent_78%)] [mask-image:radial-gradient(ellipse_at_center,black_48%,transparent_78%)]"
+      style={ratio ? { aspectRatio: ratio } : undefined}
+    >
       <Image
         src={src}
         alt={alt}
@@ -191,7 +194,6 @@ export function LockedPicture({
         sizes="(max-width: 640px) 100vw, 576px"
         className={`object-cover object-top ${blurFace ? faceFilterClass : ""}`}
       />
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-night to-transparent" />
       {revealLock ? (
         <Reveal delay={0.2} duration={1.7} className="absolute inset-0">
           {lock}

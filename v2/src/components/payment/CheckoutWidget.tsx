@@ -11,6 +11,8 @@ import { checkoutContactSchema } from "@/lib/validation/analysisInput";
 type CheckoutWidgetProps = {
   token: string;
   amount: number;
+  /** 이탈 2단 비밀쿠폰 적용 여부. 서버가 금액을 확정한다. */
+  couponApplied?: boolean;
 };
 
 type ContactErrors = Partial<Record<"email" | "phone", string>>;
@@ -23,7 +25,7 @@ type OrderResponse = {
   message?: string;
 };
 
-export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
+export function CheckoutWidget({ token, amount, couponApplied = false }: CheckoutWidgetProps) {
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -60,7 +62,7 @@ export function CheckoutWidget({ token, amount }: CheckoutWidgetProps) {
       const response = await fetch("/api/payments/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, ...contact.data }),
+        body: JSON.stringify({ token, couponApplied, ...contact.data }),
       });
       const order = (await response.json().catch(() => ({}))) as OrderResponse;
       if (!response.ok || !order.orderId || !order.payurl || order.amount !== amount) {
