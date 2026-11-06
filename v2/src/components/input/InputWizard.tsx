@@ -160,7 +160,7 @@ export default function InputWizard() {
         ref={formRef}
         noValidate
         onSubmit={handleSubmit}
-        className="relative z-10 mt-auto w-full bg-gradient-to-t from-ink via-ink/85 to-transparent px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-16"
+        className="relative z-10 mt-auto w-full bg-gradient-to-t from-ink/70 via-ink/45 to-transparent px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-16"
       >
         <div className="mx-auto w-full max-w-md">
           <AnimatePresence mode="wait" initial={false}>
