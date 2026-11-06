@@ -247,12 +247,19 @@ export function PartnerCard({ result }: { result: FreeResultView }) {
           ratio="9 / 8"
           revealLock
           blurFace
+          faceFilterClass="scale-110 blur-[8px]"
         />
       }
       rows={[
-        <Row key="vibe" label="분위기">{partner.vibe}</Row>,
-        <Row key="age" label="나이">{partner.age}</Row>,
-        <Row key="build" label="체격·키">{partner.build}</Row>,
+        <Row key="vibe" label="분위기" wrap>
+          {partner.vibe}
+        </Row>,
+        <Row key="age" label="나이" oneLine>
+          {partner.age}
+        </Row>,
+        <Row key="build" label="체격·키" oneLine>
+          {partner.build}
+        </Row>,
         <LockedRow key="job" label="직업" mask="■■■ ■■■■" />,
         <LockedRow key="place" label="처음 만나는 곳" mask="■■ ■■■ ■■" />,
       ]}
@@ -275,6 +282,7 @@ export function FaceCard({ result }: { result: FreeResultView }) {
             ratio="10 / 11"
             revealLock
             blurFace
+            faceFilterClass="scale-110 blur-[8px]"
           />
         }
         rows={[

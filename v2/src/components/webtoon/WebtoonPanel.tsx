@@ -40,7 +40,7 @@ export function WebtoonPanel({ id, src, alt, bubbles, priority = false, headroom
           fill
           priority={priority}
           sizes="(max-width: 640px) 100vw, 576px"
-          className="object-cover"
+          className="webtoon-lut-img object-cover"
           style={{ maskImage: mask, WebkitMaskImage: mask }}
         />
       </div>

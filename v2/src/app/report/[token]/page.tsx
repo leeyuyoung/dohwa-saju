@@ -5,7 +5,7 @@ import { FiveElementsCard } from "@/components/result/FiveElementsCard";
 import { ChapterCoverImage, coverFrameClass, DohwaRadarCard, WHOLE_COVER_KEYS } from "@/components/result/FreeResultParts";
 import { ManseryeokTable } from "@/components/result/ManseryeokTable";
 import { ReportWaiting } from "@/components/result/ReportWaiting";
-import { CharmStars, ReportPortrait, SectionTitle } from "@/components/result/ResultParts";
+import { ReportPortrait, SectionTitle } from "@/components/result/ResultParts";
 import { TypeHero } from "@/components/result/TypeHero";
 import { Reveal } from "@/components/ui/Reveal";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
@@ -60,7 +60,7 @@ export default async function ReportPage({ params }: PageProps<"/report/[token]"
             <SectionTitle
               eyebrow="타고난 글자"
               title="네가 태어난 순간의 하늘"
-              description="태어난 해·달·날·시에 새겨진 기운이란다. 이게 네 매력의 뿌리야."
+              description="태어난 해·달·날·시에 새겨진 기운이야. 이게 네 매력의 뿌리다."
             />
             <ManseryeokTable
               name={report.name}
@@ -79,13 +79,6 @@ export default async function ReportPage({ params }: PageProps<"/report/[token]"
               description="나무·불·흙·쇠·물. 어떤 기운이 짙고 어떤 기운이 비었는지가 네 분위기를 만들지."
             />
             <FiveElementsCard fiveElements={report.fiveElements} currentLuck={report.currentLuck} />
-          </section>
-        </Reveal>
-
-        <Reveal>
-          <section className="flex flex-col gap-5">
-            <SectionTitle eyebrow="매력의 씨앗" title="네 사주에 숨은 매력의 씨앗" />
-            <CharmStars stars={report.stars} />
           </section>
         </Reveal>
 
@@ -163,9 +156,9 @@ export default async function ReportPage({ params }: PageProps<"/report/[token]"
 
       <section className="mt-20 flex flex-col items-center gap-4 text-center">
         <p className="font-serif text-lg font-light leading-relaxed text-mist">
-          네 꽃은 이제 막 피었을 뿐.
+          네 꽃은 이제 막 피었을 뿐이야.
           <br />
-          <span className="text-blossom-glow">어떻게 흐드러질지는 네 몫이란다.</span>
+          <span className="text-blossom-glow">어떻게 피어날지는 네 선택에 달렸어.</span>
         </p>
         <p className="mt-6 max-w-sm text-[11px] leading-relaxed text-mist-dim">
           이 리포트는 사주 명리학의 전통적 해석 체계를 바탕으로 한 오락·참고용 콘텐츠이며, 의료·법률·투자 등 전문적인 판단을

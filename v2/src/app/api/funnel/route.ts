@@ -20,6 +20,26 @@ function isAllowedFunnelRequest(request: Request) {
   }
 }
 
+/** 인트로 방문(세션) 수. 소셜 프루프용으로 intro 단계만 공개한다. */
+export async function GET() {
+  try {
+    const summary = await getAnalysisStore().funnelSummary();
+    const intro = summary.find((row) => row.step === "intro");
+    const count = intro?.sessions ?? 0;
+    return Response.json(
+      { count },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        },
+      },
+    );
+  } catch (error) {
+    console.error("[funnel] intro count failed", error);
+    return Response.json({ count: 0 }, { headers: { "Cache-Control": "no-store" } });
+  }
+}
+
 /** 익명 퍼널 이벤트. PII 없이 sessionId+step만 받는다. */
 export async function POST(request: Request) {
   if (!isAllowedFunnelRequest(request)) return fail(403, "허용되지 않은 요청입니다.");

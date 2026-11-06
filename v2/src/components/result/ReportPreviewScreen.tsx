@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
+import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { LockedPicture } from "@/components/result/TeaserCards";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 import { REPORT_CHAPTERS, REPORT_SECTION_COUNT, withPartner } from "@/lib/constants/result";
@@ -112,6 +113,8 @@ export function ReportPreviewScreen() {
             얼굴·스타일 · 유혹법까지 한 권에 담는다.
           </p>
         </section>
+
+        <ReviewCarousel />
 
         <div className="flex flex-col items-center gap-3">
           <MythicButtonLink href="/start">{HERO_COPY.cta}</MythicButtonLink>

@@ -83,10 +83,10 @@ export function partnerTeaser(profile: SajuProfile): PartnerTeaser {
   const isOfficer = (tenGod: string) => tenGod === "정관" || tenGod === "편관";
   const seats = profile.pillars.filter((pillar) => isOfficer(pillar.stem.tenGod) || isOfficer(pillar.branch.tenGod));
   const age = seats.some((pillar) => pillar.position === "year" || pillar.position === "month")
-    ? "너보다 연상"
+    ? "연상"
     : seats.length > 0
-      ? "동갑이거나 연하"
-      : "나이보다 분위기에 끌리는 인연";
+      ? "동갑이나 연하"
+      : "동갑";
   const element = CONTROLLED_BY[profile.dayMaster.element];
   return { vibe: PARTNER_VIBES[element], age, build: PARTNER_BUILDS[element] };
 }

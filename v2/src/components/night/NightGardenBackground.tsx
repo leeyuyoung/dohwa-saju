@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BlossomBranch } from "./BlossomBranch";
 import { PetalCanvas } from "./PetalCanvas";
 
@@ -14,17 +15,44 @@ const LANTERNS = [
   { left: "62%", size: 120, delay: "3.1s" },
 ];
 
-/** 달밤의 도화 정원: 남색 밤하늘, 흐린 보름달, 모서리의 복숭아꽃 가지, 낮게 깔린 등불, 흩날리는 꽃잎, 한지 결 */
+const GARDEN_SOFT_SRC = "/images/night/garden-soft-v2.jpg";
+
+/** 달밤의 도화 정원. soft는 제작 배경 이미지, full은 가지·꽃잎 연출. */
 export function NightGardenBackground({ intensity = "full", lit = true }: NightGardenBackgroundProps) {
   const soft = intensity === "soft";
+
+  if (soft) {
+    return (
+      <div aria-hidden className="hanji pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-ink">
+        <Image
+          src={GARDEN_SOFT_SRC}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgb(7 6 14 / 0.18) 0%, transparent 35%, rgb(7 6 14 / 0.28) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: "radial-gradient(ellipse 130% 100% at 50% 40%, transparent 55%, rgb(3 2 8 / 0.45) 100%)" }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div aria-hidden className="hanji pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-ink">
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "linear-gradient(180deg, #0b0a1c 0%, #110d24 45%, #1a1028 75%, #0a0710 100%)",
+          background: "linear-gradient(180deg, #0b0a1c 0%, #110d24 45%, #1a1028 75%, #0a0710 100%)",
         }}
       />
 
@@ -33,7 +61,6 @@ export function NightGardenBackground({ intensity = "full", lit = true }: NightG
           className="absolute right-[-10vw] top-[-12vh] h-[70vh] w-[70vh] rounded-full animate-breathe"
           style={{
             background: "radial-gradient(circle, rgb(246 236 216 / 0.22) 0%, rgb(200 180 220 / 0.08) 40%, transparent 70%)",
-            opacity: soft ? 0.6 : 1,
           }}
         />
         <div
@@ -41,7 +68,7 @@ export function NightGardenBackground({ intensity = "full", lit = true }: NightG
           style={{
             background: "radial-gradient(circle at 42% 40%, #fff8ea 0%, #f1e3c6 55%, #d8c39f 100%)",
             boxShadow: "0 0 60px 18px rgb(246 236 216 / 0.25), 0 0 160px 60px rgb(190 170 220 / 0.12)",
-            opacity: soft ? 0.35 : 0.9,
+            opacity: 0.9,
           }}
         />
 
@@ -55,7 +82,6 @@ export function NightGardenBackground({ intensity = "full", lit = true }: NightG
               height: lantern.size,
               animationDelay: lantern.delay,
               background: "radial-gradient(circle, rgb(255 190 120 / 0.32) 0%, rgb(232 137 155 / 0.12) 45%, transparent 70%)",
-              opacity: soft ? 0.5 : 1,
             }}
           />
         ))}
@@ -66,20 +92,19 @@ export function NightGardenBackground({ intensity = "full", lit = true }: NightG
         />
       </div>
 
-      <div style={{ opacity: soft ? 0.45 : 1 }} className="absolute inset-0">
+      <div className="absolute inset-0">
         <BlossomBranch className="absolute left-[-6%] top-[-2%] w-[min(78vw,460px)]" />
       </div>
-      <div style={{ opacity: soft ? 0.3 : 0.85 }} className="absolute inset-0">
+      <div className="absolute inset-0" style={{ opacity: 0.85 }}>
         <BlossomBranch className="absolute bottom-[8%] right-[-14%] w-[min(60vw,360px)] rotate-[160deg]" flip />
       </div>
 
-      <PetalCanvas density={soft ? 0.45 : 1} className="absolute inset-0 h-full w-full" />
+      <PetalCanvas density={1} className="absolute inset-0 h-full w-full" />
 
       <div
         className="absolute inset-0"
         style={{ background: "radial-gradient(ellipse 120% 90% at 50% 45%, transparent 50%, rgb(3 2 8 / 0.8) 100%)" }}
       />
-      {soft && <div className="absolute inset-0 bg-ink/50" />}
     </div>
   );
 }

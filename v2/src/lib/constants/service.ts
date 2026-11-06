@@ -26,7 +26,7 @@ export const INTRO_SCRIPT = {
 export const HERO_COPY = {
   lead: "오늘 밤, 네 몸에 핀 꽃\n하나하나 벗겨서 읽어주마.",
   invite: "네 색기력이 어떤지\n궁금하지 않니?",
-  cta: "도화신선에게 사주 내어주기",
+  cta: "도화선녀에게 사주 내어주기",
 } as const;
 
 /** 상세 리포트 결제 금액(실제 청구). 다시 올릴 때 이 값만 바꾸면 된다. */
@@ -43,10 +43,13 @@ export const formatPrice = (won: number) => `${won.toLocaleString("ko-KR")}원`;
 export const formatWon = (won: number) => won.toLocaleString("ko-KR");
 
 /** 분석이 끝나면 로딩 화면 가운데에 뜨는 문구와 결과로 가는 버튼 */
+/** 분석 로딩 중 하단에 보여 주는 짧은 상태 문구 */
+export const ANALYSIS_WORKING_COPY = "만세력 기반 · 정밀 분석 중…" as const;
+
 export const ANALYSIS_READY_COPY = {
-  found: "다 찾았다. 네가 숨긴 데까지.",
-  tease: "이것 참 재밌는 사주군",
-  cta: "숨김없이 보여줘",
+  found: "찾았다. 네 색기의 뿌리.",
+  tease: "네 도화살, 생각보다 진해.",
+  cta: "지금 열어보기",
 } as const;
 
 /** 입력 정보 없이 로딩 화면에 들어왔을 때 가운데에 뜨는 문구와 입력으로 돌아가는 버튼 */
@@ -70,8 +73,8 @@ export const REPORT_WRITING_MESSAGES = [
 
 /** 도화신선이 하나씩 묻는 입력 질문. 순서는 analysisInput의 STEP_SCHEMAS와 같다. */
 export const INPUT_STEPS = [
-  { sub: "귀에 대고 속삭여 보거라.", question: "“네가 태어난 날, 언제지?”" },
-  { sub: "몰라도 괜찮아. 어차피 내가 찾아낼 테니.", question: "“몇 시에 태어났느냐?”" },
-  { sub: "오늘 밤 내가 부를 이름이니, 예쁜 걸로.", question: "“이름이 뭐지?”" },
-  { sub: "숨겨 봤자 소용없다.", question: "“지금 네 마음 차지한 놈, 있느냐?”" },
+  { question: "“네가 태어난 날, 언제지?”" },
+  { question: "“몇 시에 태어났느냐?”" },
+  { question: "“이름이 뭐지?”" },
+  { question: "“지금 네 마음 차지한 놈, 있느냐?”" },
 ] as const;

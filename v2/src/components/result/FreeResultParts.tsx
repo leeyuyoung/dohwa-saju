@@ -174,7 +174,7 @@ export function FreeTypeTeaser({ type }: { type: DohwaView["type"] }) {
             {lockedTail}
           </p>
         ) : null}
-        <p className="mt-3 text-center text-[12px] text-mist">나머지는 상세 리포트에서 전부 열어 준다.</p>
+        <p className="mt-3 text-center text-[12px] text-mist">나머지는 상세 리포트에서 전부 열어줄게.</p>
       </div>
     </section>
   );
@@ -278,7 +278,7 @@ export function ChapterCoverImage({ src, whole = false }: { src: string; whole?:
       alt=""
       fill
       sizes="(max-width: 640px) 100vw, 576px"
-      className={whole ? "object-contain object-top" : "object-cover"}
+      className={`webtoon-lut-img ${whole ? "object-contain object-top" : "object-cover"}`}
       style={{ maskImage: mask, WebkitMaskImage: mask }}
     />
   );
@@ -296,8 +296,8 @@ export function coverFrameClass(key: ReportChapterKey) {
  * x·y는 그림이 아니라 표지 틀 기준이라, 틀 비율(4:5 또는 통째로 보이는 3:4.65)이 바뀌면 다시 잡아야 한다.
  */
 const LOCKED_FACES: Partial<Record<ReportChapterKey, { image: string; x: string; y: string; caption: string }>> = {
-  gaze: { image: "/images/result/chapter-2-locked.jpg", x: "49.8%", y: "37.8%", caption: "그 남자가 보는 네 얼굴" },
-  fate: { image: "/images/result/chapter-5-locked.jpg", x: "50.1%", y: "29.6%", caption: "네 남자의 얼굴" },
+  gaze: { image: "/images/sunnyeo/hero-eyes-closed-v2.png", x: "49.8%", y: "37.8%", caption: "그 남자가 보는 네 얼굴" },
+  fate: { image: "/images/sunnyeo/overshoulder-flip-v2.jpg", x: "50.1%", y: "42%", caption: "네 남자의 얼굴" },
 };
 
 function FaceLock({ x, y, caption }: { x: string; y: string; caption: string }) {
@@ -317,29 +317,20 @@ function FaceLock({ x, y, caption }: { x: string; y: string; caption: string }) 
   );
 }
 
-/** 페이지 맨 아래의 리포트 목차. 장마다 그림·제목·한 줄 소개만 보이고, 소제목은 눌러야 펼쳐진다. 스크롤하면 하나씩 떠오른다. */
+/** 페이지 맨 아래의 리포트 목차. 장 제목·한 줄 소개만 보이고, 소제목은 눌러야 펼쳐진다. */
 export function ReportToc({ gender }: { gender: "female" | "male" }) {
   return (
     <section className="flex flex-col gap-4">
       <Reveal className="flex flex-col items-center gap-1.5 text-center">
         <p className="text-xs tracking-[0.3em] text-gold-soft">목차</p>
-        <h2 className="font-serif text-[20px] text-paper">들킬 준비 됐지?</h2>
+        <h2 className="font-serif text-[20px] text-paper">본편은 이제부터.</h2>
       </Reveal>
       <ol className="flex flex-col gap-2.5">
         {REPORT_CHAPTERS.map((chapter) => (
           <li key={chapter.key}>
             <Reveal amount={0.55}>
               <details className="group overflow-hidden rounded-2xl border border-line/70 bg-night/70">
-                <summary className="flex cursor-pointer list-none items-center gap-4 p-3 [&::-webkit-details-marker]:hidden">
-                  <span className="relative size-16 shrink-0 overflow-hidden rounded-xl">
-                    <Image
-                      src={LOCKED_FACES[chapter.key]?.image ?? chapter.image}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      className="object-cover object-top"
-                    />
-                  </span>
+                <summary className="flex cursor-pointer list-none items-center gap-3.5 p-3.5 [&::-webkit-details-marker]:hidden">
                   <span className="flex min-w-0 flex-1 flex-col gap-1">
                     <span className="text-[11px] tracking-[0.2em] text-gold-soft">제{chapter.chapter}장</span>
                     <span className="font-serif text-[16px] leading-snug text-paper break-keep">{chapter.title}</span>

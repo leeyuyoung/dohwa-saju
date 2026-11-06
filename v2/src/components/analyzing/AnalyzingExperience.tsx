@@ -3,20 +3,17 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HeroineBackdrop, type HeroineScene } from "@/components/night/HeroineBackdrop";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 import { trackFunnel } from "@/lib/client/funnel";
 import { trackKarrot } from "@/lib/client/karrotPixel";
 import { clearPendingAnalysis, loadPendingAnalysis } from "@/lib/client/inputStorage";
-import { ANALYSIS_MISSING_COPY, ANALYSIS_READY_COPY } from "@/lib/constants/service";
+import { ANALYSIS_MISSING_COPY, ANALYSIS_READY_COPY, ANALYSIS_WORKING_COPY } from "@/lib/constants/service";
 import { analysisInputSchema } from "@/lib/validation/analysisInput";
 
-/** 두 손을 머리 위 벽에 누르고 허리를 감싼 한 컷 */
-const SCENE = "pinRaised" satisfies HeroineScene;
-const SCENES: HeroineScene[] = [SCENE];
-/** 계산은 금방 끝나지만, 의식처럼 보이도록 이 시간만큼은 그림을 보여준다. */
-const MIN_RITUAL_MS = 2000;
+const LOADING_VIDEO_SRC = "/videos/loading/ritual.mp4";
+/** 계산은 금방 끝나지만, 의식처럼 보이도록 이 시간만큼은 영상을 보여준다. */
+const MIN_RITUAL_MS = 2500;
 /** 진행 바가 대략 이 시간에 63%쯤 차도록 한다. 실제 진행률이 아니라 기다림을 보여주는 장치다. */
 const PROGRESS_TIME_CONSTANT_MS = 700;
 const MAX_PENDING_PROGRESS = 0.95;
@@ -63,12 +60,20 @@ export function AnalyzingExperience() {
   const startedRef = useRef(false);
   const activeRef = useRef(true);
   const startTimeRef = useRef(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const begin = useCallback(() => {
     const startedAt = Date.now();
     startTimeRef.current = startedAt;
     setElapsedMs(0);
     setPhase({ kind: "working" });
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      video.play().catch(() => {
+        // 자동재생이 막히면 첫 프레임이 배경처럼 남는다.
+      });
+    }
     void runAnalysis().then(async (next) => {
       if (!activeRef.current) return;
       if (next.kind === "ready") {
@@ -100,6 +105,20 @@ export function AnalyzingExperience() {
     return () => window.clearInterval(timer);
   }, [working]);
 
+  /** 로딩이 끝나면 마지막 프레임에서 멈춘다. 반복하지 않는다. */
+  useEffect(() => {
+    if (working) return;
+    const video = videoRef.current;
+    if (!video) return;
+    const freezeAtEnd = () => {
+      if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+      video.pause();
+      video.currentTime = Math.max(0, video.duration - 0.05);
+    };
+    if (video.readyState >= 1) freezeAtEnd();
+    else video.addEventListener("loadedmetadata", freezeAtEnd, { once: true });
+  }, [working]);
+
   const progress =
     phase.kind === "ready"
       ? 1
@@ -109,14 +128,24 @@ export function AnalyzingExperience() {
 
   return (
     <div className="relative flex flex-1 flex-col text-center">
-      <HeroineBackdrop scenes={SCENES} scene={SCENE} fadeMs={700} noVeil={working || !!centerCopy} />
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-ink">
+        <video
+          ref={videoRef}
+          src={LOADING_VIDEO_SRC}
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover object-center [filter:contrast(0.94)_brightness(1.06)_saturate(0.9)_blur(0.55px)]"
+        />
+      </div>
 
       <motion.div
         aria-hidden
         className="pointer-events-none fixed inset-0 z-10 bg-ink"
         initial={{ opacity: 0.92 }}
         animate={{ opacity: 0 }}
-        transition={{ duration: MIN_RITUAL_MS / 1000, ease: "easeIn" }}
+        transition={{ duration: 1.2, ease: "easeIn" }}
       />
 
       <div
@@ -136,6 +165,18 @@ export function AnalyzingExperience() {
       </div>
 
       <AnimatePresence>
+        {working && (
+          <motion.p
+            key="working"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.45 }}
+            className="pointer-events-none fixed inset-x-0 top-1/2 z-20 mx-auto w-fit -translate-y-1/2 rounded-full bg-black/45 px-4 py-2 font-sans text-[13px] tracking-[-0.01em] text-paper/95 backdrop-blur-sm [text-shadow:0_1px_6px_rgb(0_0_0_/_0.55)]"
+          >
+            {ANALYSIS_WORKING_COPY}
+          </motion.p>
+        )}
         {centerCopy && (
           <motion.p
             key={phase.kind}

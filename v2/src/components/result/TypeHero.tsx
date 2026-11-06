@@ -8,13 +8,13 @@ export function TypeHero({ name, type, eyebrow, hook }: TypeHeroProps) {
     <section className="-mx-5">
       <div className="relative aspect-[4/5] w-full overflow-hidden">
         <Image
-          src="/images/sinseon/hero.jpg"
-          alt=""
+          src="/images/sunnyeo/hero-soft.jpg"
+          alt="달빛 아래 벚꽃 사이로 돌아보는 도화선녀"
           fill
           sizes="(max-width: 640px) 100vw, 576px"
           loading="eager"
           fetchPriority="high"
-          className="object-cover object-[50%_20%]"
+          className="webtoon-lut-img object-cover object-[50%_12%] origin-[center_10%] [transform:scaleX(-1)_scale(1.08)_translateY(-4%)]"
         />
         <div
           aria-hidden
@@ -26,10 +26,10 @@ export function TypeHero({ name, type, eyebrow, hook }: TypeHeroProps) {
             <span className="rounded-full border border-white/15 bg-ink/50 px-3 py-1 text-xs text-paper/90 backdrop-blur-sm">{eyebrow}</span>
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 px-6 pb-4">
-          <p className="font-serif text-base text-paper/90">{name}, 넌 보아하니</p>
+        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 px-6 pb-8">
+          <p className="font-serif text-base text-paper/90">{name}, 네 사주를 보면</p>
           <h1 className="font-eerie text-[clamp(2.2rem,10vw,3rem)] leading-tight text-paper [text-shadow:0_0_24px_rgb(232_137_155_/_0.55)]">
-            {type.name}이구나
+            {type.name}야
           </h1>
           <p className="flex items-center gap-2 font-serif text-sm text-blossom">
             <span>{type.hanja}</span>
@@ -39,7 +39,7 @@ export function TypeHero({ name, type, eyebrow, hook }: TypeHeroProps) {
         </div>
       </div>
 
-      <div className="px-5">
+      <div className="mt-6 px-5">
         <div className="rounded-3xl border border-line bg-night/70 px-6 py-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-2">
