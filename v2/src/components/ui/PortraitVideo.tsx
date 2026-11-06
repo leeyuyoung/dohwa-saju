@@ -2,7 +2,10 @@
 
 import type { Ref } from "react";
 
-/** 화면을 비율 유지한 채 가득 채운다. 강제 레터박스·9:16 프레임은 쓰지 않는다. */
+/**
+ * 폰: 화면 가득 cover.
+ * 태블릿·웹(md~): 원본 영상 크기·비율 그대로(필요 시만 화면에 맞게 축소), 바깥은 검정.
+ */
 export function PortraitVideo({
   src,
   videoRef,
@@ -15,7 +18,7 @@ export function PortraitVideo({
   loop?: boolean;
 }) {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden bg-black">
+    <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-black">
       <video
         ref={videoRef}
         src={src}
@@ -24,7 +27,7 @@ export function PortraitVideo({
         loop={loop}
         playsInline
         preload="auto"
-        className={`absolute inset-0 h-full w-full object-cover object-center ${filterClassName ?? ""}`}
+        className={`h-full w-full object-cover object-center md:h-auto md:w-auto md:max-h-full md:max-w-full md:object-contain ${filterClassName ?? ""}`}
       />
     </div>
   );
