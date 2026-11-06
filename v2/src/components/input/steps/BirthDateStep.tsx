@@ -53,7 +53,7 @@ export function BirthDateStep({ values, errors, update }: StepProps) {
           onChange={(event) => changeDigits(event.target.value)}
           aria-invalid={!!errors.birthDate}
           aria-describedby={error ? "birth-date-error" : undefined}
-          className="min-w-0 flex-1 bg-transparent font-serif text-2xl tracking-[0.06em] text-paper placeholder:text-mist-dim/50 focus:outline-none"
+          className="min-w-0 flex-1 bg-transparent font-serif text-2xl tracking-[0.06em] text-paper placeholder:text-paper/55 focus:outline-none"
         />
         <div role="radiogroup" aria-label="달력 유형" className="flex shrink-0 gap-1.5">
           {CALENDAR_OPTIONS.map((option) => {

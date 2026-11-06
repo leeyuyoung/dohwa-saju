@@ -4,7 +4,7 @@ import { FieldError } from "../fields/Field";
 import type { StepProps } from "./types";
 
 const TIME_INPUT =
-  "w-12 bg-transparent text-center font-serif text-2xl tracking-[0.06em] text-paper placeholder:text-mist-dim/50 focus:outline-none disabled:opacity-30";
+  "w-12 bg-transparent text-center font-serif text-2xl tracking-[0.06em] text-paper placeholder:text-paper/55 focus:outline-none disabled:opacity-30";
 
 const onlyDigits = (value: string) => value.replace(/\D/g, "").slice(0, 2);
 

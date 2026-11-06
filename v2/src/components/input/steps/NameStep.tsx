@@ -16,7 +16,7 @@ export function NameStep({ values, errors, update }: StepProps) {
         onChange={(event) => update({ name: event.target.value })}
         aria-invalid={!!errors.name}
         aria-describedby={errors.name ? "name-error" : undefined}
-        className="w-full bg-transparent font-serif text-2xl tracking-[0.04em] text-paper placeholder:text-mist-dim/50 focus:outline-none"
+        className="w-full bg-transparent font-serif text-2xl tracking-[0.04em] text-paper placeholder:text-paper/55 focus:outline-none"
       />
       <div className="h-px bg-line" />
       <FieldError id="name-error" message={errors.name} />
