@@ -2,10 +2,7 @@
 
 import type { Ref } from "react";
 
-/**
- * 전체 화면은 검정. 영상만 9:16으로 가운데에 두고 양옆·위아래는 레터박스.
- * (웹 가로에서 object-cover로 좌우가 늘어나 보이던 문제 방지)
- */
+/** 화면을 비율 유지한 채 가득 채운다. 강제 레터박스·9:16 프레임은 쓰지 않는다. */
 export function PortraitVideo({
   src,
   videoRef,
@@ -18,26 +15,17 @@ export function PortraitVideo({
   loop?: boolean;
 }) {
   return (
-    <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-black">
-      <div
-        className="relative shrink-0 overflow-hidden"
-        style={{
-          width: "min(100vw, calc(100dvh * 9 / 16))",
-          height: "min(100dvh, calc(100vw * 16 / 9))",
-          aspectRatio: "9 / 16",
-        }}
-      >
-        <video
-          ref={videoRef}
-          src={src}
-          autoPlay
-          muted
-          loop={loop}
-          playsInline
-          preload="auto"
-          className={`absolute inset-0 h-full w-full object-contain object-center ${filterClassName ?? ""}`}
-        />
-      </div>
+    <div className="pointer-events-none absolute inset-0 overflow-hidden bg-black">
+      <video
+        ref={videoRef}
+        src={src}
+        autoPlay
+        muted
+        loop={loop}
+        playsInline
+        preload="auto"
+        className={`absolute inset-0 h-full w-full object-cover object-center ${filterClassName ?? ""}`}
+      />
     </div>
   );
 }
