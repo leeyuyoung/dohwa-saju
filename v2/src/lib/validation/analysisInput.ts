@@ -33,7 +33,6 @@ export type AnalysisFormValues = {
   birthMinute: string;
   birthTimeUnknown: boolean;
   name: string;
-  relationshipStatus: "" | RelationshipStatus;
 };
 
 export const EMPTY_FORM_VALUES: AnalysisFormValues = {
@@ -46,7 +45,6 @@ export const EMPTY_FORM_VALUES: AnalysisFormValues = {
   birthMinute: "",
   birthTimeUnknown: false,
   name: "",
-  relationshipStatus: "",
 };
 
 export function daysInMonth(calendarType: "solar" | "lunar", year: number, month: number): number {
@@ -109,20 +107,7 @@ export const birthTimeStepSchema = z
 
 export const nameStepSchema = z.object({ name: nameRule });
 
-export const loveStepSchema = z
-  .object({ relationshipStatus: z.string() })
-  .superRefine((values, ctx) => {
-    if (!RELATIONSHIP_STATUS_VALUES.includes(values.relationshipStatus as RelationshipStatus)) {
-      ctx.addIssue({ code: "custom", path: ["relationshipStatus"], message: "숨기지 말고 하나 고르거라." });
-    }
-  });
-
-export const STEP_SCHEMAS = [
-  birthDateStepSchema,
-  birthTimeStepSchema,
-  nameStepSchema,
-  loveStepSchema,
-] as const;
+export const STEP_SCHEMAS = [birthDateStepSchema, birthTimeStepSchema, nameStepSchema] as const;
 
 export type FieldErrors = Partial<Record<string, string>>;
 
@@ -177,7 +162,8 @@ export function toAnalysisInput(
       minute: timeKnown ? Number(values.birthMinute) : null,
     },
     gender: "female",
-    relationshipStatus: values.relationshipStatus,
+    /** 연애 상태 질문은 제거됨. 저장·AI 호환을 위해 기본값만 둔다. */
+    relationshipStatus: "single",
   });
 
   if (!parsed.success) return { ok: false, stepIndex: 0, errors: { form: "다시 한번 확인해 보거라." } };

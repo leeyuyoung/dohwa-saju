@@ -17,18 +17,16 @@ import {
 } from "@/lib/validation/analysisInput";
 import { BirthDateStep } from "./steps/BirthDateStep";
 import { BirthTimeStep } from "./steps/BirthTimeStep";
-import { LoveStep } from "./steps/LoveStep";
 import { NameStep } from "./steps/NameStep";
 import type { StepProps } from "./steps/types";
 
-const STEP_FUNNEL: FunnelStep[] = ["birth_date", "birth_time", "name", "relationship"];
+const STEP_FUNNEL: FunnelStep[] = ["birth_date", "birth_time", "name"];
 const INPUT_VIDEO_SRC = "/videos/input/background-v2.mp4";
 
 const STEP_COMPONENTS: ReadonlyArray<(props: StepProps) => ReactNode> = [
   BirthDateStep,
   BirthTimeStep,
   NameStep,
-  LoveStep,
 ];
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;

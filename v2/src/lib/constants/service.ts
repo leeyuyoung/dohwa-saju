@@ -87,5 +87,4 @@ export const INPUT_STEPS = [
   { question: "“네가 태어난 날, 언제지?”" },
   { question: "“몇 시에 태어났느냐?”" },
   { question: "“이름이 뭐지?”" },
-  { question: "“지금 네 마음 차지한 놈, 있느냐?”" },
 ] as const;

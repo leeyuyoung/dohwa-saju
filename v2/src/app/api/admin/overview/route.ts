@@ -1,4 +1,3 @@
-import { relationshipLabel } from "@/lib/validation/analysisInput";
 import { buildFunnelSummary, FUNNEL_STEPS, type FunnelStep } from "@/lib/server/funnel";
 import { isAdminConfigured, requireAdminSession } from "@/lib/server/adminAuth";
 import { jsonError as fail } from "@/lib/server/http";
@@ -36,8 +35,6 @@ export async function GET() {
           email: record.email,
           phone: record.phone,
           marketingOptIn: record.marketingOptIn,
-          relationshipStatus: record.relationshipStatus,
-          relationshipLabel: relationshipLabel(record.relationshipStatus),
           paidAt: record.paidAt,
           status: record.status,
           emailSentAt: record.emailSentAt,
@@ -61,8 +58,6 @@ export async function GET() {
           email: record.email,
           phone: record.phone,
           marketingOptIn: record.marketingOptIn,
-          relationshipStatus: record.relationshipStatus,
-          relationshipLabel: relationshipLabel(record.relationshipStatus),
           paidAt: record.paidAt,
           status: record.status,
           emailSentAt: record.emailSentAt,
