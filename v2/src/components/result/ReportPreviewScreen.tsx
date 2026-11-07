@@ -3,7 +3,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { LockedPicture } from "@/components/result/TeaserCards";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
-import { REPORT_CHAPTERS, REPORT_SECTION_COUNT, withPartner } from "@/lib/constants/result";
+import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
 import { HERO_COPY } from "@/lib/constants/service";
 
 /** 미리보기용 고정 샘플 초상. 결제 전 이탈 방지용으로만 쓴다. */
@@ -20,7 +20,7 @@ const PREVIEW_PORTRAITS = {
 
 /**
  * 인트로·랜딩에서 들어가는 짧은 리포트 미리보기.
- * 전체 샘플 결과로 보내지 않고, 안에 뭐가 있는지·얼굴 예시·목차만 보여 이탈을 줄인다.
+ * 얼굴 예시와 v2 PART 목차만 보여 이탈을 줄인다.
  */
 export function ReportPreviewScreen() {
   return (
@@ -41,7 +41,7 @@ export function ReportPreviewScreen() {
         <section className="flex flex-col gap-3">
           <p className="text-center text-[12px] tracking-[0.2em] text-cinnabar">얼굴 미리보기</p>
           <div className="grid grid-cols-2 gap-3">
-            <div className="overflow-hidden rounded-2xl border border-line/70 bg-night/70">
+            <div className="overflow-hidden rounded-[20px]">
               <LockedPicture
                 src={PREVIEW_PORTRAITS.self.src}
                 alt="얼굴을 흐리게 가린 본인 예시"
@@ -50,10 +50,11 @@ export function ReportPreviewScreen() {
                 ratio="3 / 4"
                 blurFace
                 compactLock
+                shape="rect"
                 faceFilterClass="scale-[1.12] blur-[3.5px]"
               />
             </div>
-            <div className="overflow-hidden rounded-2xl border border-line/70 bg-night/70">
+            <div className="overflow-hidden rounded-[20px]">
               <LockedPicture
                 src={PREVIEW_PORTRAITS.partner.src}
                 alt="얼굴을 흐리게 가린 남자 예시"
@@ -62,6 +63,7 @@ export function ReportPreviewScreen() {
                 ratio="3 / 4"
                 blurFace
                 compactLock
+                shape="rect"
                 faceFilterClass="scale-[1.12] blur-[3.5px]"
               />
             </div>
@@ -72,46 +74,32 @@ export function ReportPreviewScreen() {
         <section className="flex flex-col gap-4">
           <div className="flex flex-col items-center gap-1.5 text-center">
             <p className="text-[12px] tracking-[0.2em] text-gold-soft">목차</p>
-            <h2 className="font-serif text-[18px] text-paper">
-              {REPORT_CHAPTERS.length}장 · {REPORT_SECTION_COUNT}개 풀이
-            </h2>
+            <h2 className="font-serif text-[18px] text-paper">{REPORT_PARTS_V2.length}개 PART</h2>
           </div>
           <ol className="flex flex-col gap-2">
-            {REPORT_CHAPTERS.map((chapter) => (
-              <li
-                key={chapter.key}
-                className="rounded-2xl border border-line/70 bg-night/70 px-4 py-3.5"
-              >
+            {REPORT_PARTS_V2.map((part) => (
+              <li key={part.key} className="rounded-2xl border border-line/70 bg-night/70 px-4 py-3.5">
                 <div className="flex items-baseline gap-2.5">
-                  <span className="shrink-0 text-[11px] tracking-[0.16em] text-cinnabar">제{chapter.chapter}장</span>
+                  <span className="shrink-0 text-[11px] tracking-[0.16em] text-cinnabar">PART {part.part}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-serif text-[15px] text-paper break-keep">
-                      {withPartner(chapter.title, "female")}
-                    </p>
-                    <p className="mt-0.5 text-[12.5px] leading-snug text-mist break-keep">
-                      {withPartner(chapter.subtitle, "female")}
-                    </p>
+                    <p className="font-serif text-[15px] text-paper break-keep">{part.title}</p>
+                    <p className="mt-0.5 text-[12.5px] leading-snug text-mist break-keep">{part.question}</p>
                   </div>
                 </div>
                 <ul className="mt-2.5 flex flex-col gap-1 border-t border-line/50 pt-2.5 pl-0.5">
-                  {chapter.sections.map((section) => (
-                    <li key={section.title} className="flex items-start gap-2 text-[12.5px] text-paper/80">
+                  {(part.key === "vibe"
+                    ? ["분위기 키워드 ①", "분위기 키워드 ②", "분위기 키워드 ③"]
+                    : part.sections.map((section) => section.title)
+                  ).map((title) => (
+                    <li key={title} className="flex items-start gap-2 text-[12.5px] text-paper/80">
                       <span aria-hidden className="mt-[0.45em] h-1 w-1 shrink-0 rounded-full bg-cinnabar/70" />
-                      <span className="break-keep">{withPartner(section.title, "female")}</span>
+                      <span className="break-keep">{title}</span>
                     </li>
                   ))}
                 </ul>
               </li>
             ))}
           </ol>
-        </section>
-
-        <section className="rounded-2xl border border-cinnabar/35 bg-ink/50 px-4 py-4 text-center">
-          <p className="font-serif text-[14px] leading-relaxed text-paper/90 break-keep">
-            도화유형 · 사주 8글자 · 개화 시기 · 운명의 남자
-            <br />
-            얼굴·스타일 · 유혹법까지 한 권에 담는다.
-          </p>
         </section>
 
         <ReviewCarousel />
