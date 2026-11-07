@@ -1,9 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckoutDealPrice } from "@/components/payment/CheckoutDealPrice";
-import { CheckoutExitModal } from "@/components/payment/CheckoutExitModal";
 import { CheckoutSecretCouponModal } from "@/components/payment/CheckoutSecretCouponModal";
 import { CheckoutWidget } from "@/components/payment/CheckoutWidget";
 import { trackFunnel } from "@/lib/client/funnel";
@@ -31,7 +30,6 @@ const SLASH_STEP_MS = 420;
 /** 결제 CTA에서 아래에서 올라오는 시트. 할인·연락처·페이앱 결제를 담는다. */
 export function PaymentSheet({ open, onClose, token, title, buyerName }: PaymentSheetProps) {
   const [slashIndex, setSlashIndex] = useState(0);
-  const [exitOpen, setExitOpen] = useState(false);
   const [couponOfferOpen, setCouponOfferOpen] = useState(false);
   const [couponApplied, setCouponApplied] = useState(false);
   const displayPrice = SLASH_STEPS[slashIndex] ?? DETAILED_REPORT_PRICE;
@@ -40,37 +38,26 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
   const baseSaved = DETAILED_REPORT_LIST_PRICE - DETAILED_REPORT_PRICE;
   const totalSaved = DETAILED_REPORT_LIST_PRICE - payAmount;
 
+  /** 첫 닫기 → 비밀쿠폰 팝업. 이미 적용됐으면 시트 종료. */
   const requestClose = () => {
-    setCouponOfferOpen(false);
-    setExitOpen(true);
-  };
-  const continueCheckout = () => setExitOpen(false);
-  /** 1단에서 나가기 → 쿠폰 미적용이면 2단, 이미 적용했으면 종료 */
-  const leaveAfterExit = () => {
-    setExitOpen(false);
-    if (couponApplied) {
-      onClose();
+    if (!couponApplied) {
+      setCouponOfferOpen(true);
       return;
     }
-    setCouponOfferOpen(true);
+    onClose();
   };
   const acceptCoupon = () => {
     setCouponApplied(true);
     setCouponOfferOpen(false);
   };
   const leaveCheckout = () => {
-    setExitOpen(false);
     setCouponOfferOpen(false);
     onClose();
   };
 
-  const couponOfferOpenRef = useRef(couponOfferOpen);
-  couponOfferOpenRef.current = couponOfferOpen;
-
   useEffect(() => {
     if (!open) {
       setSlashIndex(0);
-      setExitOpen(false);
       setCouponOfferOpen(false);
       setCouponApplied(false);
       return;
@@ -89,15 +76,6 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
     });
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      if (couponOfferOpenRef.current) {
-        setCouponOfferOpen(false);
-        return;
-      }
-      setExitOpen((prev) => !prev);
-    };
-    window.addEventListener("keydown", onKey);
 
     setSlashIndex(0);
     const t1 = window.setTimeout(() => setSlashIndex(1), SLASH_STEP_MS);
@@ -105,11 +83,28 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
 
     return () => {
       document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
   }, [open, token]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (couponOfferOpen) {
+        setCouponOfferOpen(false);
+        return;
+      }
+      if (!couponApplied) {
+        setCouponOfferOpen(true);
+        return;
+      }
+      onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, couponApplied, couponOfferOpen, onClose]);
 
   return (
     <>
@@ -219,7 +214,6 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
           </div>
         )}
       </AnimatePresence>
-      <CheckoutExitModal open={exitOpen} onContinue={continueCheckout} onLeave={leaveAfterExit} />
       <CheckoutSecretCouponModal open={couponOfferOpen} onAccept={acceptCoupon} onLeave={leaveCheckout} />
     </>
   );

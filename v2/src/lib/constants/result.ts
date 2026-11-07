@@ -108,109 +108,16 @@ export const CHARM_STAR_LABELS: Record<CharmStarKey, { name: string; hanja: stri
   hwagae: { name: "화개살", hanja: "華蓋", meaning: "고독해서 더 빛나는 예술가의 아우라" },
 };
 
+import { LOVE_TIMELINE_YEARS_V1, REPORT_CHAPTERS_V1, type ReportChapterKeyV1 } from "./reportChapters.v1";
+
 /**
- * 결제 후 AI가 쓰는 연애 리포트의 장과 소제목. guide는 AI 지시문에만 쓰이고, title·subtitle은 결제 전 목차에도 보인다.
- * 장 번호는 배열 순서로 매겨진다. 장이나 소제목의 수·순서를 바꾸면 이미 저장된 리포트는 형식 검사에서 걸러져 새로 생성해야 한다.
- * 문구 속 {partner}와 {him}은 사용자의 성별에 맞춰 withPartner로 바꾼다.
+ * 결제 후 AI가 쓰는 연애 리포트의 장과 소제목(현재 생성용).
+ * 지금은 v1 동결본을 그대로 쓴다. 장 구조를 바꿀 때는 v2 목차를 만들고 CURRENT_REPORT_VERSION을 올린 뒤 여기를 교체한다.
+ * 이미 저장된 리포트는 reportChapters.v1 + reportVersion으로 계속 읽는다.
  */
-const CHAPTERS = [
-  {
-    key: "nature",
-    title: "네 색기의 정체",
-    subtitle: "남자들이 너한테 미치는 진짜 이유",
-    image: "/images/sunnyeo/tree-lean.jpg",
-    sections: [
-      {
-        title: "남자들이 너한테 꽂히는 진짜 이유",
-        guide:
-          "문단1(근거): 일간·오행·도화 유형으로 본 타고난 결을 쉬운 말로. <dohwa>의 네 매력 지수 중 가장 높은 지수 1개를 중심으로 왜 남자들이 꽂히는지 사주 근거와 연결. 출생 시간을 모르면 이 문단에서 한계를 한 번만 짧게 밝힌다. 문단2(장면): 그 매력이 실제로 드러나는 구체 장면 1개(술자리·직장·단둘·채팅 등)와 그때 남자의 반응. 문단3(조언): 지금 태도로 그 힘을 다루는 법 한 가지(말·거리감·타이밍 중 하나)를 바로 쓸 수 있게",
-      },
-      {
-        title: "너만 모르는 네 치명적인 무기",
-        guide:
-          "본인은 모르지만 사내들은 알아보는 매력. 가장 짙게 드러나는 구체 장면 2개(예: 웃을 때·취할 때·단둘이 남을 때·채팅 답장 텀)와 그때 남자의 반응, 사주 근거",
-      },
-      {
-        title: "그 색기가 독이 되는 순간",
-        guide:
-          "매력이 오해·질투·상처로 번지는 구체 상황 2개와 그때 나타나는 말·행동, 그 힘을 다루는 대처법(바로 쓸 문장이나 행동 포함)",
-      },
-    ],
-  },
-  {
-    key: "fate",
-    title: "네 운명의 남자",
-    subtitle: "얼굴·키·나이, 그리고 그를 만나는 때",
-    image: "/images/sunnyeo/overshoulder-flip-v2.jpg",
-    sections: [
-      {
-        title: "네 운명의 남자: 얼굴·키·나이",
-        guide:
-          "사주로 본 잘 맞는 인연을 구체적인 한 사람처럼 그린다. 얼굴 인상(눈매·분위기·표정), 체격과 키를 반드시 숫자로 짚는다. 키는 '182cm 전후'처럼 cm 숫자+전후 형식으로 쓰고, 반드시 179~187cm 사이 값만 고른다(178 이하·188 이상은 절대 쓰지 않는다). 나이(이 사람보다 몇 살 위·아래인지 범위), 직업이나 분위기의 결을 반드시 짚고, 각 근거를 쉬운 말로 붙인다. 지금 곁을 맴도는 사내들과 어떻게 다른지도 한두 문장 덧붙인다",
-      },
-      {
-        title: "네가 절대 못 버티는 위험한 남자",
-        guide:
-          "알면서도 끌려가는 위험한 남자의 성향(말투·연락 패턴·데이트 방식), 처음에 달콤하게 다가오는 구체 신호 2~3개, 알아채는 법과 빠져나오는 말·행동, 사주 근거",
-      },
-      {
-        title: "그 남자가 나타나는 때와 장소",
-        guide:
-          "시기는 <dohwa>의 bloomMonth(무료 화면에서 이미 보여 준 도화가 피는 달)만 쓴다. 반드시 그 해·그 달 안에서만 짚고, 2028년 이후·3년 뒤·멀리 있는 해·awakening의 다른 해로 미루지 않는다. 3년 연애운 흐름·연도별 전망은 이 소제목에서 쓰지 않는다(loveTimeline에 있다). 그 달을 초반(1~10일)·중순(11~20일)·말(21일~말일) 중 하나로 좁혀 '2027년 n월 중순'처럼 쓰고, 왜 그 구간인지 사주 근거를 쉬운 말로 붙인다. 이어서 어디서(구체 장소 유형 2개 이상), 어떤 상황·시간대에, 어떻게 처음 눈이 마주치고 말이 붙는지 한 장면처럼 구체적으로 그린다",
-      },
-    ],
-  },
-  {
-    key: "gaze",
-    title: "남자들 눈에 비친 너",
-    subtitle: "첫눈에 박히고, 밤새 떠오르는 얼굴",
-    image: "/images/sunnyeo/hero-eyes-closed-v2.png",
-    sections: [
-      {
-        title: "남자들이 몰래 곱씹는 네 첫인상",
-        guide:
-          "문단1: 처음 봤을 때—시선이 머무는 곳 1개+남는 잔상 1문장. 문단2: 첫 대화 직후—남는 말·태도·거리감 중 1개+그때 남자의 속마음. 문단3: 헤어진 뒤—다시 떠오르는 장면 1개. 세 시점을 모두 다루고, 전체를 관통하는 비유는 하나만. '인상 좋다'처럼 두루뭉실하게 끝내지 말 것",
-      },
-      {
-        title: "네 얼굴에 맺힌 도화 자리",
-        guide:
-          "문단1(근거): 일간·오행·매력살로 왜 그 자리에 도화가 맺히는지 쉬운 말로. 문단2(포인트): 매력 포인트 정확히 2개(예: 눈빛·입매, 눈매·표정 온도 등)와 그게 살아나는 순간 1개. 문단3(연출): 그 포인트를 살리는 연출 1개+피하면 좋은 연출 1개. 외모 평가·신체 성적 묘사 금지, 분위기와 비유로만",
-      },
-      {
-        title: "색기를 두 배로 키우는 스타일링",
-        guide:
-          "문단1(근거): 오행 균형으로 왜 그 색·소재·결이 이 사람에게 맞는지 쉬운 말로 연결. 문단2(룩 레시피): 반드시 대표 색 2개+피해야 할 색 1개, 상의·하의 실루엣, 소재 1~2개, 헤어 포인트 1개, 메이크업 포인트 1개, 향의 결(달콤/청량/스모키 등)+예시 계열을 구체적으로. '무난한 스타일'처럼 두루뭉실하게 끝내지 말 것. 문단3(착용 상황): 매력이 가장 살아나는 장소 2곳+시간대 1개, 그리고 '이런 날/자리에서 이렇게 입어' 장면 하나를 손에 잡히게 쓸 것",
-      },
-    ],
-  },
-  {
-    key: "flirt",
-    title: "남자를 무너뜨리는 법",
-    subtitle: "네가 마음먹으면 버틸 남자는 없다",
-    image: "/images/sunnyeo/whisper-offer.jpg",
-    sections: [
-      {
-        title: "너만 쓸 수 있는 필승 유혹법",
-        guide:
-          "기질에 맞는 유혹법을 문단 3개로 고정. 문단1=시작, 문단2=밀당, 문단3=결정. 각 문단에 반드시 행동 예시 1개+말 예시 1개를 넣고, 문단3에는 가장 치명적인 상황(장소·시간대·분위기)을 한 장면으로 구체화. 단계 설명만 하고 예시 없이 끝내지 말 것",
-      },
-      {
-        title: "밤새 곱씹게 만드는 한마디",
-        guide:
-          "매력적인 말투·연락 습관과 바로 써먹을 문장 예시 3개(상황별로 다르게). 답장 텀·이모지·마지막 한마디처럼 실전 디테일 포함",
-      },
-      {
-        title: "남자가 한순간에 식는 네 습관",
-        guide:
-          "마음을 식히는 말버릇·행동 습관 2~3개를 장면으로 보여 주고, 각각을 고치는 대체 말·행동까지 구체적으로",
-      },
-    ],
-  },
-] as const;
-
-export type ReportChapterKey = (typeof CHAPTERS)[number]["key"];
-
-export const REPORT_CHAPTERS = CHAPTERS.map((chapter, index) => ({ ...chapter, chapter: index + 1 }));
+export const REPORT_CHAPTERS = REPORT_CHAPTERS_V1;
+export type ReportChapterKey = ReportChapterKeyV1;
+export const LOVE_TIMELINE_YEARS = LOVE_TIMELINE_YEARS_V1;
 
 export const chapterOf = (key: ReportChapterKey) => REPORT_CHAPTERS.find((chapter) => chapter.key === key)!;
 
@@ -227,9 +134,6 @@ export function withPartner(text: string, gender: "female" | "male"): string {
   const female = gender === "female";
   return text.replaceAll("{partner}", female ? "남자" : "여자").replaceAll("{him}", female ? "그" : "그녀");
 }
-
-/** 앞으로 몇 년의 연애운을 표로 보여줄지 */
-export const LOVE_TIMELINE_YEARS = 3;
 
 /**
  * 결과 화면 중간의 후기. 실제로 받은 후기는 sample: false, 직접 쓴 예시 문구는 sample: true로 둔다.

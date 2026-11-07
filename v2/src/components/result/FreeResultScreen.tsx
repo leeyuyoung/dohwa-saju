@@ -1,25 +1,22 @@
 import { FunnelBeacon } from "@/components/analytics/FunnelBeacon";
 import { PageShell } from "@/components/layout/PageShell";
 import { CheckoutSheetProvider } from "@/components/payment/CheckoutSheetContext";
-import { FreeTypeTeaser, ReportToc, ReportVolume } from "@/components/result/FreeResultParts";
+import { UnlockTap } from "@/components/payment/UnlockTap";
+import { LockedPartSections, ReportToc, ReportVolume, withPartnerPlain } from "@/components/result/FreeResultParts";
 import { ManseryeokTable } from "@/components/result/ManseryeokTable";
+import { LockIcon } from "@/components/result/ResultParts";
 import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { StickyCheckoutBar } from "@/components/result/StickyCheckoutBar";
-import { BloomCard, FaceCard, PartnerCard, ScoreCard, SinseonLines, SinseonScene } from "@/components/result/TeaserCards";
-import { WebtoonPanel } from "@/components/webtoon/WebtoonPanel";
+import { FaceCard, PartnerCard } from "@/components/result/TeaserCards";
+import { Reveal } from "@/components/ui/Reveal";
+import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
 import { DETAILED_REPORT_ORDER_NAME } from "@/lib/constants/service";
-import { countPeachBranches } from "@/lib/saju/dohwa";
 import type { FreeResultView } from "@/types/result";
 
-const SEASONS = ["겨울", "봄", "여름", "가을"] as const;
-const seasonOf = (month: number) => SEASONS[Math.floor((month % 12) / 3)];
-
 /** 결제 버튼이 이 칸에 닿은 뒤부터 화면 아래에 따라다닌다. */
-const TYPE_TEASER_ID = "dohwa-type";
+const CHARM_TEASER_ID = "free-part-1";
 
-const glow = (text: string) => <span className="text-blossom-glow">{text}</span>;
-
-/** 무료 결과 화면. 도화선녀의 대사와 반만 열린 카드가 번갈아 나온다. 샘플이면 버튼이 입력 화면으로 간다. */
+/** 무료 결과 화면. 유료 v2와 같은 PART 목차로, AI 없이 미리보기만 연다. */
 export function FreeResultScreen({
   result,
   sample = false,
@@ -50,163 +47,175 @@ export function FreeResultScreen({
         }
       : undefined;
 
-  const peachCount = countPeachBranches(result.pillars);
+  const [part1, part2, part3, part4, part5] = REPORT_PARTS_V2;
+  const { preview } = result;
+  const partnerWord = result.gender === "female" ? "남자" : "여자";
 
   return (
     <CheckoutSheetProvider checkout={checkout} href={cta.href}>
-    <PageShell withStickyBar>
-      {token && !sample ? <FunnelBeacon step="result" token={token} /> : null}
-      <h1 className="sr-only">{result.name}의 도화 풀이</h1>
+      <PageShell withStickyBar>
+        {token && !sample ? <FunnelBeacon step="result" token={token} /> : null}
+        <h1 className="sr-only">{result.name}의 도화 풀이</h1>
 
-      <WebtoonPanel
-        priority
-        src="/images/sunnyeo/holding-paper-back.jpg"
-        alt="달밤의 복숭아꽃 정원에서 종이 뒷면을 보이며 건네는 도화선녀"
-        bubbles={[
-          { kind: "speech", text: "자, 여기 봐.", at: 0.15, place: { top: "4%", left: "5%" } },
-          { kind: "whisper", text: `${result.name}.`, at: 0.65, place: { top: "31%", right: "3%" }, big: true },
-          {
-            kind: "caption",
-            text: `${result.birth.year}년 ${seasonOf(result.birth.month)}에 피어난 꽃이네`,
-            at: 1.3,
-            place: { top: "84%", left: "5%" },
-          },
-        ]}
-      />
+        <header className="relative -mx-5 overflow-hidden px-5 pb-10 pt-10">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgb(156_63_98_/_0.32),transparent_55%),linear-gradient(180deg,rgb(13_11_25)_0%,rgb(7_6_14)_100%)]"
+          />
+          <div className="relative flex flex-col items-center gap-4 text-center">
+            <p className="text-[11px] tracking-[0.28em] text-cinnabar/90">나의 매력 발견</p>
+            <h2 className="font-eerie text-[clamp(1.9rem,8vw,2.5rem)] leading-tight text-paper">
+              {result.name}
+              <span className="mt-2 block font-serif text-[1.05rem] font-light tracking-normal text-blossom">의 사주 미리보기</span>
+            </h2>
+          </div>
+        </header>
 
-      <SinseonLines
-        lines={[
-          <>
-            먼저 네 사주에 새겨진
-            <br />
-            {glow("여덟 글자")}부터 짚어볼게.
-          </>,
-          ...(peachCount > 0
-            ? [
-                <>
-                  네 사주에 {glow("도화 글자")}가 {peachCount}개나 있어.
-                </>,
-              ]
-            : []),
-        ]}
-      />
-      <ManseryeokTable
-        name={result.name}
-        dayPillarName={result.dayPillarName}
-        birthLabel={result.birthLabel}
-        pillars={result.pillars}
-      />
+        <div className="mt-4 flex flex-col gap-16">
+          <Reveal>
+            <section className="flex flex-col gap-6">
+              <ManseryeokTable
+                name={result.name}
+                dayPillarName={result.dayPillarName}
+                birthLabel={result.birthLabel}
+                pillars={result.pillars}
+              />
+              <div className="flex flex-col gap-3 font-serif text-[16px] font-light leading-[1.9] text-paper/90">
+                {preview.intro.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+            </section>
+          </Reveal>
 
-      <SinseonLines lines={[<>이 글자들로 네 {glow("도화 점수")}를 읽어볼게.</>]} />
-      <ScoreCard result={result} />
+          {/* PART 1 */}
+          <Reveal>
+            <article id={CHARM_TEASER_ID} className="scroll-mt-24 flex flex-col gap-6">
+              <PartHeader part={part1} gender={result.gender} />
+              <div className="rounded-3xl border border-cinnabar/30 bg-gradient-to-b from-crimson-deep/50 via-night/90 to-night px-5 py-6">
+                <p className="text-[11px] tracking-[0.18em] text-cinnabar">타고난 매력 유형</p>
+                <p className="mt-3 font-eerie text-[clamp(1.35rem,6vw,1.75rem)] leading-snug text-blossom-glow break-keep">
+                  {preview.charmType.label}
+                </p>
+                <p className="mt-3 font-serif text-[15px] leading-relaxed text-paper/90 break-keep">{preview.charmType.vibeLine}</p>
+                <p className="mt-4 text-[13.5px] leading-relaxed text-mist break-keep">{preview.charmType.reason}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { name: "도화살", hint: "사람 끌어당기는 결" },
+                  { name: "홍염살", hint: "시선이 머무는 열기" },
+                ].map((star) => (
+                  <UnlockTap
+                    key={star.name}
+                    className="flex flex-col gap-1 rounded-2xl border border-line/70 bg-night/70 px-4 py-3.5 text-left"
+                    label={`${star.name} 상세 잠금 해제`}
+                  >
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="font-serif text-[15px] text-paper">{star.name}</span>
+                      <LockIcon />
+                    </span>
+                    <span className="text-[12px] text-mist">{star.hint}</span>
+                    <span className="mt-1 flex items-baseline gap-0.5 font-serif text-blossom-glow" aria-hidden>
+                      <span className="select-none blur-[4px]">00</span>
+                      <span>개</span>
+                    </span>
+                  </UnlockTap>
+                ))}
+              </div>
+              <LockedPartSections part={part1} gender={result.gender} />
+            </article>
+          </Reveal>
 
-      <SinseonLines
-        lines={[
-          <>
-            점수만으로는 부족해.
-            <br />
-            네 {glow("도화유형")}도 살짝 열어줄게.
-          </>,
-        ]}
-      />
-      <div id={TYPE_TEASER_ID}>
-        <FreeTypeTeaser type={result.dohwa.type} />
-      </div>
+          {/* PART 2 */}
+          <Reveal>
+            <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartHeader part={part2} gender={result.gender} />
+              <div className="rounded-3xl border border-line/70 bg-night/70 px-5 py-5">
+                <p className="text-[11px] tracking-[0.18em] text-cinnabar">첫인상 티저</p>
+                <p className="mt-3 font-serif text-[15.5px] leading-[1.85] text-paper/90 break-keep">{preview.firstImpression}</p>
+              </div>
+              <UnlockTap className="block w-full" label="첫인상 상세 잠금 해제">
+                <p className="select-none rounded-2xl border border-line/50 bg-ink/40 px-4 py-4 font-serif text-[14px] leading-relaxed text-paper/60 blur-[3px]" aria-hidden>
+                  친해지면 달라지는 이미지, {partnerWord}들이 밤에 곱씹는 장면까지 — 상세 리포트에서 열어줄게.
+                </p>
+              </UnlockTap>
+              <LockedPartSections part={part2} gender={result.gender} />
+            </article>
+          </Reveal>
 
-      <SinseonScene
-        className="mt-2"
-        src="/images/sunnyeo/hero-eyes-closed-v2.png"
-        alt="달빛 아래 벚꽃 사이로 돌아보며 눈 감고 웃는 도화선녀"
-        headroom={0.06}
-        cropBottom={0.08}
-        bubbles={[
-          { kind: "speech", text: "이 정도면…\n남자들이 가만 안 뒀을걸?", at: 0.2, place: { top: "2%", right: "3%" } },
-          { kind: "speech", text: "근데 꽃은\n아무 때나 피는 게 아니야.", at: 1.2, place: { top: "64%", left: "3%" } },
-        ]}
-        lines={[
-          <>
-            네 사주엔 이미 정해져 있어.
-            <br />
-            가만 있어도 남자들이 {glow("꼬일 달")}.
-          </>,
-        ]}
-      />
-      <BloomCard result={result} />
+          {/* PART 3 */}
+          <Reveal>
+            <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartHeader part={part3} gender={result.gender} />
+              <ul className="flex flex-col gap-3">
+                {preview.vibeKeywords.map((keyword, index) => (
+                  <li key={keyword.name}>
+                    <div className="rounded-3xl border border-line/70 bg-night/70 px-5 py-5">
+                      <p className="text-[11px] tracking-[0.16em] text-cinnabar">키워드 {index + 1}</p>
+                      <p className="mt-2 font-serif text-[clamp(1.35rem,5.5vw,1.7rem)] text-blossom">{keyword.name}</p>
+                      <UnlockTap className="mt-3 block w-full" label={`${keyword.name} 상세 잠금 해제`}>
+                        <p className="select-none font-serif text-[14px] leading-relaxed text-paper/55 blur-[3px]" aria-hidden>
+                          이 분위기가 사주에서 어떻게 읽히고, 언제 가장 잘 드러나는지 — 본편에서 풀어줄게.
+                        </p>
+                      </UnlockTap>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <LockedPartSections part={part3} gender={result.gender} />
+            </article>
+          </Reveal>
 
-      <SinseonLines
-        lines={[
-          <>
-            그때 너한테 목맬 남자…
-            <br />
-            궁금하지? {glow("살짝만")} 보여주지.
-          </>,
-        ]}
-      />
-      <PartnerCard result={result} />
+          {/* PART 4 */}
+          <Reveal>
+            <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartHeader part={part4} gender={result.gender} />
+              <FaceCard result={result} />
+              <LockedPartSections part={part4} gender={result.gender} />
+            </article>
+          </Reveal>
 
-      <SinseonLines
-        divided
-        lines={[
-          <>
-            네가 마음만 먹으면,
-            <br />그 남잔 이미 {glow("네 손안에")} 있어.
-          </>,
-          <>
-            근데 먼저 알아야 해.
-            <br />그 남자 눈에 {glow("네가 어떻게 보이는지.")}
-          </>,
-        ]}
-      />
-      <FaceCard result={result} />
+          {/* PART 5 */}
+          <Reveal>
+            <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartHeader part={part5} gender={result.gender} />
+              <PartnerCard result={result} />
+              <LockedPartSections part={part5} gender={result.gender} />
+            </article>
+          </Reveal>
 
-      <SinseonScene
-        src="/images/sunnyeo/tree-lean.jpg"
-        alt="보름달 아래 복숭아나무에 기대어 팔짱을 낀 채 내려다보며 웃는 도화선녀"
-        headroom={0.02}
-        cropBottom={0.12}
-        bubbles={[
-          {
-            kind: "speech",
-            text: "색 하나 바꿨을 뿐인데,\n그 남자의 눈빛이\n달라질 거야.",
-            at: 0.3,
-            place: { top: "5%", left: "3%" },
-          },
-          { kind: "speech", text: "머리끝부터 향까지,\n다 정리해 뒀어.", at: 1.4, place: { top: "64%", right: "3%" } },
-        ]}
-        lines={[
-          <>
-            그 남자 {glow("정신 못 차리게")} 하는 법,
-            <br />
-            숨김없이, 아주 구체적으로 적어 뒀어.
-          </>,
-        ]}
-      />
+          <div className="mt-4 flex flex-col gap-16">
+            <ReportToc gender={result.gender} />
+            <ReviewCarousel />
+            <ReportVolume />
+          </div>
+        </div>
 
-      <div className="mt-16 flex flex-col gap-16">
-        <ReportToc gender={result.gender} />
-        <ReviewCarousel />
-        <ReportVolume />
-      </div>
-
-      <div className="mt-4">
-        <WebtoonPanel
-          src="/images/sunnyeo/whisper-offer.jpg"
-          alt="가까이 기대어 속삭이며 손을 내밀어 함께 가자고 청하는 도화선녀"
-          headroom={0.22}
-          bubbles={[
-            { kind: "speech", text: "그 색기,\n썩히기엔 아깝잖아.", at: 0.3, place: { top: "7%", left: "4%" } },
-            { kind: "whisper", text: "이제\n쓰면 돼.", at: 1.6, place: { top: "72%", right: "5%" } },
-          ]}
+        <StickyCheckoutBar
+          href={cta.href}
+          label={cta.label}
+          showAfterId={paid ? undefined : CHARM_TEASER_ID}
+          sheetEnabled={Boolean(checkout)}
         />
-      </div>
-
-      <StickyCheckoutBar
-        href={cta.href}
-        label={cta.label}
-        showAfterId={paid ? undefined : TYPE_TEASER_ID}
-        sheetEnabled={Boolean(checkout)}
-      />
-    </PageShell>
+      </PageShell>
     </CheckoutSheetProvider>
+  );
+}
+
+function PartHeader({
+  part,
+  gender,
+}: {
+  part: (typeof REPORT_PARTS_V2)[number];
+  gender: "female" | "male";
+}) {
+  return (
+    <header className="flex flex-col gap-2 border-b border-line/70 pb-5">
+      <p className="text-[11px] tracking-[0.22em] text-cinnabar">PART {part.part}</p>
+      <h2 className="font-eerie text-[clamp(1.4rem,6vw,1.85rem)] leading-snug text-paper break-keep">
+        {withPartnerPlain(part.title, gender)}
+      </h2>
+      <p className="text-sm text-mist">{withPartnerPlain(part.question, gender)}</p>
+    </header>
   );
 }

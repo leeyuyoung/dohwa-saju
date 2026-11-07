@@ -4,8 +4,15 @@ import { UnlockTap } from "@/components/payment/UnlockTap";
 import { OrnateFrameCard } from "@/components/result/OrnateFrameCard";
 import { LockIcon } from "@/components/result/ResultParts";
 import { Reveal } from "@/components/ui/Reveal";
+import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
 import { REPORT_CHAPTERS, type ReportChapterKey, withPartner } from "@/lib/constants/result";
 import type { DohwaView } from "@/types/result";
+
+/** v2 목차 문구의 '남자'를 사용자 성별에 맞게 바꾼다. */
+export function withPartnerPlain(text: string, gender: "female" | "male"): string {
+  if (gender === "female") return text;
+  return text.replaceAll("남자", "여자");
+}
 
 const RADAR_SIZE = 300;
 const RADAR_CENTER = RADAR_SIZE / 2;
@@ -39,8 +46,7 @@ export function DohwaRadarCard({ dohwa }: { dohwa: DohwaView }) {
           </p>
         </div>
         <span className="flex h-[72px] w-[72px] shrink-0 flex-col items-center justify-center rounded-full border border-cinnabar/50 bg-crimson/30">
-          <span className="font-serif text-base leading-none text-blossom">{dohwa.grade.hanja}</span>
-          <span className="mt-1 text-[10px] text-paper/80">{dohwa.grade.label}</span>
+          <span className="px-1 text-center text-[11px] leading-snug text-paper/90">{dohwa.grade.label}</span>
         </span>
       </div>
       <p className="relative mt-3 font-serif text-[14px] leading-relaxed text-paper/90">“{dohwa.grade.line}”</p>
@@ -128,17 +134,10 @@ export function FreeTypeTeaser({ type }: { type: DohwaView["type"] }) {
     <OrnateFrameCard variant="medium" bodyClassName="overflow-y-auto px-1 py-1">
       <p className="text-center text-[11px] tracking-[0.08em] text-cinnabar">네 도화유형</p>
       <div className="relative mt-2 flex flex-col items-center gap-1.5 text-center">
-        <span aria-hidden className="absolute font-serif text-[72px] leading-none text-cinnabar/10">
-          {type.elementHanja}
-        </span>
         <h3 className="relative font-eerie text-[clamp(1.7rem,8.5vw,2.2rem)] leading-none text-blossom-glow [text-shadow:0_0_24px_rgb(232_137_155_/_0.55)]">
           {type.name}
         </h3>
-        <p className="relative font-serif text-[13px] text-blossom">
-          {type.hanja}
-          <span className="mx-1.5 text-mist-dim">·</span>
-          {type.alias}
-        </p>
+        <p className="relative font-serif text-[13px] text-blossom">{type.alias}</p>
         <p className="relative mt-0.5 font-serif text-[15px] text-paper">{type.headline}</p>
       </div>
 
@@ -193,11 +192,8 @@ export function FreeReading({ type }: { type: DohwaView["type"] }) {
     <section className="flex flex-col gap-16">
       <Reveal className="flex flex-col items-center gap-3 text-center">
         <p className="font-serif text-[16px] text-mist">네 색기 유형은…</p>
-        <div className="relative flex items-center justify-center py-2">
-          <span aria-hidden className="absolute font-serif text-[120px] leading-none text-cinnabar/15">
-            {type.elementHanja}
-          </span>
-          <h3 className="relative font-eerie text-[clamp(2.6rem,13vw,3.2rem)] leading-none text-blossom-glow [text-shadow:0_0_30px_rgb(232_137_155_/_0.7)]">
+        <div className="flex items-center justify-center py-2">
+          <h3 className="font-eerie text-[clamp(2.6rem,13vw,3.2rem)] leading-none text-blossom-glow [text-shadow:0_0_30px_rgb(232_137_155_/_0.7)]">
             {type.name}
           </h3>
         </div>
@@ -241,7 +237,7 @@ function CheckMark() {
 
 /** 유료 리포트 캡처 콜라주 가운데에 분량 카피를 올린다. */
 export function ReportVolume() {
-  const chapters = REPORT_CHAPTERS.length;
+  const chapters = REPORT_PARTS_V2.length;
 
   return (
     <UnlockTap className="block w-full" label="상세 리포트 열기">
@@ -251,7 +247,7 @@ export function ReportVolume() {
         {/* 유료 리포트 캡처 21장 = 7열 × 3행 · 상하만 투명 페이드 */}
         <div className="relative w-full" style={{ aspectRatio: "1223 / 1127" }}>
           <Image
-            src="/images/result/report-volume-collage.jpg?v=20261107f"
+            src="/images/result/report-volume-collage.jpg?v=20261107h"
             alt="흐리게 가린 실제 유료 리포트 화면들"
             fill
             sizes="(max-width: 640px) 100vw, 576px"
@@ -260,7 +256,7 @@ export function ReportVolume() {
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-5 text-center">
             <p className="font-serif text-[clamp(1.05rem,4.6vw,1.3rem)] leading-snug tracking-[0.02em] text-paper [text-shadow:0_2px_18px_rgb(0_0_0_/_0.55)]">
-              총 <span className="text-blossom-glow">{chapters}개 챕터</span>의 심층 분석
+              총 <span className="text-blossom-glow">{chapters}개 PART</span>의 심층 분석
             </p>
             <p className="font-eerie text-[clamp(2.1rem,11vw,2.7rem)] leading-none tracking-[0.04em] text-blossom-glow [text-shadow:0_2px_22px_rgb(0_0_0_/_0.6)]">
               미친 분량
@@ -325,35 +321,75 @@ function FaceLock({ x, y, caption }: { x: string; y: string; caption: string }) 
   );
 }
 
-/** 페이지 맨 아래의 리포트 목차. 장 제목·한 줄 소개만 보이고, 소제목은 눌러야 펼쳐진다. */
+/** 무료 PART 안에서 유료 소절 목록을 잠금으로 보여 준다. */
+export function LockedPartSections({
+  part,
+  gender,
+}: {
+  part: (typeof REPORT_PARTS_V2)[number];
+  gender: "female" | "male";
+}) {
+  const items =
+    part.key === "vibe"
+      ? ["분위기 키워드 ① 상세", "분위기 키워드 ② 상세", "분위기 키워드 ③ 상세"]
+      : part.sections.map((section) => withPartnerPlain(section.title, gender));
+
+  return (
+    <ol className="flex flex-col gap-2">
+      {items.map((title, index) => (
+        <li key={title}>
+          <UnlockTap
+            className="flex w-full items-center gap-3 rounded-2xl border border-line/70 bg-night/70 px-4 py-3.5 text-left"
+            label={`${title} 잠금 해제`}
+          >
+            <span className="font-serif text-sm text-cinnabar">
+              {part.part}-{index + 1}
+            </span>
+            <span className="flex-1 font-serif text-[15px] text-paper/85 break-keep">{title}</span>
+            <LockIcon />
+          </UnlockTap>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** 페이지 맨 아래의 리포트 목차. 유료 v2 PART 제목과 동일하다. */
 export function ReportToc({ gender }: { gender: "female" | "male" }) {
   return (
     <section className="flex flex-col gap-4">
       <Reveal className="flex flex-col items-center gap-1.5 text-center">
-        <p className="text-xs tracking-[0.3em] text-gold-soft">목차</p>
+        <p className="text-xs tracking-[0.3em] text-gold-soft">상세 리포트 목차</p>
         <h2 className="font-serif text-[20px] text-paper">본편은 이제부터.</h2>
       </Reveal>
       <ol className="flex flex-col gap-2.5">
-        {REPORT_CHAPTERS.map((chapter) => (
-          <li key={chapter.key}>
+        {REPORT_PARTS_V2.map((part) => (
+          <li key={part.key}>
             <Reveal amount={0.55}>
               <details className="group overflow-hidden rounded-2xl border border-line/70 bg-night/70">
                 <summary className="flex cursor-pointer list-none items-center gap-3.5 p-3.5 [&::-webkit-details-marker]:hidden">
                   <span className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="text-[11px] tracking-[0.2em] text-gold-soft">제{chapter.chapter}장</span>
-                    <span className="font-serif text-[16px] leading-snug text-paper break-keep">{chapter.title}</span>
-                    <span className="text-[12.5px] leading-snug text-mist break-keep">{chapter.subtitle}</span>
+                    <span className="text-[11px] tracking-[0.2em] text-gold-soft">PART {part.part}</span>
+                    <span className="font-serif text-[16px] leading-snug text-paper break-keep">
+                      {withPartnerPlain(part.title, gender)}
+                    </span>
+                    <span className="text-[12.5px] leading-snug text-mist break-keep">
+                      {withPartnerPlain(part.question, gender)}
+                    </span>
                   </span>
                   <svg aria-hidden viewBox="0 0 24 24" fill="none" className="size-4 shrink-0 text-mist transition-transform group-open:rotate-180">
                     <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </summary>
                 <ol className="flex flex-col gap-2 border-t border-line/40 px-4 py-3.5">
-                  {chapter.sections.map((section, index) => (
-                    <li key={section.title}>
-                      <UnlockTap className="flex w-full items-center gap-2.5 text-[13.5px] text-paper/85" label={`${section.title} 잠금 해제`}>
+                  {(part.key === "vibe"
+                    ? ["키워드 ①", "키워드 ②", "키워드 ③"]
+                    : part.sections.map((section) => section.title)
+                  ).map((title, index) => (
+                    <li key={title}>
+                      <UnlockTap className="flex w-full items-center gap-2.5 text-[13.5px] text-paper/85" label={`${title} 잠금 해제`}>
                         <span className="font-serif text-cinnabar">{index + 1}</span>
-                        <span className="flex-1 break-keep">{withPartner(section.title, gender)}</span>
+                        <span className="flex-1 break-keep">{withPartnerPlain(title, gender)}</span>
                         <LockIcon />
                       </UnlockTap>
                     </li>

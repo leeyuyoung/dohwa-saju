@@ -31,22 +31,15 @@ export function TypeHero({ name, type, eyebrow, hook }: TypeHeroProps) {
           <h1 className="font-eerie text-[clamp(2.2rem,10vw,3rem)] leading-tight text-paper [text-shadow:0_0_24px_rgb(232_137_155_/_0.55)]">
             {type.name}야
           </h1>
-          <p className="flex items-center gap-2 font-serif text-sm text-blossom">
-            <span>{type.hanja}</span>
-            <span className="text-mist-dim">·</span>
-            <span>{type.alias}</span>
-          </p>
+          <p className="font-serif text-sm text-blossom">{type.alias}</p>
         </div>
       </div>
 
       <div className="mt-6 px-5">
         <div className="rounded-3xl border border-line bg-night/70 px-6 py-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex flex-col gap-2">
-              <p className="font-serif text-lg text-paper">{type.headline}</p>
-              <p className="text-sm leading-relaxed text-mist">{type.description}</p>
-            </div>
-            <span className="font-serif text-4xl text-blossom-glow">{type.elementHanja}</span>
+          <div className="flex flex-col gap-2">
+            <p className="font-serif text-lg text-paper">{type.headline}</p>
+            <p className="text-sm leading-relaxed text-mist">{type.description}</p>
           </div>
           <p className="mt-6 text-xs font-medium text-cinnabar">{type.name}의 분위기</p>
           <ul className="mt-3 grid grid-cols-2 gap-2">

@@ -4,10 +4,12 @@ import { randomBytes } from "node:crypto";
 import { after } from "next/server";
 import { buildSajuProfile, calculateSaju } from "@/lib/saju";
 import type { AnalysisInput } from "@/lib/validation/analysisInput";
+import { CURRENT_REPORT_VERSION, resolveReportVersion } from "@/lib/constants/reportVersion";
 import { AiReportError, generateReport } from "./ai/generateReport";
-import { aiReportSchema, type AiReport } from "./ai/reportSchema";
+import { aiReportSchemaV1, type AiReportV1 } from "./ai/reportSchema.v1";
+import { aiReportSchemaV2, type AiReportV2 } from "./ai/reportSchema.v2";
 import { sendReportEmail } from "./email/sendReportEmail";
-import { getAnalysisStore, type AnalysisRecord } from "./store";
+import { getAnalysisStore, type AnalysisRecord, type StoredAiReport } from "./store";
 
 /** 이 시간보다 오래 generating이면 생성이 중단된 것으로 보고 다시 시작할 수 있다. 생성 제한 시간(300초)보다 길어야 한다. */
 const STALE_GENERATION_MS = 10 * 60 * 1000;
@@ -17,12 +19,22 @@ const UNPAID_ANALYSIS_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const TOKEN_PATTERN = /^[A-Za-z0-9_-]{22}$/;
 const newToken = () => randomBytes(16).toString("base64url");
 
-/** 저장된 리포트가 지금 형식에 맞을 때만 돌려준다. 예전 형식(11장 인생 리포트)이면 null. */
-export function storedReport(record: AnalysisRecord): AiReport | null {
+/** 저장된 리포트가 해당 버전 스키마에 맞을 때만 돌려준다. */
+export function storedReport(record: AnalysisRecord): StoredAiReport | null {
   if (!record.report) return null;
-  const parsed = aiReportSchema.safeParse(record.report);
-  return parsed.success ? parsed.data : null;
+  const version = resolveReportVersion(record.reportVersion);
+  if (version === 1) {
+    const parsed = aiReportSchemaV1.safeParse(record.report);
+    return parsed.success ? parsed.data : null;
+  }
+  if (version === 2) {
+    const parsed = aiReportSchemaV2.safeParse(record.report);
+    return parsed.success ? parsed.data : null;
+  }
+  return null;
 }
+
+export type { AiReportV1, AiReportV2 };
 
 /** 만세력 계산만으로 무료 결과를 만든다. AI는 결제 후에만 호출한다. 계산 오류는 그대로 던진다(SajuCalculationError). */
 export async function createAnalysis(input: AnalysisInput): Promise<AnalysisRecord> {
@@ -43,6 +55,7 @@ export async function createAnalysis(input: AnalysisInput): Promise<AnalysisReco
     concern: null,
     profile,
     report: null,
+    reportVersion: null,
     paidAt: null,
   };
   const store = getAnalysisStore();
@@ -80,7 +93,7 @@ export async function startReportGeneration(token: string): Promise<void> {
   const store = getAnalysisStore();
   const record = await store.get(token);
   if (!record || record.paidAt === null || storedReport(record)) return;
-  if (record.report) await store.update(token, { report: null });
+  if (record.report) await store.update(token, { report: null, reportVersion: null });
   const claimed = await store.claimReportGeneration(token, Date.now() - STALE_GENERATION_MS);
   if (claimed) after(() => runReportGeneration(token));
 }
@@ -92,7 +105,7 @@ async function runReportGeneration(token: string): Promise<void> {
     const record = await store.get(token);
     if (!record) return;
     const report = await generateReport(record.profile, { relationshipStatus: record.relationshipStatus });
-    await store.update(token, { status: "ready", report });
+    await store.update(token, { status: "ready", report, reportVersion: CURRENT_REPORT_VERSION });
     const latest = await store.get(token);
     if (latest?.paidAt) await sendReportEmail(latest);
   } catch (error) {

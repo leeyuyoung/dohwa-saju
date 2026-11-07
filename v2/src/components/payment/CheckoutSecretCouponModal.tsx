@@ -9,7 +9,7 @@ type CheckoutSecretCouponModalProps = {
   onLeave: () => void;
 };
 
-/** 이탈 2단: 비밀쿠폰을 받을지 묻고, 받으면 결제 시트에 적용한다. */
+/** 결제 시트를 닫으려 할 때 비밀쿠폰을 제안하는 팝업. */
 export function CheckoutSecretCouponModal({ open, onAccept, onLeave }: CheckoutSecretCouponModalProps) {
   return (
     <AnimatePresence>
@@ -39,7 +39,7 @@ export function CheckoutSecretCouponModal({ open, onAccept, onLeave }: CheckoutS
               id="checkout-coupon-title"
               className="text-left font-gothic text-[22px] font-bold leading-snug tracking-[-0.02em] text-[#111827]"
             >
-              아직도 고민되시나요?
+              아직 고민되시나요?
             </h2>
             <p className="mt-3 text-left font-gothic text-[15px] leading-relaxed tracking-[-0.01em] text-[#4b5563]">
               지금만{" "}
@@ -47,6 +47,9 @@ export function CheckoutSecretCouponModal({ open, onAccept, onLeave }: CheckoutS
                 {formatWon(DETAILED_REPORT_SECRET_COUPON)}원 비밀쿠폰
               </span>
               을 드릴게요.
+            </p>
+            <p className="mt-2 text-left font-gothic text-[13px] leading-relaxed tracking-[-0.01em] text-[#9ca3af]">
+              페이지를 나가면 쿠폰은 사라져요 🥲
             </p>
 
             <button

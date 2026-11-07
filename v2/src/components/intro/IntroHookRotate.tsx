@@ -42,7 +42,7 @@ export function IntroHookRotate() {
           <>
             지금까지{" "}
             <span className="font-medium text-blossom-glow tabular-nums">{visitCount.toLocaleString("ko-KR")}</span>
-            명 다녀갔어요
+            명 풀이했어요
           </>
         ),
       },

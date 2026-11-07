@@ -1,7 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { UnlockTap } from "@/components/payment/UnlockTap";
-import { DohwaScoreCard } from "@/components/result/DohwaScoreCard";
 import { OrnateFrameCard, type OrnateFrameVariant } from "@/components/result/OrnateFrameCard";
 import { LockIcon } from "@/components/result/ResultParts";
 import { Reveal } from "@/components/ui/Reveal";
@@ -9,12 +8,18 @@ import type { Bubble } from "@/components/webtoon/SpeechBubble";
 import { WebtoonPanel } from "@/components/webtoon/WebtoonPanel";
 import type { FreeResultView } from "@/types/result";
 
-export { DohwaScoreCard as ScoreCard };
-
 /** 카드 사이에 끼는 도화신선의 대사. 문단마다 차례로 떠오른다. */
-export function SinseonLines({ lines, divided = false }: { lines: ReactNode[]; divided?: boolean }) {
+export function SinseonLines({
+  lines,
+  divided = false,
+  className,
+}: {
+  lines: ReactNode[];
+  divided?: boolean;
+  className?: string;
+}) {
   return (
-    <div className="flex flex-col items-center gap-5 py-14 text-center">
+    <div className={`flex flex-col items-center gap-5 text-center ${className ?? "py-14"}`}>
       {lines.map((line, index) => (
         <Reveal key={index} delay={index * 0.25} className="flex flex-col items-center gap-5">
           {divided && index > 0 && (
@@ -83,47 +88,6 @@ function TeaserCard({
   );
 }
 
-/**
- * oneLine이면 글자를 줄 폭에 맞춰 줄여 한 줄로 남긴다.
- * wrap이면 같은 반응형 크기를 쓰되, 좁아지면 줄어들다 두 줄까지 허용한다.
- * 13.8은 가장 긴 첫인상 문구의 폭을 글자 크기로 나눈 값이라, 문구가 더 길어지면 함께 키워야 한다.
- */
-const ROW_FLUID_SIZE = { fontSize: "clamp(11px, calc((100cqw - 7.5rem) / 13.8), 16px)" } as const;
-
-function Row({
-  label,
-  oneLine = false,
-  wrap = false,
-  children,
-}: {
-  label: string;
-  oneLine?: boolean;
-  wrap?: boolean;
-  children: ReactNode;
-}) {
-  const fluid = oneLine || wrap;
-  return (
-    <div
-      className={`flex items-center gap-3 border-t border-[rgb(232_200_154_/_0.18)] px-2 py-3 ${fluid ? "[container-type:inline-size]" : ""}`}
-    >
-      <span className="w-[5.75rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-1.5 py-0.5 text-center text-[11px] text-gold-soft">
-        {label}
-      </span>
-      {oneLine ? (
-        <span className="flex-1 whitespace-nowrap font-serif text-paper" style={ROW_FLUID_SIZE}>
-          {children}
-        </span>
-      ) : wrap ? (
-        <span className="line-clamp-2 flex-1 break-keep font-serif leading-snug text-paper" style={ROW_FLUID_SIZE}>
-          {children}
-        </span>
-      ) : (
-        <span className="flex-1 break-keep font-serif text-[16px] text-paper">{children}</span>
-      )}
-    </div>
-  );
-}
-
 /** 잠긴 칸. 값 대신 흐린 가짜 글자를 깔아 둔다. */
 function LockedRow({ label, mask = "■■■■■■" }: { label: string; mask?: string }) {
   return (
@@ -152,6 +116,8 @@ export function LockedPicture({
   faceFilterClass = "scale-110 blur-[14px]",
   /** 자물쇠 아이콘만 줄인다. 캡션 글자 크기는 유지. */
   compactLock = false,
+  /** soft=타원 페이드, rect=모서리 20px 사각형 */
+  shape = "soft",
 }: {
   src: string;
   alt: string;
@@ -164,6 +130,7 @@ export function LockedPicture({
   blurFace?: boolean;
   faceFilterClass?: string;
   compactLock?: boolean;
+  shape?: "soft" | "rect";
 }) {
   const lock = (
     <figcaption className="absolute left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2.5" style={{ top: lockY }}>
@@ -182,11 +149,13 @@ export function LockedPicture({
     </figcaption>
   );
 
+  const shapeClass =
+    shape === "rect"
+      ? "overflow-hidden rounded-[20px]"
+      : "overflow-hidden [-webkit-mask-image:radial-gradient(ellipse_at_center,black_48%,transparent_78%)] [mask-image:radial-gradient(ellipse_at_center,black_48%,transparent_78%)]";
+
   const figure = (
-    <figure
-      className="relative h-full w-full overflow-hidden [-webkit-mask-image:radial-gradient(ellipse_at_center,black_48%,transparent_78%)] [mask-image:radial-gradient(ellipse_at_center,black_48%,transparent_78%)]"
-      style={ratio ? { aspectRatio: ratio } : undefined}
-    >
+    <figure className={`relative h-full w-full ${shapeClass}`} style={ratio ? { aspectRatio: ratio } : undefined}>
       <Image
         src={src}
         alt={alt}
@@ -213,40 +182,6 @@ export function LockedPicture({
   );
 }
 
-/** 그림은 바로 두고, 제목·텍스트·자물쇠만 천천히 띄우는 카드. */
-function SlowTextTeaserCard({
-  title,
-  picture,
-  rows,
-  variant = "tall",
-}: {
-  title: ReactNode;
-  picture: ReactNode;
-  rows: ReactNode[];
-  variant?: OrnateFrameVariant;
-}) {
-  return (
-    <OrnateFrameCard variant={variant} bodyClassName="overflow-hidden">
-      <Reveal duration={1.25}>
-        <h2 className="shrink-0 border-b border-[rgb(232_200_154_/_0.22)] px-2 py-2 text-center font-serif text-[13px] tracking-[0.04em] text-gold-soft">
-          {title}
-        </h2>
-      </Reveal>
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        {/* 높이는 유지하되, 좌우로만 들여 장식 테두리를 넘지 않게 */}
-        <div className="mx-2 shrink-0 overflow-hidden rounded-lg">{picture}</div>
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          {rows.map((row, index) => (
-            <Reveal key={index} delay={0.2 + index * 0.18} duration={1.2}>
-              {row}
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </OrnateFrameCard>
-  );
-}
-
 export function BloomCard({ result }: { result: FreeResultView }) {
   const { bloom } = result.teasers;
   return (
@@ -264,36 +199,52 @@ export function BloomCard({ result }: { result: FreeResultView }) {
   );
 }
 
+/** 얼굴 사진만 보여 주는 티저. 장식 카드 없이 모서리 20px 사각형. */
+function PortraitOnlyCard({
+  title,
+  src,
+  alt,
+  caption,
+  lockY,
+  ratio,
+}: {
+  title: string;
+  src: string;
+  alt: string;
+  caption: string;
+  lockY: string;
+  ratio: string;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <Reveal duration={1.25}>
+        <h2 className="text-center font-serif text-[13px] tracking-[0.04em] text-gold-soft">{title}</h2>
+      </Reveal>
+      <LockedPicture
+        src={src}
+        alt={alt}
+        caption={caption}
+        lockY={lockY}
+        ratio={ratio}
+        revealLock
+        blurFace
+        shape="rect"
+        faceFilterClass="blur-[8px]"
+      />
+    </div>
+  );
+}
+
 export function PartnerCard({ result }: { result: FreeResultView }) {
   const { partner } = result.teasers;
   return (
-    <SlowTextTeaserCard
+    <PortraitOnlyCard
       title={`${result.name}에게 끌리는 남자`}
-      picture={
-        <LockedPicture
-          src={partner.portrait}
-          alt="얼굴을 흐리게 가린 남자"
-          caption="그 남자의 얼굴"
-          lockY="42%"
-          ratio="6 / 5"
-          revealLock
-          blurFace
-          faceFilterClass="blur-[8px]"
-        />
-      }
-      rows={[
-        <Row key="vibe" label="분위기" wrap>
-          {partner.vibe}
-        </Row>,
-        <Row key="age" label="나이" oneLine>
-          {partner.age}
-        </Row>,
-        <Row key="build" label="체격·키" oneLine>
-          {partner.build}
-        </Row>,
-        <LockedRow key="job" label="직업" mask="■■■ ■■■■" />,
-        <LockedRow key="place" label="처음 만나는 곳" mask="■■ ■■■ ■■" />,
-      ]}
+      src={partner.portrait}
+      alt="얼굴을 흐리게 가린 남자"
+      caption="그 남자의 얼굴"
+      lockY="42%"
+      ratio="6 / 5"
     />
   );
 }
@@ -301,55 +252,13 @@ export function PartnerCard({ result }: { result: FreeResultView }) {
 export function FaceCard({ result }: { result: FreeResultView }) {
   const { face } = result.teasers;
   return (
-    <div className="flex flex-col">
-      <SlowTextTeaserCard
-        title="남자들 눈에 비친 네 얼굴"
-        picture={
-          <LockedPicture
-            src={face.portrait}
-            alt="거울 속 얼굴이 흐리게 가려진 모습"
-            caption="그 남자가 보는 네 얼굴"
-            lockY="53%"
-            ratio="10 / 11"
-            revealLock
-            blurFace
-            faceFilterClass="blur-[8px]"
-          />
-        }
-        rows={[
-          <Row key="impression" label="첫인상" oneLine>
-            {face.impression}
-          </Row>,
-          <Row key="point" label="매력 포인트" wrap>
-            {face.point}
-          </Row>,
-          <LockedRow key="line" label="필살 멘트" mask="■■■ ■■ ■■" />,
-          <LockedRow key="scene" label="잊지 못할 장면" mask="■■■■ ■■■" />,
-        ]}
-      />
-
-      <SinseonLines
-        lines={[
-          <>
-            사주에 따라 보여지는
-            <br />
-            <span className="text-blossom-glow">얼굴 이미지</span>도 다른 거 알아?
-          </>,
-        ]}
-      />
-
-      <TeaserCard title="이렇게만 바꾸면 남자들이 못 참을 텐데" variant="medium">
-        <div className="flex items-center gap-3 px-2 py-3">
-          <span className="w-[5.75rem] shrink-0 whitespace-nowrap rounded border border-gold/30 px-1.5 py-0.5 text-center text-[11px] text-gold-soft">
-            포인트 컬러
-          </span>
-          <span aria-hidden className="size-5 shrink-0 rounded-full border border-white/30" style={{ backgroundColor: face.color.hex }} />
-          <span className="flex-1 font-serif text-[15px] text-paper">{face.color.name}</span>
-        </div>
-        <LockedRow label="헤어·메이크업" mask="■■■ ■■ ■■■" />
-        <LockedRow label="어울리는 향" mask="■■■ ■■" />
-        <LockedRow label="예뻐 보이는 때" mask="■■ ■시 ■■" />
-      </TeaserCard>
-    </div>
+    <PortraitOnlyCard
+      title="남자들 눈에 비친 네 얼굴"
+      src={face.portrait}
+      alt="거울 속 얼굴이 흐리게 가려진 모습"
+      caption="그 남자가 보는 네 얼굴"
+      lockY="53%"
+      ratio="10 / 11"
+    />
   );
 }

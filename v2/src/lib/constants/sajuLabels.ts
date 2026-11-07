@@ -12,6 +12,11 @@ export function josa(word: string, withBatchim: string, withoutBatchim: string) 
   return `${word}${hasBatchim ? withBatchim : withoutBatchim}`;
 }
 
+/** 화면용 간지. 한자 대신 한글을 ·로 잇는다(병신·임신 같은 붙여쓰기 피함). */
+export function ganjiKorean(stemKorean: string, branchKorean: string) {
+  return `${stemKorean}·${branchKorean}`;
+}
+
 export const ELEMENT_LABELS: Record<FiveElementKey, { name: string; reading: string; hanja: string; mood: string }> = {
   wood: { name: "나무", reading: "목", hanja: "木", mood: "자라나는 생기" },
   fire: { name: "불", reading: "화", hanja: "火", mood: "타오르는 열정" },

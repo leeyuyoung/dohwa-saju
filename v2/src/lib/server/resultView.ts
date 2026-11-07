@@ -1,9 +1,24 @@
 import "server-only";
 
-import { CHARM_INDICES, DOHWA_TYPES, REPORT_CHAPTERS, gradeOf, withPartner } from "@/lib/constants/result";
+import { REPORT_CHAPTERS_V1 } from "@/lib/constants/reportChapters.v1";
+import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
+import { resolveReportVersion } from "@/lib/constants/reportVersion";
+import { CHARM_INDICES, DOHWA_TYPES, gradeOf, withPartner } from "@/lib/constants/result";
 import { buildSajuProfile, calculateSaju, readDohwa, type DohwaReading, type SajuProfile } from "@/lib/saju";
+import { freeCharmType, freeFirstImpressionLine, freeIntroLines, freeVibeKeywords } from "@/lib/saju/freeResultCopy";
+import { ganjiKorean } from "@/lib/constants/sajuLabels";
 import { faceTeaser, nextBloomMonth, partnerTeaser } from "@/lib/saju/teasers";
-import type { CharmStarView, CurrentLuckView, DohwaView, FreeResultView, FullReportView, PillarView } from "@/types/result";
+import type {
+  CharmStarView,
+  CurrentLuckView,
+  DohwaView,
+  FreeResultView,
+  FullReportView,
+  FullReportViewV2,
+  PillarView,
+} from "@/types/result";
+import type { AiReportV1 } from "./ai/reportSchema.v1";
+import type { AiReportV2 } from "./ai/reportSchema.v2";
 import { storedReport } from "./analysis";
 import { partnerPortraitSrc, reportPortraits, selfPortraitSrc } from "./portraits";
 import type { AnalysisRecord } from "./store";
@@ -42,10 +57,11 @@ function freeView(name: string, profile: SajuProfile): FreeResultView {
   const day = profile.pillars.find((pillar) => pillar.position === "day")!;
   const reading = readDohwa(profile);
   const dohwa = dohwaView(reading);
+  const charmType = freeCharmType(profile, reading);
   return {
     name,
     birthLabel: birthLabel(profile),
-    dayPillarName: `${day.stem.korean}${day.branch.korean}일주`,
+    dayPillarName: `${ganjiKorean(day.stem.korean, day.branch.korean)} 일주`,
     pillars: pillarViews(profile),
     birthTimeKnown: profile.calculation.hourPillar !== null,
     dohwa,
@@ -59,6 +75,12 @@ function freeView(name: string, profile: SajuProfile): FreeResultView {
         ...faceTeaser(profile, reading),
         portrait: selfPortraitSrc(reading.typeKey),
       },
+    },
+    preview: {
+      intro: freeIntroLines(profile, reading, name),
+      charmType,
+      firstImpression: freeFirstImpressionLine(profile, reading),
+      vibeKeywords: freeVibeKeywords(profile, reading),
     },
   };
 }
@@ -82,12 +104,8 @@ const formatKoreanDate = (time: number) =>
 /** 무료 화면용 값. 만세력 계산 결과만으로 만든다. */
 export const toFreeResultView = (record: AnalysisRecord): FreeResultView => freeView(record.name, record.profile);
 
-/** 결제가 확인되고 리포트가 완성된 기록만 전체 리포트로 변환한다. */
-export function toFullReportView(record: AnalysisRecord): FullReportView | null {
-  const report = storedReport(record);
-  if (record.paidAt === null || !report) return null;
-  const { profile } = record;
-  const stars: CharmStarView[] = readDohwa(profile).stars.map((star) => ({
+function charmStars(profile: SajuProfile): CharmStarView[] {
+  return readDohwa(profile).stars.map((star) => ({
     key: star.key,
     name: star.name,
     hanja: star.hanja,
@@ -95,19 +113,36 @@ export function toFullReportView(record: AnalysisRecord): FullReportView | null 
     positions: star.positions,
     score: star.score,
   }));
+}
+
+function isAiReportV1(report: unknown): report is AiReportV1 {
+  return Boolean(report && typeof report === "object" && "chapters" in report && "summary" in report);
+}
+
+function isAiReportV2(report: unknown): report is AiReportV2 {
+  return Boolean(report && typeof report === "object" && "part1" in report && "intro" in report);
+}
+
+/** 결제가 확인되고 리포트가 완성된 v1 기록만 전체 리포트로 변환한다. */
+export function toFullReportView(record: AnalysisRecord): FullReportView | null {
+  const report = storedReport(record);
+  if (record.paidAt === null || !report) return null;
+  if (resolveReportVersion(record.reportVersion) !== 1 || !isAiReportV1(report)) return null;
+
+  const { profile } = record;
   return {
     ...toFreeResultView(record),
     analyzedAt: formatKoreanDate(record.createdAt),
     summary: report.summary,
     keywords: report.keywords,
-    stars,
+    stars: charmStars(profile),
     fiveElements: {
       counts: profile.fiveElements.counts,
       dominant: profile.fiveElements.dominant,
       missing: profile.fiveElements.missing,
     },
     currentLuck: currentLuckView(profile),
-    chapters: REPORT_CHAPTERS.map((meta, index) => ({
+    chapters: REPORT_CHAPTERS_V1.map((meta, index) => ({
       chapter: meta.chapter,
       key: meta.key,
       title: meta.title,
@@ -120,6 +155,73 @@ export function toFullReportView(record: AnalysisRecord): FullReportView | null 
       })),
     })),
     loveTimeline: report.loveTimeline,
+    portraits: reportPortraits(profile),
+  };
+}
+
+/** 결제가 확인되고 리포트가 완성된 v2 기록만 PART 구조로 변환한다. */
+export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | null {
+  const report = storedReport(record);
+  if (record.paidAt === null || !report) return null;
+  if (resolveReportVersion(record.reportVersion) !== 2 || !isAiReportV2(report)) return null;
+
+  const { profile } = record;
+  const gender = profile.calculation.gender;
+  const partBodies = [report.part1, report.part2, report.part3, report.part4, report.part5] as const;
+
+  return {
+    ...toFreeResultView(record),
+    analyzedAt: formatKoreanDate(record.createdAt),
+    intro: report.intro,
+    stars: charmStars(profile),
+    fiveElements: {
+      counts: profile.fiveElements.counts,
+      dominant: profile.fiveElements.dominant,
+      missing: profile.fiveElements.missing,
+    },
+    currentLuck: currentLuckView(profile),
+    parts: REPORT_PARTS_V2.map((meta, index) => {
+      const body = partBodies[index];
+      if (meta.key === "vibe" && "keywords" in body) {
+        return {
+          part: meta.part,
+          key: meta.key,
+          title: withPartner(meta.title, gender),
+          question: withPartner(meta.question, gender),
+          headline: body.headline,
+          closingLine: body.closingLine,
+          sections: [],
+          keywords: body.keywords.map((keyword) => ({
+            name: keyword.name,
+            paragraphs: keyword.paragraphs,
+          })),
+        };
+      }
+      if (!("sections" in body) || !Array.isArray(body.sections)) {
+        return {
+          part: meta.part,
+          key: meta.key,
+          title: withPartner(meta.title, gender),
+          question: withPartner(meta.question, gender),
+          headline: body.headline,
+          closingLine: body.closingLine,
+          sections: [],
+        };
+      }
+      return {
+        part: meta.part,
+        key: meta.key,
+        title: withPartner(meta.title, gender),
+        question: withPartner(meta.question, gender),
+        headline: body.headline,
+        closingLine: body.closingLine,
+        sections: meta.sections.map((section, sectionIndex) => ({
+          title: withPartner(section.title, gender),
+          paragraphs: body.sections[sectionIndex].paragraphs,
+        })),
+      };
+    }),
+    conclusion: report.conclusion,
     portraits: reportPortraits(profile),
   };
 }

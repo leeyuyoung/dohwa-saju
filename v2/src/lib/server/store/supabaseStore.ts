@@ -22,6 +22,7 @@ type Row = {
   concern: string | null;
   profile: AnalysisRecord["profile"];
   report: AnalysisRecord["report"];
+  report_version: number | null;
   paid_at: string | null;
   email_sent_at: string | null;
   email_error: string | null;
@@ -81,6 +82,7 @@ function toRow(record: AnalysisRecord): Row {
     concern: record.concern,
     profile: record.profile,
     report: record.report,
+    report_version: record.reportVersion,
     paid_at: record.paidAt === null ? null : toIso(record.paidAt),
     email_sent_at: record.emailSentAt === null ? null : toIso(record.emailSentAt),
     email_error: record.emailError,
@@ -101,6 +103,7 @@ function fromRow(row: Row): AnalysisRecord {
     concern: row.concern,
     profile: row.profile,
     report: row.report,
+    reportVersion: row.report_version ?? null,
     paidAt: row.paid_at === null ? null : Date.parse(row.paid_at),
     emailSentAt: row.email_sent_at == null ? null : Date.parse(row.email_sent_at),
     emailError: row.email_error ?? null,
@@ -118,6 +121,7 @@ function patchToRow(patch: Patch): Partial<Row> {
   if (patch.concern !== undefined) row.concern = patch.concern;
   if (patch.profile !== undefined) row.profile = patch.profile;
   if (patch.report !== undefined) row.report = patch.report;
+  if (patch.reportVersion !== undefined) row.report_version = patch.reportVersion;
   if (patch.paidAt !== undefined) row.paid_at = patch.paidAt === null ? null : toIso(patch.paidAt);
   if (patch.emailSentAt !== undefined) row.email_sent_at = patch.emailSentAt === null ? null : toIso(patch.emailSentAt);
   if (patch.emailError !== undefined) row.email_error = patch.emailError;
@@ -254,6 +258,7 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       "relationship_status",
       "concern",
       "profile",
+      "report_version",
       "paid_at",
       "email_sent_at",
       "email_error",

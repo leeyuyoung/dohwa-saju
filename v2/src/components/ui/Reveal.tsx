@@ -19,7 +19,7 @@ export function Reveal({ children, delay = 0, className, amount, duration = 1.2 
       className={className}
       initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, amount: amount ?? 0.2, margin: amount ? "0px 0px -18% 0px" : "-60px" }}
+      viewport={{ once: true, amount: amount ?? 0.12, margin: amount ? "0px 0px -10% 0px" : "80px 0px" }}
       transition={{ duration, delay, ease: [0.22, 0.61, 0.36, 1] }}
     >
       {children}

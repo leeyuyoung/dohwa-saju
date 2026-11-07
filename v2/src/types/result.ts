@@ -46,6 +46,13 @@ export type FreeResultView = {
     partner: { vibe: string; age: string; build: string; portrait: string };
     face: { impression: string; point: string; color: { name: string; hex: string; hanja: string }; portrait: string };
   };
+  /** API 없이 만든 무료 미리보기 카피. */
+  preview: {
+    intro: [string, string];
+    charmType: { label: string; vibeLine: string; reason: string };
+    firstImpression: string;
+    vibeKeywords: { name: string }[];
+  };
 };
 
 export type CharmStarView = { key: string; name: string; hanja: string; found: boolean; positions: PillarPosition[]; score: number };
@@ -89,5 +96,27 @@ export type FullReportView = FreeResultView & {
   currentLuck: CurrentLuckView | null;
   chapters: ReportChapterView[];
   loveTimeline: { year: number; mood: string; body: string }[];
+  portraits: { self: ReportPortraitView; partner: ReportPortraitView };
+};
+
+/** 유료 리포트 v2 화면용. PART 구조. */
+export type FullReportViewV2 = FreeResultView & {
+  analyzedAt: string;
+  intro: string;
+  stars: CharmStarView[];
+  fiveElements: FiveElementsView;
+  currentLuck: CurrentLuckView | null;
+  parts: {
+    part: number;
+    key: string;
+    title: string;
+    question: string;
+    headline: string;
+    closingLine: string;
+    sections: { title: string; paragraphs: string[] }[];
+    /** part3만 */
+    keywords?: { name: string; paragraphs: string[] }[];
+  }[];
+  conclusion: string;
   portraits: { self: ReportPortraitView; partner: ReportPortraitView };
 };

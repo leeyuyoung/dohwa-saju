@@ -1,7 +1,10 @@
 import type { FunnelEvent, FunnelStep, FunnelStepCount } from "@/lib/server/funnel";
-import type { AiReport } from "@/lib/server/ai/reportSchema";
+import type { AiReportV1 } from "@/lib/server/ai/reportSchema.v1";
+import type { AiReportV2 } from "@/lib/server/ai/reportSchema.v2";
 import type { SajuProfile } from "@/lib/saju";
 import type { RelationshipStatus } from "@/lib/validation/analysisInput";
+
+export type StoredAiReport = AiReportV1 | AiReportV2;
 
 /** 유료 리포트 생성 상태. 무료 결과는 만세력 계산만으로 만들어 처음부터 ready다. */
 export type AnalysisStatus = "generating" | "ready" | "failed";
@@ -22,7 +25,12 @@ export type AnalysisRecord = {
   relationshipStatus: RelationshipStatus;
   concern: string | null;
   profile: SajuProfile;
-  report: AiReport | null;
+  report: StoredAiReport | null;
+  /**
+   * 유료 리포트 JSON/화면 포맷 버전. 생성 시점에 기록.
+   * null은 레거시(미표기)로, 읽을 때 v1으로 취급한다.
+   */
+  reportVersion: number | null;
   paidAt: number | null;
   /** 리포트 메일 발송 성공 시각. 아직 안 보냈으면 null. */
   emailSentAt: number | null;
