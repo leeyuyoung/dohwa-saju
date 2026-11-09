@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 import { PortraitVideo } from "@/components/ui/PortraitVideo";
+import { getStoredAttribution } from "@/lib/client/attribution";
 import { trackFunnel } from "@/lib/client/funnel";
 import { trackKarrot } from "@/lib/client/karrotPixel";
 import { clearPendingAnalysis, loadPendingAnalysis } from "@/lib/client/inputStorage";
@@ -29,7 +30,12 @@ const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve,
 
 /** 보관된 입력으로 무료 결과를 저장하고 토큰을 받는다. AI는 호출하지 않는다. */
 async function runAnalysis(): Promise<Phase> {
-  const pending = analysisInputSchema.safeParse(loadPendingAnalysis());
+  const raw = loadPendingAnalysis();
+  if (!raw || typeof raw !== "object") return { kind: "missing" };
+  const pending = analysisInputSchema.safeParse({
+    ...raw,
+    attribution: getStoredAttribution(),
+  });
   if (!pending.success) return { kind: "missing" };
   try {
     const response = await fetch("/api/analysis", {

@@ -2,9 +2,10 @@ import type { FunnelEvent, FunnelStep, FunnelStepCount } from "@/lib/server/funn
 import type { AiReportV1 } from "@/lib/server/ai/reportSchema.v1";
 import type { AiReportV2 } from "@/lib/server/ai/reportSchema.v2";
 import type { SajuProfile } from "@/lib/saju";
-import type { RelationshipStatus } from "@/lib/validation/analysisInput";
+import type { AttributionInput, RelationshipStatus } from "@/lib/validation/analysisInput";
 
 export type StoredAiReport = AiReportV1 | AiReportV2;
+export type Attribution = AttributionInput;
 
 /** 유료 리포트 생성 상태. 무료 결과는 만세력 계산만으로 만들어 처음부터 ready다. */
 export type AnalysisStatus = "generating" | "ready" | "failed";
@@ -24,6 +25,8 @@ export type AnalysisRecord = {
   marketingOptIn: boolean | null;
   relationshipStatus: RelationshipStatus;
   concern: string | null;
+  /** 광고 유입 UTM 첫 터치. 없으면 null. */
+  attribution: Attribution | null;
   profile: SajuProfile;
   report: StoredAiReport | null;
   /**

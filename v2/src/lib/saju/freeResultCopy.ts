@@ -17,28 +17,29 @@ export type FreeVibeKeyword = { name: string };
 const CHARM_BY_ELEMENT: Record<FiveElementKey, FreeCharmType> = {
   wood: {
     label: "볼수록 빠져드는 은은한 매력형",
-    vibeLine: "처음부터 요란하지 않은데, 웃는 순간·말투에서 천천히 스며드는 분위기야.",
-    reason: "일간이 나무 기운이라 경계를 낮추는 결이 강하고, 곁에 두면 편한 사람처럼 보이면서도 여운이 남는 타입으로 읽혀.",
+    vibeLine: "편해 보이는데, 웃는 순간부터 상대가 방심하는 타입이야.",
+    reason:
+      "일간이 나무 기운이라 경계가 쉽게 풀려. 다들 편한 사람이라 착각하다가, 정신 차려 보면 이미 네 생각에 빠져 있어.",
   },
   fire: {
     label: "첫인상부터 시선을 끄는 화려한 매력형",
-    vibeLine: "방에 들어서는 순간 온도가 달라지는, 한 번 보면 기억에 남는 쪽이야.",
-    reason: "일간이 불 기운이라 표정·눈빛에 존재감이 먼저 서고, 상대가 네 리듬에 맞춰지게 만드는 흐름이 강해.",
+    vibeLine: "들어서면 공기가 달라지고, 한 번 보면 쉽게 안 잊히는 타입이야.",
+    reason: "일간이 불 기운이라 눈빛과 표정만으로도 분위기를 압도해. 데일 걸 알면서도 다들 너한테 손이 가.",
   },
   earth: {
     label: "차분하지만 강한 존재감을 지닌 매력형",
-    vibeLine: "겉은 단정한데, 가까이 갈수록 온기와 반전이 드러나는 타입이야.",
-    reason: "일간이 흙 기운이라 안정감이 먼저 읽히고, 오래 곁에 두면 다른 사람이 잘 안 보이는 중독성이 생겨.",
+    vibeLine: "멀리선 단정해 보이는데, 가까이 갈수록 온기가 진해지는 타입이야.",
+    reason: "일간이 흙 기운이라 옆에 있으면 마음이 편해져. 가까이 둘수록 자꾸 기대게 되는 타입이야.",
   },
   metal: {
     label: "우아하고 고급스러운 분위기형",
-    vibeLine: "쉽게 곁을 안 내주는 선이 또렷해서, 더 보고 싶게 만드는 결이야.",
-    reason: "일간이 쇠 기운이라 거리감과 정돈이 먼저 보이고, 그 서늘함이 오히려 시선을 붙잡는 구조야.",
+    vibeLine: "쉽게 곁을 안 내주니까, 오히려 더 보고 싶어지는 타입이야.",
+    reason: "일간이 쇠 기운이라 차가워보이는 거리감과 말 아끼는 그 태도가 오히려 시선을 붙잡아.",
   },
   water: {
     label: "신비롭고 쉽게 잊히지 않는 매력형",
     vibeLine: "속을 다 보여 주지 않아서, 한 번 시선이 가면 계속 남게 되는 타입이야.",
-    reason: "일간이 물 기운이라 깊이·여백이 먼저 읽히고, 상대가 네 안을 더 알고 싶어지는 흐름이 있어.",
+    reason: "일간이 물 기운이라 눈매가 깊고 여백이 있는 분위기야. 알면 알수록 더 궁금한 타입이 돼.",
   },
 };
 
@@ -49,15 +50,15 @@ function refineCharmType(base: FreeCharmType, reading: DohwaReading): FreeCharmT
   if (hongyeom && hongyeom.positions.length > 0) {
     return {
       label: "첫인상부터 시선을 끄는 화려한 매력형",
-      vibeLine: "가만히 있어도 시선이 모이는, 온도감 있는 매력이야.",
-      reason: `${base.reason} 게다가 홍염의 기운이 원국에 드러나 있어, 눈길·분위기의 강도가 한층 또렷해.`,
+      vibeLine: "가만히 있어도 시선이 쏠리는 타입이야.",
+      reason: `${base.reason} 여기에 홍염까지 겹쳐서, 눈길 받는 힘이 더 세.`,
     };
   }
   if (hwagae && hwagae.positions.length > 0) {
     return {
       label: "신비롭고 쉽게 잊히지 않는 매력형",
-      vibeLine: "혼자만의 결이 분명해서, 한번 기억되면 잘 지워지지 않는 타입이야.",
-      reason: `${base.reason} 화개의 기운이 겹치면서 예술적·독립적인 인상이 더해져.`,
+      vibeLine: "혼자만의 분위기가 뚜렷해서, 한번 기억되면 잘 안 지워지는 타입이야.",
+      reason: `${base.reason} 화개까지 겹쳐서, 남들과는 다른 독립적인 인상이 더해져.`,
     };
   }
   return base;
@@ -83,16 +84,18 @@ export function freeIntroLines(profile: SajuProfile, reading: DohwaReading, name
 
 export function freeFirstImpressionLine(profile: SajuProfile, reading: DohwaReading): string {
   const type = freeCharmType(profile, reading);
-  const hook = type.label.includes("화려한")
-    ? "처음부터 강한 인상"
-    : type.label.includes("신비")
-      ? "쉽게 읽히지 않는 인상"
-      : type.label.includes("우아")
-        ? "선이 또렷한 인상"
-        : type.label.includes("차분")
-          ? "단정하고 안정적인 인상"
-          : "은은하게 남는 인상";
-  return `넌 처음부터 모든 매력을 드러내기보다는, ${hook}으로 기억될 가능성이 커. 그런데 가까워질수록 처음과는 다른 매력이 드러나는 결도 있어.`;
+  if (type.label.includes("화려한")) {
+    return "첫인상부터 강한 인상으로 박히는 타입이야. 그런데 가까워지면, 처음에 봤던 화려함과는 또 다른 매력이 나와.";
+  }
+  if (type.label.includes("우아")) {
+    return "첫인상부터 선이 또렷한 인상으로 박혀. 그런데 가까워질수록, 처음에 본 그 선 너머로 다른 매력이 더 보여.";
+  }
+  const hook = type.label.includes("신비")
+    ? "쉽게 읽히지 않는 인상"
+    : type.label.includes("차분")
+      ? "단정하고 안정적인 인상"
+      : "은은하게 남는 인상";
+  return `넌 ${hook}으로 기억될 가능성이 커. 그런데 가까워질수록 처음과는 다른 매력이 더 드러나.`;
 }
 
 const VIBE_POOL = [

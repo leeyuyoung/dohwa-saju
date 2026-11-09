@@ -1,7 +1,13 @@
 import { buildFunnelSummary, FUNNEL_STEPS, type FunnelStep } from "@/lib/server/funnel";
 import { isAdminConfigured, requireAdminSession } from "@/lib/server/adminAuth";
 import { jsonError as fail } from "@/lib/server/http";
-import { getAnalysisStore } from "@/lib/server/store";
+import { getAnalysisStore, type Attribution } from "@/lib/server/store";
+
+function attributionLabel(attribution: Attribution | null | undefined) {
+  if (!attribution) return "—";
+  const parts = [attribution.utmSource, attribution.utmCampaign, attribution.utmContent].filter(Boolean);
+  return parts.length > 0 ? parts.join(" · ") : "—";
+}
 
 export async function GET() {
   if (!isAdminConfigured()) return fail(404, "Not found");
@@ -35,6 +41,7 @@ export async function GET() {
           email: record.email,
           phone: record.phone,
           marketingOptIn: record.marketingOptIn,
+          attributionLabel: attributionLabel(record.attribution),
           paidAt: record.paidAt,
           status: record.status,
           emailSentAt: record.emailSentAt,
@@ -58,6 +65,7 @@ export async function GET() {
           email: record.email,
           phone: record.phone,
           marketingOptIn: record.marketingOptIn,
+          attributionLabel: attributionLabel(record.attribution),
           paidAt: record.paidAt,
           status: record.status,
           emailSentAt: record.emailSentAt,

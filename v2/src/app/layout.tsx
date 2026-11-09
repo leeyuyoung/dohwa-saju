@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Noto_Sans_KR, Noto_Serif_KR, Song_Myung } from "next/font/google";
 import localFont from "next/font/local";
+import { AttributionCapture } from "@/components/analytics/AttributionCapture";
 import { KarrotPixel } from "@/components/analytics/KarrotPixel";
 import { SERVICE } from "@/lib/constants/service";
 import "./globals.css";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <KarrotPixel />
+        <AttributionCapture />
         {children}
       </body>
     </html>

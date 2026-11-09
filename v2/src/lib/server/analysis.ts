@@ -53,6 +53,17 @@ export async function createAnalysis(input: AnalysisInput): Promise<AnalysisReco
     marketingOptIn: null,
     relationshipStatus: input.relationshipStatus,
     concern: null,
+    attribution: input.attribution
+      ? {
+          utmSource: input.attribution.utmSource ?? null,
+          utmMedium: input.attribution.utmMedium ?? null,
+          utmCampaign: input.attribution.utmCampaign ?? null,
+          utmContent: input.attribution.utmContent ?? null,
+          utmTerm: input.attribution.utmTerm ?? null,
+          landing: input.attribution.landing ?? null,
+          capturedAt: input.attribution.capturedAt ?? null,
+        }
+      : null,
     profile,
     report: null,
     reportVersion: null,

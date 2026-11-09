@@ -16,6 +16,7 @@ type AnalysisRow = {
   email: string | null;
   phone: string | null;
   marketingOptIn: boolean | null;
+  attributionLabel: string;
   paidAt: number | null;
   status: string;
   emailSentAt: number | null;
@@ -239,6 +240,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                     <th className="px-3 py-2 font-normal">이름</th>
                     <th className="px-3 py-2 font-normal">양력</th>
                     <th className="px-3 py-2 font-normal">시간</th>
+                    <th className="px-3 py-2 font-normal">유입</th>
                     <th className="px-3 py-2 font-normal">이메일</th>
                     <th className="px-3 py-2 font-normal">메일발송</th>
                     <th className="px-3 py-2 font-normal">휴대폰</th>
@@ -250,7 +252,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                 <tbody>
                   {analysesTotal === 0 ? (
                     <tr>
-                      <td colSpan={10} className="px-3 py-6 text-center text-mist">
+                      <td colSpan={11} className="px-3 py-6 text-center text-mist">
                         아직 제출이 없습니다.
                       </td>
                     </tr>
@@ -263,6 +265,9 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                         <td className="px-3 py-2 text-paper">{row.name}</td>
                         <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.solar}</td>
                         <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.time}</td>
+                        <td className="max-w-[10rem] px-3 py-2 text-mist break-keep" title={row.attributionLabel}>
+                          {row.attributionLabel}
+                        </td>
                         <td className="px-3 py-2 text-mist break-all">{row.email ?? "—"}</td>
                         <td className="max-w-[11rem] px-3 py-2 text-mist">
                           <span className={row.emailError ? "text-fire" : row.emailSentAt ? "text-paper" : ""}>

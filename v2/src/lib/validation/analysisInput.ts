@@ -109,6 +109,30 @@ export const nameStepSchema = z.object({ name: nameRule });
 
 export const STEP_SCHEMAS = [birthDateStepSchema, birthTimeStepSchema, nameStepSchema] as const;
 
+const attributionField = z
+  .string()
+  .trim()
+  .max(120)
+  .nullable()
+  .optional()
+  .transform((value) => (value && value.length > 0 ? value : null));
+
+/** 광고 유입(UTM). 클라이언트가 첫 터치로 붙인다. 없어도 제출은 된다. */
+export const attributionSchema = z
+  .object({
+    utmSource: attributionField,
+    utmMedium: attributionField,
+    utmCampaign: attributionField,
+    utmContent: attributionField,
+    utmTerm: attributionField,
+    landing: attributionField,
+    capturedAt: z.number().int().positive().optional().nullable(),
+  })
+  .optional()
+  .nullable();
+
+export type AttributionInput = NonNullable<z.infer<typeof attributionSchema>>;
+
 export type FieldErrors = Partial<Record<string, string>>;
 
 export function validateStep(stepIndex: number, values: AnalysisFormValues): FieldErrors {
@@ -136,6 +160,7 @@ export const analysisInputSchema = z.object({
   }),
   gender: z.literal("female"),
   relationshipStatus: z.enum(RELATIONSHIP_STATUS_VALUES),
+  attribution: attributionSchema,
 });
 
 export type AnalysisInput = z.infer<typeof analysisInputSchema>;

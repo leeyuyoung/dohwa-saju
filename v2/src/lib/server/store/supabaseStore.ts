@@ -20,6 +20,7 @@ type Row = {
   marketing_opt_in: boolean | null;
   relationship_status: AnalysisRecord["relationshipStatus"];
   concern: string | null;
+  attribution: AnalysisRecord["attribution"];
   profile: AnalysisRecord["profile"];
   report: AnalysisRecord["report"];
   report_version: number | null;
@@ -80,6 +81,7 @@ function toRow(record: AnalysisRecord): Row {
     marketing_opt_in: record.marketingOptIn,
     relationship_status: record.relationshipStatus,
     concern: record.concern,
+    attribution: record.attribution,
     profile: record.profile,
     report: record.report,
     report_version: record.reportVersion,
@@ -101,6 +103,7 @@ function fromRow(row: Row): AnalysisRecord {
     marketingOptIn: row.marketing_opt_in ?? null,
     relationshipStatus: row.relationship_status,
     concern: row.concern,
+    attribution: row.attribution ?? null,
     profile: row.profile,
     report: row.report,
     reportVersion: row.report_version ?? null,
@@ -119,6 +122,7 @@ function patchToRow(patch: Patch): Partial<Row> {
   if (patch.marketingOptIn !== undefined) row.marketing_opt_in = patch.marketingOptIn;
   if (patch.relationshipStatus !== undefined) row.relationship_status = patch.relationshipStatus;
   if (patch.concern !== undefined) row.concern = patch.concern;
+  if (patch.attribution !== undefined) row.attribution = patch.attribution;
   if (patch.profile !== undefined) row.profile = patch.profile;
   if (patch.report !== undefined) row.report = patch.report;
   if (patch.reportVersion !== undefined) row.report_version = patch.reportVersion;
@@ -257,6 +261,7 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       "marketing_opt_in",
       "relationship_status",
       "concern",
+      "attribution",
       "profile",
       "report_version",
       "paid_at",
