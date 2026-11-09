@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { CheckoutDealPrice } from "@/components/payment/CheckoutDealPrice";
-import { CheckoutSecretCouponModal } from "@/components/payment/CheckoutSecretCouponModal";
+import { CheckoutExitModal } from "@/components/payment/CheckoutExitModal";
 import { CheckoutWidget } from "@/components/payment/CheckoutWidget";
 import { trackFunnel } from "@/lib/client/funnel";
 import { KARROT_PRODUCT, trackKarrot } from "@/lib/client/karrotPixel";
@@ -11,9 +11,7 @@ import {
   DETAILED_REPORT_LIST_PRICE,
   DETAILED_REPORT_MID_PRICE,
   DETAILED_REPORT_PRICE,
-  DETAILED_REPORT_SECRET_COUPON,
   formatWon,
-  reportCheckoutAmount,
 } from "@/lib/constants/service";
 
 type PaymentSheetProps = {
@@ -30,36 +28,22 @@ const SLASH_STEP_MS = 420;
 /** 결제 CTA에서 아래에서 올라오는 시트. 할인·연락처·페이앱 결제를 담는다. */
 export function PaymentSheet({ open, onClose, token, title, buyerName }: PaymentSheetProps) {
   const [slashIndex, setSlashIndex] = useState(0);
-  const [couponOfferOpen, setCouponOfferOpen] = useState(false);
-  const [couponApplied, setCouponApplied] = useState(false);
+  const [exitOpen, setExitOpen] = useState(false);
   const displayPrice = SLASH_STEPS[slashIndex] ?? DETAILED_REPORT_PRICE;
   const showFinal = slashIndex >= 2;
-  const payAmount = reportCheckoutAmount(couponApplied);
-  const baseSaved = DETAILED_REPORT_LIST_PRICE - DETAILED_REPORT_PRICE;
-  const totalSaved = DETAILED_REPORT_LIST_PRICE - payAmount;
+  const saved = DETAILED_REPORT_LIST_PRICE - DETAILED_REPORT_PRICE;
 
-  /** 첫 닫기 → 비밀쿠폰 팝업. 이미 적용됐으면 시트 종료. */
-  const requestClose = () => {
-    if (!couponApplied) {
-      setCouponOfferOpen(true);
-      return;
-    }
-    onClose();
-  };
-  const acceptCoupon = () => {
-    setCouponApplied(true);
-    setCouponOfferOpen(false);
-  };
+  const requestClose = () => setExitOpen(true);
+  const continueCheckout = () => setExitOpen(false);
   const leaveCheckout = () => {
-    setCouponOfferOpen(false);
+    setExitOpen(false);
     onClose();
   };
 
   useEffect(() => {
     if (!open) {
       setSlashIndex(0);
-      setCouponOfferOpen(false);
-      setCouponApplied(false);
+      setExitOpen(false);
       return;
     }
     trackFunnel("checkout", token);
@@ -92,19 +76,11 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      if (couponOfferOpen) {
-        setCouponOfferOpen(false);
-        return;
-      }
-      if (!couponApplied) {
-        setCouponOfferOpen(true);
-        return;
-      }
-      onClose();
+      setExitOpen((prev) => !prev);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, couponApplied, couponOfferOpen, onClose]);
+  }, [open]);
 
   return (
     <>
@@ -147,7 +123,7 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
               <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-[max(1rem,env(safe-area-inset-bottom))] font-gothic">
                 <p className="text-[15px] tracking-[-0.01em] text-paper">{buyerName}의 연애·매력 리포트 결제</p>
                 <p className="mt-1.5 inline-flex rounded-full bg-[#e11d48]/15 px-3 py-0.5 text-[12px] tracking-[-0.01em] text-[#e11d48]">
-                  총 {formatWon(totalSaved)}원 할인받았어요!
+                  총 {formatWon(saved)}원 할인받았어요!
                 </p>
 
                 <div className="mt-3 rounded-2xl border border-[#e11d48]/55 bg-ink/50 px-4 py-3">
@@ -167,19 +143,14 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
                           {formatWon(DETAILED_REPORT_MID_PRICE)}원
                         </p>
                       )}
-                      {couponApplied && (
-                        <p className="text-[12px] tracking-[-0.01em] text-mist-dim line-through">
-                          {formatWon(DETAILED_REPORT_PRICE)}원
-                        </p>
-                      )}
                       <motion.p
-                        key={couponApplied ? payAmount : displayPrice}
+                        key={displayPrice}
                         initial={{ opacity: 0.35, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ type: "spring", stiffness: 420, damping: 22 }}
-                        className={`text-[17px] tracking-[-0.01em] ${showFinal || couponApplied ? "text-gold-soft" : "text-paper"}`}
+                        className={`text-[17px] tracking-[-0.01em] ${showFinal ? "text-gold-soft" : "text-paper"}`}
                       >
-                        {formatWon(couponApplied ? payAmount : displayPrice)}원
+                        {formatWon(displayPrice)}원
                       </motion.p>
                     </div>
                   </div>
@@ -191,30 +162,24 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
                 </div>
                 <div className="flex items-center justify-between border-b border-line/60 py-2 text-[13px] tracking-[-0.01em]">
                   <span className="text-[#e11d48]">지금 결제 시 할인</span>
-                  <span className="text-[#e11d48]">-{formatWon(baseSaved)}원</span>
+                  <span className="text-[#e11d48]">-{formatWon(saved)}원</span>
                 </div>
-                {couponApplied && (
-                  <div className="flex items-center justify-between border-b border-line/60 py-2 text-[13px] tracking-[-0.01em]">
-                    <span className="text-[#e11d48]">비밀쿠폰</span>
-                    <span className="text-[#e11d48]">-{formatWon(DETAILED_REPORT_SECRET_COUPON)}원</span>
-                  </div>
-                )}
                 <div className="flex items-center justify-between py-2 tracking-[-0.01em]">
                   <span className="text-[15px] text-paper">최종 구매가</span>
-                  <span className="text-[20px] text-paper">{formatWon(payAmount)}원</span>
+                  <span className="text-[20px] text-paper">{formatWon(DETAILED_REPORT_PRICE)}원</span>
                 </div>
 
                 <div className="mb-2 mt-0.5 flex justify-center">
                   <CheckoutDealPrice align="center" showPrice={false} showUrgency />
                 </div>
 
-                <CheckoutWidget token={token} amount={payAmount} couponApplied={couponApplied} />
+                <CheckoutWidget token={token} amount={DETAILED_REPORT_PRICE} />
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
-      <CheckoutSecretCouponModal open={couponOfferOpen} onAccept={acceptCoupon} onLeave={leaveCheckout} />
+      <CheckoutExitModal open={exitOpen} onContinue={continueCheckout} onLeave={leaveCheckout} />
     </>
   );
 }
