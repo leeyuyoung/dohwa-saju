@@ -30,7 +30,7 @@ export const HERO_COPY = {
 } as const;
 
 /** 상세 리포트 결제 금액(실제 청구). 다시 올릴 때 이 값만 바꾸면 된다. */
-export const DETAILED_REPORT_PRICE = 9900;
+export const DETAILED_REPORT_PRICE = 19900;
 /** 결제 화면에 취소선으로 보여주는 정가. */
 export const DETAILED_REPORT_LIST_PRICE = 59900;
 /** 3단 가격 UI 중간 단계(표시용). */
