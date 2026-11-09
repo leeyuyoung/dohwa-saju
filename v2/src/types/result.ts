@@ -49,6 +49,8 @@ export type FreeResultView = {
   /** API 없이 만든 무료 미리보기 카피. */
   preview: {
     intro: [string, string];
+    /** PART 1~5 앞에 붙는 말투 리드인. */
+    partLeadIns: [string, string, string, string, string];
     charmType: { label: string; vibeLine: string; reason: string };
     firstImpression: string;
     vibeKeywords: { name: string }[];

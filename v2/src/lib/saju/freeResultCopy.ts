@@ -1,4 +1,4 @@
-import { ganjiKorean } from "@/lib/constants/sajuLabels";
+import { ganjiKorean, josa } from "@/lib/constants/sajuLabels";
 import type { DohwaReading } from "./dohwa";
 import type { FiveElementKey, SajuProfile } from "./profileTypes";
 
@@ -19,27 +19,27 @@ const CHARM_BY_ELEMENT: Record<FiveElementKey, FreeCharmType> = {
     label: "볼수록 빠져드는 은은한 매력형",
     vibeLine: "편해 보이는데, 웃는 순간부터 상대가 방심하는 타입이야.",
     reason:
-      "일간이 나무 기운이라 경계가 쉽게 풀려. 다들 편한 사람이라 착각하다가, 정신 차려 보면 이미 네 생각에 빠져 있어.",
+      "일간에 나무 기운이 있어서 경계가 쉽게 풀려. 다들 편한 사람이라 착각하다가, 정신 차려 보면 이미 네 생각에 빠져 있어.",
   },
   fire: {
     label: "첫인상부터 시선을 끄는 화려한 매력형",
     vibeLine: "들어서면 공기가 달라지고, 한 번 보면 쉽게 안 잊히는 타입이야.",
-    reason: "일간이 불 기운이라 눈빛과 표정만으로도 분위기를 압도해. 데일 걸 알면서도 다들 너한테 손이 가.",
+    reason: "일간에 불 기운이 있어서 눈빛과 표정만으로도 분위기를 압도해. 데일 걸 알면서도 다들 너한테 손이 가.",
   },
   earth: {
     label: "차분하지만 강한 존재감을 지닌 매력형",
     vibeLine: "멀리선 단정해 보이는데, 가까이 갈수록 온기가 진해지는 타입이야.",
-    reason: "일간이 흙 기운이라 옆에 있으면 마음이 편해져. 가까이 둘수록 자꾸 기대게 되는 타입이야.",
+    reason: "일간에 흙 기운이 있어서 옆에 있으면 마음이 편해져. 가까이 둘수록 자꾸 기대게 되는 타입이야.",
   },
   metal: {
     label: "우아하고 고급스러운 분위기형",
     vibeLine: "쉽게 곁을 안 내주니까, 오히려 더 보고 싶어지는 타입이야.",
-    reason: "일간이 쇠 기운이라 차가워보이는 거리감과 말 아끼는 그 태도가 오히려 시선을 붙잡아.",
+    reason: "일간에 쇠 기운이 있어서 차가워보이는 거리감과 말 아끼는 그 태도가 오히려 시선을 붙잡아.",
   },
   water: {
     label: "신비롭고 쉽게 잊히지 않는 매력형",
     vibeLine: "속을 다 보여 주지 않아서, 한 번 시선이 가면 계속 남게 되는 타입이야.",
-    reason: "일간이 물 기운이라 눈매가 깊고 여백이 있는 분위기야. 알면 알수록 더 궁금한 타입이 돼.",
+    reason: "일간에 물 기운이 있어서 눈매가 깊고 여백이 있는 분위기야. 알면 알수록 더 궁금한 타입이 돼.",
   },
 };
 
@@ -74,11 +74,23 @@ export function freeIntroLines(profile: SajuProfile, reading: DohwaReading, name
   const starHits = reading.stars.filter((star) => star.positions.length > 0).map((star) => star.name);
   const starHint =
     starHits.length > 0
-      ? `${starHits.join("·")}의 결이 원국에 비쳐 있어.`
+      ? `네 사주에 ${starHits.join("·")}이 보여.`
       : "겉으로 요란한 매력살보다, 일간과 오행 균형에서 매력이 읽히는 사주야.";
   return [
-    `${name}, 네 일주는 ${ganjiKorean(day.stem.korean, day.branch.korean)}이야. ${type.vibeLine}`,
+    `${name}, 네 일주는 ${josa(ganjiKorean(day.stem.korean, day.branch.korean), "이야", "야")}. ${type.vibeLine}`,
     `${starHint} 이 페이지에선 그 핵심만 먼저 열어 줄게.`,
+  ];
+}
+
+/** PART 1~5 앞에 붙는 말투 리드인. 인트로와 같은 반말로 이어 준다. */
+export function freePartLeadIns(gender: "female" | "male"): [string, string, string, string, string] {
+  const partner = gender === "female" ? "남자" : "여자";
+  return [
+    "사주에 예쁜 기운이 보이네.",
+    `${partner}들이 보는 네 첫인상과 친해지고 나서 반전매력, 궁금하지 않아?`,
+    "너는 이런 분위기의 사람이야.",
+    "평생 활용할 수 있는 사주별 스타일링 꿀팁도 넣어뒀단다.",
+    `네 운명의 ${partner}, 언제 어디서 만나는지 자세히 다 나온단다.`,
   ];
 }
 

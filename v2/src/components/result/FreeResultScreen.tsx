@@ -7,7 +7,7 @@ import { ManseryeokTable } from "@/components/result/ManseryeokTable";
 import { LockIcon } from "@/components/result/ResultParts";
 import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { StickyCheckoutBar } from "@/components/result/StickyCheckoutBar";
-import { FaceCard, PartnerCard } from "@/components/result/TeaserCards";
+import { FaceCard, PartnerCard, PartSunnyeoLeadIn } from "@/components/result/TeaserCards";
 import { Reveal } from "@/components/ui/Reveal";
 import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
 import { DETAILED_REPORT_ORDER_NAME } from "@/lib/constants/service";
@@ -91,6 +91,7 @@ export function FreeResultScreen({
           {/* PART 1 */}
           <Reveal>
             <article id={CHARM_TEASER_ID} className="scroll-mt-24 flex flex-col gap-6">
+              <PartSunnyeoLeadIn partIndex={0} line={preview.partLeadIns[0]} />
               <PartHeader part={part1} gender={result.gender} />
               <div className="rounded-3xl border border-cinnabar/30 bg-gradient-to-b from-crimson-deep/50 via-night/90 to-night px-5 py-6">
                 <p className="text-[11px] tracking-[0.18em] text-cinnabar">타고난 매력 유형</p>
@@ -129,6 +130,7 @@ export function FreeResultScreen({
           {/* PART 2 */}
           <Reveal>
             <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartSunnyeoLeadIn partIndex={1} line={preview.partLeadIns[1]} />
               <PartHeader part={part2} gender={result.gender} />
               <div className="rounded-3xl border border-line/70 bg-night/70 px-5 py-5">
                 <p className="text-[11px] tracking-[0.18em] text-cinnabar">첫인상 티저</p>
@@ -146,6 +148,7 @@ export function FreeResultScreen({
           {/* PART 3 */}
           <Reveal>
             <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartSunnyeoLeadIn partIndex={2} line={preview.partLeadIns[2]} />
               <PartHeader part={part3} gender={result.gender} />
               <ul className="flex flex-col gap-3">
                 {preview.vibeKeywords.map((keyword, index) => (
@@ -162,13 +165,13 @@ export function FreeResultScreen({
                   </li>
                 ))}
               </ul>
-              <LockedPartSections part={part3} gender={result.gender} />
             </article>
           </Reveal>
 
           {/* PART 4 */}
           <Reveal>
             <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartSunnyeoLeadIn partIndex={3} line={preview.partLeadIns[3]} />
               <PartHeader part={part4} gender={result.gender} />
               <FaceCard result={result} />
               <LockedPartSections part={part4} gender={result.gender} />
@@ -178,6 +181,7 @@ export function FreeResultScreen({
           {/* PART 5 */}
           <Reveal>
             <article className="scroll-mt-24 flex flex-col gap-6">
+              <PartSunnyeoLeadIn partIndex={4} line={preview.partLeadIns[4]} />
               <PartHeader part={part5} gender={result.gender} />
               <PartnerCard result={result} />
               <LockedPartSections part={part5} gender={result.gender} />

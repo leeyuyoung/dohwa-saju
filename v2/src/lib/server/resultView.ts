@@ -5,7 +5,13 @@ import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
 import { resolveReportVersion } from "@/lib/constants/reportVersion";
 import { CHARM_INDICES, DOHWA_TYPES, gradeOf, withPartner } from "@/lib/constants/result";
 import { buildSajuProfile, calculateSaju, readDohwa, type DohwaReading, type SajuProfile } from "@/lib/saju";
-import { freeCharmType, freeFirstImpressionLine, freeIntroLines, freeVibeKeywords } from "@/lib/saju/freeResultCopy";
+import {
+  freeCharmType,
+  freeFirstImpressionLine,
+  freeIntroLines,
+  freePartLeadIns,
+  freeVibeKeywords,
+} from "@/lib/saju/freeResultCopy";
 import { ganjiKorean } from "@/lib/constants/sajuLabels";
 import { faceTeaser, nextBloomMonth, partnerTeaser } from "@/lib/saju/teasers";
 import type {
@@ -78,6 +84,7 @@ function freeView(name: string, profile: SajuProfile): FreeResultView {
     },
     preview: {
       intro: freeIntroLines(profile, reading, name),
+      partLeadIns: freePartLeadIns(profile.calculation.gender),
       charmType,
       firstImpression: freeFirstImpressionLine(profile, reading),
       vibeKeywords: freeVibeKeywords(profile, reading),

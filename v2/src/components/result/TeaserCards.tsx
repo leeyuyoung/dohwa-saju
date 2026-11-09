@@ -66,6 +66,43 @@ export function SinseonScene({
   );
 }
 
+/** 무료 결과 PART 1~5 리드인에 쓰는 선녀 컷. */
+const PART_SUNNYEO_SRC = [
+  "/images/sunnyeo/holding-paper-back.jpg",
+  "/images/sunnyeo/tree-lean.jpg",
+  "/images/sunnyeo/hero-soft-flip.jpg",
+  "/images/sunnyeo/mirror-lipstick-v2.jpg",
+  "/images/sunnyeo/overshoulder-flip-v2.jpg",
+] as const;
+
+/** PART 앞 선녀 컷 + 말풍선 한 줄. */
+export function PartSunnyeoLeadIn({ partIndex, line }: { partIndex: 0 | 1 | 2 | 3 | 4; line: string }) {
+  const long = line.length > 28;
+  const place =
+    partIndex === 1
+      ? ({ top: "0%", right: "5%" } as const)
+      : partIndex === 3
+        ? ({ top: "3%", left: "5%" } as const)
+        : ({ top: "8%", left: "5%" } as const);
+  return (
+    <WebtoonPanel
+      src={PART_SUNNYEO_SRC[partIndex]}
+      alt="도화선녀"
+      headroom={0}
+      cropBottom={0.3}
+      bubbles={[
+        {
+          kind: "speech",
+          text: line,
+          at: 0.12,
+          place,
+          small: long,
+        } satisfies Bubble,
+      ]}
+    />
+  );
+}
+
 /** 결과 화면의 카드 틀. 점수 카드와 같은 장식 격자 프레임. */
 function TeaserCard({
   title,
