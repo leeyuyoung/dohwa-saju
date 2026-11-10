@@ -3,8 +3,23 @@ import { Cormorant_Garamond, Noto_Sans_KR, Noto_Serif_KR, Song_Myung } from "nex
 import localFont from "next/font/local";
 import { AttributionCapture } from "@/components/analytics/AttributionCapture";
 import { KarrotPixel } from "@/components/analytics/KarrotPixel";
+import { MetaPixelPageView } from "@/components/analytics/MetaPixel";
 import { SERVICE } from "@/lib/constants/service";
 import "./globals.css";
+
+const META_PIXEL_ID = "1451519196941557";
+const META_PIXEL_SCRIPT = `
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${META_PIXEL_ID}');
+fbq('track', 'PageView');
+`;
 
 const notoSerifKr = Noto_Serif_KR({
   variable: "--font-noto-serif-kr",
@@ -66,7 +81,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ko"
       className={`${notoSerifKr.variable} ${notoSansKr.variable} ${classicKr.variable} ${handwriting.variable} ${cormorant.variable} h-full antialiased`}
     >
+      <head>
+        {/* Meta Pixel Code — head 안에 설치 (메타 가이드와 동일) */}
+        <script dangerouslySetInnerHTML={{ __html: META_PIXEL_SCRIPT }} />
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            height={1}
+            width={1}
+            style={{ display: "none" }}
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+            alt=""
+          />
+        </noscript>
+        {/* End Meta Pixel Code */}
+      </head>
       <body className="min-h-full flex flex-col">
+        <MetaPixelPageView />
         <KarrotPixel />
         <AttributionCapture />
         {children}
