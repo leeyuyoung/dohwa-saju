@@ -7,6 +7,7 @@ import { CheckoutExitModal } from "@/components/payment/CheckoutExitModal";
 import { CheckoutWidget } from "@/components/payment/CheckoutWidget";
 import { trackFunnel } from "@/lib/client/funnel";
 import { KARROT_PRODUCT, trackKarrot } from "@/lib/client/karrotPixel";
+import { trackMetaInitiateCheckout } from "@/lib/client/metaPixel";
 import {
   DETAILED_REPORT_LIST_PRICE,
   DETAILED_REPORT_MID_PRICE,
@@ -58,6 +59,7 @@ export function PaymentSheet({ open, onClose, token, title, buyerName }: Payment
         },
       ],
     });
+    trackMetaInitiateCheckout(DETAILED_REPORT_PRICE);
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 

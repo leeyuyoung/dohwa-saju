@@ -90,9 +90,7 @@ export function IntroSequence() {
       </div>
 
       <main className="relative z-10 mt-auto flex w-full justify-center px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-        <h1 className="sr-only">
-          {HERO_COPY.lead} {HERO_COPY.invite}
-        </h1>
+        <h1 className="sr-only">도화신당 · 타고난 색기력 분석</h1>
         <div className="flex w-full max-w-md flex-col items-center">
           <Link
             href="/preview"

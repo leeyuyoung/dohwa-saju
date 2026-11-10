@@ -6,6 +6,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { LogoMark } from "@/components/ui/LogoMark";
 import { trackFunnel } from "@/lib/client/funnel";
 import { trackKarrotPurchase } from "@/lib/client/karrotPixel";
+import { trackMetaPurchase } from "@/lib/client/metaPixel";
+import { DETAILED_REPORT_PRICE } from "@/lib/constants/service";
 
 const POLL_MS = 2000;
 const GIVE_UP_MS = 3 * 60 * 1000;
@@ -27,14 +29,15 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
         }
         try {
           const response = await fetch(`/api/analysis/${token}`, { cache: "no-store" });
-          const data = (await response.json().catch(() => ({}))) as { paid?: boolean };
+          const data = (await response.json().catch(() => ({}))) as { paid?: boolean; product?: string };
           if (data.paid) {
-            if (!tracked.current) {
+            if (!tracked.current && data.product !== "newyear2027") {
               tracked.current = true;
               trackFunnel("paid", token);
               trackKarrotPurchase();
+              trackMetaPurchase(DETAILED_REPORT_PRICE);
             }
-            router.replace(`/report/${token}`);
+            router.replace(data.product === "newyear2027" ? `/2027/report/${token}` : `/report/${token}`);
             return;
           }
         } catch {
