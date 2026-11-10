@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 
 type FunnelRow = {
   step: string;
@@ -55,6 +55,56 @@ function formatDrop(dropOff: number | null) {
 
 const ANALYSES_PAGE_SIZE = 10;
 
+type SortKey = "createdAt" | "paidAt";
+type SortDir = "desc" | "asc";
+
+const SORT_OPTIONS: { key: SortKey; dir: SortDir; label: string }[] = [
+  { key: "createdAt", dir: "desc", label: "입력 최신순" },
+  { key: "createdAt", dir: "asc", label: "입력 오래된순" },
+  { key: "paidAt", dir: "desc", label: "결제 최신순" },
+  { key: "paidAt", dir: "asc", label: "결제 오래된순" },
+];
+
+function sortAnalyses(rows: AnalysisRow[], key: SortKey, dir: SortDir) {
+  const sign = dir === "desc" ? -1 : 1;
+  return [...rows].sort((a, b) => {
+    const av = key === "paidAt" ? a.paidAt : a.createdAt;
+    const bv = key === "paidAt" ? b.paidAt : b.createdAt;
+    if (av === null && bv === null) return b.createdAt - a.createdAt;
+    if (av === null) return 1;
+    if (bv === null) return -1;
+    if (av === bv) return b.createdAt - a.createdAt;
+    return av < bv ? -sign : sign;
+  });
+}
+
+function SortHeader({
+  label,
+  active,
+  dir,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  dir: SortDir;
+  onClick: () => void;
+}) {
+  return (
+    <th className="px-3 py-2 font-normal">
+      <button
+        type="button"
+        onClick={onClick}
+        className={`inline-flex items-center gap-1 hover:text-paper ${active ? "text-paper" : "text-mist"}`}
+      >
+        {label}
+        <span aria-hidden className="text-[10px] tabular-nums">
+          {active ? (dir === "desc" ? "↓" : "↑") : "↕"}
+        </span>
+      </button>
+    </th>
+  );
+}
+
 /** 관리자 로그인·퍼널·제출 목록. 공개 UI와 분리된 운영 화면. */
 export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }) {
   const [authed, setAuthed] = useState(initiallyAuthed);
@@ -65,6 +115,8 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(initiallyAuthed);
   const [analysesPage, setAnalysesPage] = useState(1);
+  const [sortKey, setSortKey] = useState<SortKey>("createdAt");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   const loadOverview = useCallback(async () => {
     setLoading(true);
@@ -127,14 +179,32 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
     setAnalysesPage(1);
   };
 
-  const analysesTotal = overview?.analyses.length ?? 0;
+  const sortedAnalyses = useMemo(
+    () => sortAnalyses(overview?.analyses ?? [], sortKey, sortDir),
+    [overview?.analyses, sortKey, sortDir],
+  );
+  const analysesTotal = sortedAnalyses.length;
   const analysesPageCount = Math.max(1, Math.ceil(analysesTotal / ANALYSES_PAGE_SIZE));
   const currentAnalysesPage = Math.min(analysesPage, analysesPageCount);
-  const pageAnalyses =
-    overview?.analyses.slice(
-      (currentAnalysesPage - 1) * ANALYSES_PAGE_SIZE,
-      currentAnalysesPage * ANALYSES_PAGE_SIZE,
-    ) ?? [];
+  const pageAnalyses = sortedAnalyses.slice(
+    (currentAnalysesPage - 1) * ANALYSES_PAGE_SIZE,
+    currentAnalysesPage * ANALYSES_PAGE_SIZE,
+  );
+  const sortValue = `${sortKey}:${sortDir}`;
+
+  const setSort = (key: SortKey, dir: SortDir) => {
+    setSortKey(key);
+    setSortDir(dir);
+    setAnalysesPage(1);
+  };
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSort(key, sortDir === "desc" ? "asc" : "desc");
+      return;
+    }
+    setSort(key, "desc");
+  };
 
   if (!authed) {
     return (
@@ -229,14 +299,44 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="font-serif text-base text-gold-soft">
-              제출 목록{analysesTotal > 0 ? ` (${analysesTotal}건)` : ""}
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="font-serif text-base text-gold-soft">
+                제출 목록{analysesTotal > 0 ? ` (${analysesTotal}건)` : ""}
+              </h2>
+              <label className="flex items-center gap-2 text-xs text-mist">
+                정렬
+                <select
+                  value={sortValue}
+                  onChange={(event) => {
+                    const [key, dir] = event.target.value.split(":") as [SortKey, SortDir];
+                    setSort(key, dir);
+                  }}
+                  className="rounded-lg border border-line bg-ink/50 px-2 py-1.5 text-xs text-paper outline-none focus:border-gold/50"
+                >
+                  {SORT_OPTIONS.map((option) => (
+                    <option key={`${option.key}:${option.dir}`} value={`${option.key}:${option.dir}`}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
             <div className="overflow-x-auto rounded-2xl border border-line">
-              <table className="w-full min-w-[60rem] border-collapse text-left text-sm">
+              <table className="w-full min-w-[64rem] border-collapse text-left text-sm">
                 <thead className="bg-ink/60 text-xs text-mist">
                   <tr>
-                    <th className="px-3 py-2 font-normal">시각</th>
+                    <SortHeader
+                      label="입력"
+                      active={sortKey === "createdAt"}
+                      dir={sortDir}
+                      onClick={() => toggleSort("createdAt")}
+                    />
+                    <SortHeader
+                      label="결제"
+                      active={sortKey === "paidAt"}
+                      dir={sortDir}
+                      onClick={() => toggleSort("paidAt")}
+                    />
                     <th className="px-3 py-2 font-normal">이름</th>
                     <th className="px-3 py-2 font-normal">양력</th>
                     <th className="px-3 py-2 font-normal">시간</th>
@@ -245,7 +345,6 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                     <th className="px-3 py-2 font-normal">메일발송</th>
                     <th className="px-3 py-2 font-normal">휴대폰</th>
                     <th className="px-3 py-2 font-normal">마케팅</th>
-                    <th className="px-3 py-2 font-normal">결제</th>
                     <th className="px-3 py-2 font-normal">링크</th>
                   </tr>
                 </thead>
@@ -260,56 +359,56 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                     pageAnalyses.map((row) => {
                       const mail = formatEmailStatus(row);
                       return (
-                      <tr key={row.token} className="border-t border-line/70 align-top">
-                        <td className="whitespace-nowrap px-3 py-2 text-mist">{formatWhen(row.createdAt)}</td>
-                        <td className="px-3 py-2 text-paper">{row.name}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.solar}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.time}</td>
-                        <td className="max-w-[10rem] px-3 py-2 text-mist break-keep" title={row.attributionLabel}>
-                          {row.attributionLabel}
-                        </td>
-                        <td className="px-3 py-2 text-mist break-all">{row.email ?? "—"}</td>
-                        <td className="max-w-[11rem] px-3 py-2 text-mist">
-                          <span className={row.emailError ? "text-fire" : row.emailSentAt ? "text-paper" : ""}>
-                            {mail.label}
-                          </span>
-                          {mail.detail && (
-                            <p className="mt-1 line-clamp-2 break-all text-[11px] text-fire/90" title={mail.detail}>
-                              {mail.detail}
-                            </p>
-                          )}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-2 text-mist">{row.phone ?? "—"}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-mist">
-                          {row.marketingOptIn === true ? "동의" : row.marketingOptIn === false ? "거부" : "—"}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-2 text-mist">
-                          {row.paidAt ? formatWhen(row.paidAt) : "미결제"}
-                        </td>
-                        <td className="px-3 py-2">
-                          <div className="flex flex-col gap-1 text-xs">
-                            <a className="text-blossom underline-offset-2 hover:underline" href={`/result/${row.token}`}>
-                              결과
-                            </a>
-                            {!row.paidAt && (
-                              <a
-                                className="text-blossom underline-offset-2 hover:underline"
-                                href={`/checkout/${row.token}`}
-                              >
-                                결제
-                              </a>
+                        <tr key={row.token} className="border-t border-line/70 align-top">
+                          <td className="whitespace-nowrap px-3 py-2 text-mist">{formatWhen(row.createdAt)}</td>
+                          <td className="whitespace-nowrap px-3 py-2 text-mist">
+                            {row.paidAt ? formatWhen(row.paidAt) : "미결제"}
+                          </td>
+                          <td className="px-3 py-2 text-paper">{row.name}</td>
+                          <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.solar}</td>
+                          <td className="whitespace-nowrap px-3 py-2 text-mist">{row.birth.time}</td>
+                          <td className="max-w-[10rem] px-3 py-2 break-keep text-mist" title={row.attributionLabel}>
+                            {row.attributionLabel}
+                          </td>
+                          <td className="px-3 py-2 break-all text-mist">{row.email ?? "—"}</td>
+                          <td className="max-w-[11rem] px-3 py-2 text-mist">
+                            <span className={row.emailError ? "text-fire" : row.emailSentAt ? "text-paper" : ""}>
+                              {mail.label}
+                            </span>
+                            {mail.detail && (
+                              <p className="mt-1 line-clamp-2 break-all text-[11px] text-fire/90" title={mail.detail}>
+                                {mail.detail}
+                              </p>
                             )}
-                            {row.paidAt && (
-                              <a
-                                className="text-blossom underline-offset-2 hover:underline"
-                                href={`/report/${row.token}`}
-                              >
-                                리포트
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-2 text-mist">{row.phone ?? "—"}</td>
+                          <td className="whitespace-nowrap px-3 py-2 text-mist">
+                            {row.marketingOptIn === true ? "동의" : row.marketingOptIn === false ? "거부" : "—"}
+                          </td>
+                          <td className="px-3 py-2">
+                            <div className="flex flex-col gap-1 text-xs">
+                              <a className="text-blossom underline-offset-2 hover:underline" href={`/result/${row.token}`}>
+                                결과
                               </a>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
+                              {!row.paidAt && (
+                                <a
+                                  className="text-blossom underline-offset-2 hover:underline"
+                                  href={`/checkout/${row.token}`}
+                                >
+                                  결제
+                                </a>
+                              )}
+                              {row.paidAt && (
+                                <a
+                                  className="text-blossom underline-offset-2 hover:underline"
+                                  href={`/report/${row.token}`}
+                                >
+                                  리포트
+                                </a>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
                       );
                     })
                   )}
@@ -322,7 +421,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                   type="button"
                   disabled={currentAnalysesPage <= 1}
                   onClick={() => setAnalysesPage((page) => Math.max(1, page - 1))}
-                  className="rounded-full border border-line px-3 py-1.5 text-xs disabled:opacity-30 hover:text-paper"
+                  className="rounded-full border border-line px-3 py-1.5 text-xs hover:text-paper disabled:opacity-30"
                 >
                   이전
                 </button>
@@ -333,7 +432,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
                   type="button"
                   disabled={currentAnalysesPage >= analysesPageCount}
                   onClick={() => setAnalysesPage((page) => Math.min(analysesPageCount, page + 1))}
-                  className="rounded-full border border-line px-3 py-1.5 text-xs disabled:opacity-30 hover:text-paper"
+                  className="rounded-full border border-line px-3 py-1.5 text-xs hover:text-paper disabled:opacity-30"
                 >
                   다음
                 </button>
