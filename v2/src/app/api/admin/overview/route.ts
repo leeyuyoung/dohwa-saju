@@ -1,4 +1,4 @@
-import { buildFunnelSummary, FUNNEL_STEPS, type FunnelStep } from "@/lib/server/funnel";
+import { buildFunnelSummary, FUNNEL_STEPS, parseFunnelDateRange, type FunnelStep } from "@/lib/server/funnel";
 import { isAdminConfigured, requireAdminSession } from "@/lib/server/adminAuth";
 import { jsonError as fail } from "@/lib/server/http";
 import { getAnalysisStore, type Attribution } from "@/lib/server/store";
@@ -9,13 +9,15 @@ function attributionLabel(attribution: Attribution | null | undefined) {
   return parts.length > 0 ? parts.join(" · ") : "—";
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   if (!isAdminConfigured()) return fail(404, "Not found");
   if (!(await requireAdminSession())) return fail(401, "로그인이 필요합니다.");
 
+  const params = new URL(request.url).searchParams;
+  const funnelRange = parseFunnelDateRange(params.get("from"), params.get("to"));
   const store = getAnalysisStore();
 
-  const funnelResult = await store.funnelSummary().catch((error) => {
+  const funnelResult = await store.funnelSummary(funnelRange).catch((error) => {
     console.error("[admin/overview] funnel", error);
     const zeros = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
     return buildFunnelSummary(zeros);

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { FUNNEL_STEPS, type FunnelStep } from "@/lib/funnelSteps";
-import { buildFunnelSummary, type FunnelEvent } from "@/lib/server/funnel";
+import { buildFunnelSummary, type FunnelEvent, type FunnelSummaryRange } from "@/lib/server/funnel";
 import type { AnalysisRecord, AnalysisStore, OrderPatch, OrderRecord } from "./types";
 
 const TABLE = "analyses";
@@ -141,6 +141,7 @@ export class SupabaseStoreError extends Error {
 
 /** Supabase(PostgREST)에 Secret key로 접근하는 저장소. 서버에서만 쓴다. */
 export class SupabaseAnalysisStore implements AnalysisStore {
+  readonly storeVersion = 3;
   constructor(
     private readonly url: string,
     private readonly secretKey: string,
@@ -307,12 +308,12 @@ export class SupabaseAnalysisStore implements AnalysisStore {
     }
   }
 
-  async funnelSummary() {
+  async funnelSummary(range?: FunnelSummaryRange) {
     const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
     try {
       await Promise.all(
         FUNNEL_STEPS.map(async (step) => {
-          counts[step] = await this.countFunnelStep(step);
+          counts[step] = await this.countFunnelStep(step, range);
         }),
       );
     } catch (error) {
@@ -322,17 +323,22 @@ export class SupabaseAnalysisStore implements AnalysisStore {
     return buildFunnelSummary(counts);
   }
 
-  private async countFunnelStep(step: FunnelStep): Promise<number> {
+  private async countFunnelStep(step: FunnelStep, range?: FunnelSummaryRange): Promise<number> {
     const headers: Record<string, string> = {
       apikey: this.secretKey,
       Authorization: `Bearer ${this.secretKey}`,
       Prefer: "count=exact",
       Range: "0-0",
     };
+    const filters = [`step=eq.${encodeURIComponent(step)}`];
+    if (range?.fromMs != null) filters.push(`created_at=gte.${encodeURIComponent(toIso(range.fromMs))}`);
+    if (range?.toMsExclusive != null) {
+      filters.push(`created_at=lt.${encodeURIComponent(toIso(range.toMsExclusive))}`);
+    }
     let response: Response;
     try {
       response = await fetch(
-        `${this.url}/rest/v1/${FUNNEL_TABLE}?step=eq.${encodeURIComponent(step)}&select=session_id`,
+        `${this.url}/rest/v1/${FUNNEL_TABLE}?${filters.join("&")}&select=session_id`,
         { method: "GET", headers, cache: "no-store", signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
       );
     } catch (error) {
@@ -342,8 +348,8 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       const body = await response.text().catch(() => "");
       throw new SupabaseStoreError(`HTTP ${response.status} ${body.slice(0, 200)}`);
     }
-    const range = response.headers.get("content-range");
-    const total = range?.split("/")[1];
+    const contentRange = response.headers.get("content-range");
+    const total = contentRange?.split("/")[1];
     if (total && total !== "*" && /^\d+$/.test(total)) return Number(total);
     const rows = (await response.json().catch(() => [])) as unknown[];
     return Array.isArray(rows) ? rows.length : 0;

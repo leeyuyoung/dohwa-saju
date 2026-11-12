@@ -1,4 +1,4 @@
-import type { FunnelEvent, FunnelStep, FunnelStepCount } from "@/lib/server/funnel";
+import type { FunnelEvent, FunnelStep, FunnelStepCount, FunnelSummaryRange } from "@/lib/server/funnel";
 import type { AiReportV1 } from "@/lib/server/ai/reportSchema.v1";
 import type { AiReportV2 } from "@/lib/server/ai/reportSchema.v2";
 import type { SajuProfile } from "@/lib/saju";
@@ -79,6 +79,8 @@ export interface AnalysisStore {
    * 개인정보 보관 최소화를 위해 미결제 건만 지운다.
    */
   deleteUnpaidAnalysesBefore(createdBefore: number): Promise<void>;
+  /** 개발 서버가 코드 갱신 뒤 옛 저장소 인스턴스를 버리지 않도록 구분한다. */
+  readonly storeVersion?: number;
   /** 제출 전체. 관리자 목록용(최신순). */
   listAnalyses(): Promise<AnalysisRecord[]>;
   /**
@@ -86,6 +88,6 @@ export interface AnalysisStore {
    * PII를 넣지 않는다. token은 제출 이후 단계에만 붙일 수 있다.
    */
   trackFunnelEvent(event: FunnelEvent): Promise<void>;
-  /** 단계별 고유 세션 수와 이탈률. */
-  funnelSummary(): Promise<FunnelStepCount[]>;
+  /** 단계별 고유 세션 수와 이탈률. range가 있으면 해당 기간만. */
+  funnelSummary(range?: FunnelSummaryRange): Promise<FunnelStepCount[]>;
 }

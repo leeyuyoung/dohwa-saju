@@ -1,7 +1,7 @@
 import "server-only";
 
 import { FUNNEL_STEPS, type FunnelStep } from "@/lib/funnelSteps";
-import { buildFunnelSummary, type FunnelEvent } from "@/lib/server/funnel";
+import { buildFunnelSummary, type FunnelEvent, type FunnelSummaryRange } from "@/lib/server/funnel";
 import type { AnalysisRecord, AnalysisStore, OrderPatch, OrderRecord } from "./types";
 
 /** 개발용 보관 기간. 서버를 재시작해도 사라진다. */
@@ -11,6 +11,7 @@ const RECORD_TTL_MS = 24 * 60 * 60 * 1000;
  * 개발용 메모리 저장소. Supabase 설정이 없을 때만 쓰며, 서버 프로세스 하나에서만 유효해 배포 환경에서는 쓸 수 없다.
  */
 export class MemoryAnalysisStore implements AnalysisStore {
+  readonly storeVersion = 3;
   private records = new Map<string, AnalysisRecord>();
   private orders = new Map<string, OrderRecord>();
   private funnel = new Map<FunnelStep, Set<string>>();
@@ -92,11 +93,20 @@ export class MemoryAnalysisStore implements AnalysisStore {
     this.funnel.set(event.step, set);
   }
 
-  async funnelSummary() {
-    const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, this.funnel.get(step)?.size ?? 0])) as Record<
-      FunnelStep,
-      number
-    >;
+  async funnelSummary(range?: FunnelSummaryRange) {
+    if (!range?.fromMs && !range?.toMsExclusive) {
+      const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, this.funnel.get(step)?.size ?? 0])) as Record<
+        FunnelStep,
+        number
+      >;
+      return buildFunnelSummary(counts);
+    }
+    const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
+    for (const event of this.funnelMeta.values()) {
+      if (range.fromMs != null && event.at < range.fromMs) continue;
+      if (range.toMsExclusive != null && event.at >= range.toMsExclusive) continue;
+      counts[event.step] += 1;
+    }
     return buildFunnelSummary(counts);
   }
 }

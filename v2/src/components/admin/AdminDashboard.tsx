@@ -53,6 +53,21 @@ function formatDrop(dropOff: number | null) {
   return `${Math.round(dropOff * 100)}%`;
 }
 
+/** Asia/Seoul 기준 YYYY-MM-DD */
+function kstYmd(ms = Date.now()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(ms));
+}
+
+function shiftKstYmd(ymd: string, offsetDays: number) {
+  const base = Date.parse(`${ymd}T12:00:00+09:00`);
+  return kstYmd(base + offsetDays * 24 * 60 * 60 * 1000);
+}
+
 const ANALYSES_PAGE_SIZE = 10;
 
 type SortKey = "createdAt" | "paidAt";
@@ -117,12 +132,19 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
   const [analysesPage, setAnalysesPage] = useState(1);
   const [sortKey, setSortKey] = useState<SortKey>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [funnelFrom, setFunnelFrom] = useState(() => kstYmd());
+  const [funnelTo, setFunnelTo] = useState(() => kstYmd());
 
   const loadOverview = useCallback(async () => {
     setLoading(true);
     setLoadError(null);
     try {
-      const response = await fetch("/api/admin/overview", { credentials: "same-origin" });
+      const params = new URLSearchParams();
+      if (funnelFrom) params.set("from", funnelFrom);
+      if (funnelTo) params.set("to", funnelTo);
+      const qs = params.toString();
+      const overviewUrl = qs ? `/api/admin/overview?${qs}` : "/api/admin/overview";
+      const response = await fetch(overviewUrl, { credentials: "same-origin" });
       if (response.status === 401) {
         setAuthed(false);
         setOverview(null);
@@ -141,7 +163,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [funnelFrom, funnelTo]);
 
   useEffect(() => {
     if (authed) void loadOverview();
@@ -275,7 +297,64 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
       {overview && (
         <>
           <section className="flex flex-col gap-3">
-            <h2 className="font-serif text-base text-gold-soft">퍼널 (고유 세션)</h2>
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <h2 className="font-serif text-base text-gold-soft">퍼널 (고유 세션)</h2>
+              <p className="text-xs text-mist-dim">
+                {funnelFrom || funnelTo
+                  ? `${funnelFrom || "…"} ~ ${funnelTo || "…"} (KST)`
+                  : "전체 기간"}
+                {loading ? " · 불러오는 중…" : ""}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-end gap-2">
+              <div className="flex flex-wrap gap-1.5">
+                {(
+                  [
+                    { label: "오늘", from: kstYmd(), to: kstYmd() },
+                    { label: "어제", from: shiftKstYmd(kstYmd(), -1), to: shiftKstYmd(kstYmd(), -1) },
+                    { label: "7일", from: shiftKstYmd(kstYmd(), -6), to: kstYmd() },
+                    { label: "전체", from: "", to: "" },
+                  ] as const
+                ).map((preset) => {
+                  const active = funnelFrom === preset.from && funnelTo === preset.to;
+                  return (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => {
+                        setFunnelFrom(preset.from);
+                        setFunnelTo(preset.to);
+                      }}
+                      className={`rounded-full border px-2.5 py-1 text-xs ${
+                        active
+                          ? "border-gold/50 text-gold-soft"
+                          : "border-line text-mist hover:text-paper"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <label className="flex flex-col gap-1 text-xs text-mist">
+                시작
+                <input
+                  type="date"
+                  value={funnelFrom}
+                  onChange={(event) => setFunnelFrom(event.target.value)}
+                  className="rounded-lg border border-line bg-ink/50 px-2 py-1.5 text-sm text-paper outline-none focus:border-gold/50"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-xs text-mist">
+                끝
+                <input
+                  type="date"
+                  value={funnelTo}
+                  onChange={(event) => setFunnelTo(event.target.value)}
+                  className="rounded-lg border border-line bg-ink/50 px-2 py-1.5 text-sm text-paper outline-none focus:border-gold/50"
+                />
+              </label>
+            </div>
             <div className="overflow-x-auto rounded-2xl border border-line">
               <table className="w-full min-w-[28rem] border-collapse text-left text-sm">
                 <thead className="bg-ink/60 text-xs text-mist">

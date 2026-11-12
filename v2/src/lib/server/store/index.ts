@@ -18,6 +18,9 @@ export type {
 // 개발 서버의 코드 변경(HMR) 때 모듈이 다시 불려도 같은 저장소를 쓰도록 전역에 둔다.
 const globalForStore = globalThis as typeof globalThis & { __dohwaAnalysisStore?: AnalysisStore };
 
+/** 저장소 동작이 바뀌면 올린다. 개발 서버가 예전 인스턴스를 붙잡지 않게 한다. */
+const STORE_VERSION = 3;
+
 function createStore(): AnalysisStore {
   const url = process.env.SUPABASE_URL;
   const secretKey = process.env.SUPABASE_SECRET_KEY;
@@ -31,7 +34,12 @@ function createStore(): AnalysisStore {
 export function getAnalysisStore(): AnalysisStore {
   const existing = globalForStore.__dohwaAnalysisStore;
   // HMR로 클래스가 바뀌면 예전 인스턴스에 새 메서드가 없어 깨지므로 다시 만든다.
-  if (existing && typeof existing.listAnalyses === "function" && typeof existing.deleteUnpaidAnalysesBefore === "function") {
+  if (
+    existing &&
+    (existing as AnalysisStore & { storeVersion?: number }).storeVersion === STORE_VERSION &&
+    typeof existing.listAnalyses === "function" &&
+    typeof existing.deleteUnpaidAnalysesBefore === "function"
+  ) {
     return existing;
   }
   const created = createStore();
