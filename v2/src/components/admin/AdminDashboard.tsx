@@ -132,8 +132,8 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
   const [analysesPage, setAnalysesPage] = useState(1);
   const [sortKey, setSortKey] = useState<SortKey>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [funnelFrom, setFunnelFrom] = useState(() => kstYmd());
-  const [funnelTo, setFunnelTo] = useState(() => kstYmd());
+  const [funnelFrom, setFunnelFrom] = useState("");
+  const [funnelTo, setFunnelTo] = useState("");
 
   const loadOverview = useCallback(async () => {
     setLoading(true);
