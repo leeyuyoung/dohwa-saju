@@ -144,7 +144,7 @@ export class SupabaseStoreError extends Error {
 
 /** Supabase(PostgREST)에 Secret key로 접근하는 저장소. 서버에서만 쓴다. */
 export class SupabaseAnalysisStore implements AnalysisStore {
-  readonly storeVersion = 3;
+  readonly storeVersion = 4;
   constructor(
     private readonly url: string,
     private readonly secretKey: string,
@@ -308,6 +308,34 @@ export class SupabaseAnalysisStore implements AnalysisStore {
         return;
       }
       console.error("[funnel] track failed", error);
+    }
+  }
+
+  async findFunnelSessionForToken(token: string) {
+    try {
+      const response = await this.request(
+        `${FUNNEL_TABLE}?token=eq.${encodeURIComponent(token)}&select=session_id&order=created_at.desc&limit=1`,
+        { method: "GET" },
+      );
+      const rows = (await response.json()) as Array<{ session_id: string }>;
+      return rows[0]?.session_id ?? null;
+    } catch (error) {
+      console.error("[funnel] find session failed", error);
+      return null;
+    }
+  }
+
+  async hasFunnelStepForToken(step: FunnelStep, token: string) {
+    try {
+      const response = await this.request(
+        `${FUNNEL_TABLE}?step=eq.${encodeURIComponent(step)}&token=eq.${encodeURIComponent(token)}&select=session_id&limit=1`,
+        { method: "GET" },
+      );
+      const rows = (await response.json()) as unknown[];
+      return Array.isArray(rows) && rows.length > 0;
+    } catch (error) {
+      console.error("[funnel] has step failed", error);
+      return false;
     }
   }
 

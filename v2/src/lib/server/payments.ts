@@ -188,6 +188,18 @@ export async function createPayappOrder(
   };
 }
 
+/** 결제 확정 시 퍼널 paid를 서버에서 찍는다. 탭을 닫아도 누락되지 않게 한다. */
+async function trackPaidFunnel(token: string, orderId: string, at = Date.now()) {
+  const store = getAnalysisStore();
+  try {
+    if (await store.hasFunnelStepForToken("paid", token)) return;
+    const sessionId = (await store.findFunnelSessionForToken(token)) ?? `pay_${orderId}`;
+    await store.trackFunnelEvent({ sessionId, step: "paid", token, at });
+  } catch (error) {
+    console.error("[funnel] paid track failed", error);
+  }
+}
+
 async function completePaidOrder(order: OrderRecord, mulNo: string, method: string | null) {
   const store = getAnalysisStore();
   const approvedAt = Date.now();
@@ -198,6 +210,7 @@ async function completePaidOrder(order: OrderRecord, mulNo: string, method: stri
     approvedAt,
   });
   await markAnalysisPaid(order.token);
+  await trackPaidFunnel(order.token, order.orderId, approvedAt);
 
   // 픽셀과 같은 event_id(주문번호)로 CAPI Purchase를 보낸다. 실패해도 결제는 유지한다.
   const record = await store.get(order.token).catch(() => null);
@@ -254,6 +267,7 @@ export async function handlePayappFeedback(fields: Record<string, string>): Prom
   if (payState === PAY_STATE_PAID) {
     if (order.status === "paid") {
       await markAnalysisPaid(order.token);
+      await trackPaidFunnel(order.token, order.orderId, order.approvedAt ?? Date.now());
       return "ok";
     }
     if (order.status === "canceled") return "ignore";

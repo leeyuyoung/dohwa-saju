@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { LogoMark } from "@/components/ui/LogoMark";
-import { trackFunnel } from "@/lib/client/funnel";
 import { trackKarrotPurchase } from "@/lib/client/karrotPixel";
 import { trackMetaPurchase } from "@/lib/client/metaPixel";
 
@@ -33,7 +32,7 @@ export function PaymentConfirm({ paymentKey, orderId, amount }: PaymentConfirmPr
           retryable?: boolean;
         };
         if (response.ok && data.token) {
-          trackFunnel("paid", data.token);
+          // paid 퍼널은 결제 확정 API/웹훅에서 서버가 찍는다. 여기선 픽셀만 보낸다.
           trackKarrotPurchase();
           trackMetaPurchase(amount, orderId);
           router.replace(`/report/${data.token}`);

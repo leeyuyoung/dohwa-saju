@@ -98,6 +98,10 @@ export interface AnalysisStore {
    * PII를 넣지 않는다. token은 제출 이후 단계에만 붙일 수 있다.
    */
   trackFunnelEvent(event: FunnelEvent): Promise<void>;
+  /** 토큰이 붙은 퍼널 중 가장 최근 session_id. 없으면 null. */
+  findFunnelSessionForToken(token: string): Promise<string | null>;
+  /** 해당 토큰으로 이미 찍힌 단계가 있는지. */
+  hasFunnelStepForToken(step: FunnelStep, token: string): Promise<boolean>;
   /** 단계별 고유 세션 수와 이탈률. range가 있으면 해당 기간만. */
   funnelSummary(range?: FunnelSummaryRange): Promise<FunnelStepCount[]>;
 }

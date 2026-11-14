@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { LogoMark } from "@/components/ui/LogoMark";
-import { trackFunnel } from "@/lib/client/funnel";
 import { trackKarrotPurchase } from "@/lib/client/karrotPixel";
 import { trackMetaPurchase } from "@/lib/client/metaPixel";
 import { DETAILED_REPORT_PRICE } from "@/lib/constants/service";
@@ -31,9 +30,9 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
           const response = await fetch(`/api/analysis/${token}`, { cache: "no-store" });
           const data = (await response.json().catch(() => ({}))) as { paid?: boolean; product?: string };
           if (data.paid) {
+            // paid 퍼널은 결제 웹훅에서 서버가 찍는다. 여기선 픽셀만 보낸다.
             if (!tracked.current && data.product !== "newyear2027") {
               tracked.current = true;
-              trackFunnel("paid", token);
               trackKarrotPurchase();
               trackMetaPurchase(DETAILED_REPORT_PRICE, orderId);
             }

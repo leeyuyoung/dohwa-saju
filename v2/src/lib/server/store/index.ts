@@ -20,7 +20,7 @@ export type {
 const globalForStore = globalThis as typeof globalThis & { __dohwaAnalysisStore?: AnalysisStore };
 
 /** 저장소 동작이 바뀌면 올린다. 개발 서버가 예전 인스턴스를 붙잡지 않게 한다. */
-const STORE_VERSION = 3;
+const STORE_VERSION = 4;
 
 function createStore(): AnalysisStore {
   const url = process.env.SUPABASE_URL;

@@ -11,7 +11,7 @@ const RECORD_TTL_MS = 24 * 60 * 60 * 1000;
  * 개발용 메모리 저장소. Supabase 설정이 없을 때만 쓰며, 서버 프로세스 하나에서만 유효해 배포 환경에서는 쓸 수 없다.
  */
 export class MemoryAnalysisStore implements AnalysisStore {
-  readonly storeVersion = 3;
+  readonly storeVersion = 4;
   private records = new Map<string, AnalysisRecord>();
   private orders = new Map<string, OrderRecord>();
   private funnel = new Map<FunnelStep, Set<string>>();
@@ -91,6 +91,22 @@ export class MemoryAnalysisStore implements AnalysisStore {
     const set = this.funnel.get(event.step) ?? new Set<string>();
     set.add(event.sessionId);
     this.funnel.set(event.step, set);
+  }
+
+  async findFunnelSessionForToken(token: string) {
+    let latest: FunnelEvent | null = null;
+    for (const event of this.funnelMeta.values()) {
+      if (event.token !== token) continue;
+      if (!latest || event.at > latest.at) latest = event;
+    }
+    return latest?.sessionId ?? null;
+  }
+
+  async hasFunnelStepForToken(step: FunnelStep, token: string) {
+    for (const event of this.funnelMeta.values()) {
+      if (event.step === step && event.token === token) return true;
+    }
+    return false;
   }
 
   async funnelSummary(range?: FunnelSummaryRange) {
