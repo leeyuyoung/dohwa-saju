@@ -25,9 +25,19 @@ import type {
 } from "@/types/result";
 import type { AiReportV1 } from "./ai/reportSchema.v1";
 import type { AiReportV2 } from "./ai/reportSchema.v2";
+import { scrubReportLeakage } from "./ai/scrubReportText";
 import { storedReport } from "./analysis";
 import { partnerPortraitSrc, reportPortraits, selfPortraitSrc } from "./portraits";
 import type { AnalysisRecord } from "./store";
+
+/** 저장본에 스키마 키·영문이 새어 있어도 화면에 안 나가게 한다. */
+function displayLines(lines: string[]): string[] {
+  return lines.map((line) => scrubReportLeakage(line)).filter((line) => line.length > 0);
+}
+
+function displayLine(line: string): string {
+  return scrubReportLeakage(line);
+}
 
 function pillarViews(profile: SajuProfile): PillarView[] {
   return [...profile.pillars].reverse().map((pillar) => ({
@@ -179,7 +189,7 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
   return {
     ...toFreeResultView(record),
     analyzedAt: formatKoreanDate(record.createdAt),
-    intro: report.intro,
+    intro: displayLine(report.intro),
     stars: charmStars(profile),
     fiveElements: {
       counts: profile.fiveElements.counts,
@@ -195,12 +205,12 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
           key: meta.key,
           title: withPartner(meta.title, gender),
           question: withPartner(meta.question, gender),
-          headline: body.headline,
-          closingLine: body.closingLine,
+          headline: displayLine(body.headline),
+          closingLine: displayLine(body.closingLine),
           sections: [],
           keywords: body.keywords.map((keyword) => ({
-            name: keyword.name,
-            paragraphs: keyword.paragraphs,
+            name: displayLine(keyword.name),
+            paragraphs: displayLines(keyword.paragraphs),
           })),
         };
       }
@@ -210,8 +220,8 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
           key: meta.key,
           title: withPartner(meta.title, gender),
           question: withPartner(meta.question, gender),
-          headline: body.headline,
-          closingLine: body.closingLine,
+          headline: displayLine(body.headline),
+          closingLine: displayLine(body.closingLine),
           sections: [],
         };
       }
@@ -220,15 +230,15 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
         key: meta.key,
         title: withPartner(meta.title, gender),
         question: withPartner(meta.question, gender),
-        headline: body.headline,
-        closingLine: body.closingLine,
+        headline: displayLine(body.headline),
+        closingLine: displayLine(body.closingLine),
         sections: meta.sections.map((section, sectionIndex) => ({
           title: withPartner(section.title, gender),
-          paragraphs: body.sections[sectionIndex].paragraphs,
+          paragraphs: displayLines(body.sections[sectionIndex].paragraphs),
         })),
       };
     }),
-    conclusion: report.conclusion,
+    conclusion: displayLine(report.conclusion),
     portraits: reportPortraits(profile),
   };
 }
