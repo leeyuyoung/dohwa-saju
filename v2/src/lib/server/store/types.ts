@@ -43,6 +43,14 @@ export type AnalysisRecord = {
 
 export type OrderStatus = "pending" | "paid" | "canceled";
 
+/** 결제 시점에 잡은 Meta 클릭·기기 정보. CAPI 매칭용. */
+export type OrderMetaClick = {
+  fbp?: string;
+  fbc?: string;
+  clientIp?: string;
+  userAgent?: string;
+};
+
 /** 결제 시도 1건. 금액은 서버가 정하고, 토스 승인 결과로만 paid가 된다. 환불되면 canceled. */
 export type OrderRecord = {
   orderId: string;
@@ -54,6 +62,8 @@ export type OrderRecord = {
   createdAt: number;
   updatedAt: number;
   approvedAt: number | null;
+  /** 주문 생성 시 브라우저에서 수집. 없으면 null. */
+  metaClick: OrderMetaClick | null;
 };
 
 export type OrderPatch = Partial<Pick<OrderRecord, "status" | "paymentKey" | "method" | "approvedAt">>;

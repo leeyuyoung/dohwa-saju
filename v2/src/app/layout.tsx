@@ -4,10 +4,10 @@ import localFont from "next/font/local";
 import { AttributionCapture } from "@/components/analytics/AttributionCapture";
 import { KarrotPixel } from "@/components/analytics/KarrotPixel";
 import { MetaPixelPageView } from "@/components/analytics/MetaPixel";
+import { META_PIXEL_ID } from "@/lib/constants/meta";
 import { SERVICE } from "@/lib/constants/service";
 import "./globals.css";
 
-const META_PIXEL_ID = "1451519196941557";
 const META_PIXEL_SCRIPT = `
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?

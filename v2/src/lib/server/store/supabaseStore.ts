@@ -41,6 +41,7 @@ type OrderRow = {
   created_at: string;
   updated_at: string;
   approved_at: string | null;
+  meta_click: OrderRecord["metaClick"];
 };
 
 const toIso = (time: number) => new Date(time).toISOString();
@@ -55,6 +56,7 @@ const toOrderRow = (order: OrderRecord): OrderRow => ({
   created_at: toIso(order.createdAt),
   updated_at: toIso(order.updatedAt),
   approved_at: order.approvedAt === null ? null : toIso(order.approvedAt),
+  meta_click: order.metaClick,
 });
 
 const fromOrderRow = (row: OrderRow): OrderRecord => ({
@@ -67,6 +69,7 @@ const fromOrderRow = (row: OrderRow): OrderRecord => ({
   createdAt: Date.parse(row.created_at),
   updatedAt: Date.parse(row.updated_at),
   approvedAt: row.approved_at === null ? null : Date.parse(row.approved_at),
+  metaClick: row.meta_click ?? null,
 });
 
 function toRow(record: AnalysisRecord): Row {

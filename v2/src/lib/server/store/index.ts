@@ -11,6 +11,7 @@ export type {
   Attribution,
   FunnelEvent,
   FunnelStep,
+  OrderMetaClick,
   OrderRecord,
   StoredAiReport,
 } from "./types";

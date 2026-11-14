@@ -35,7 +35,7 @@ export function PaymentConfirm({ paymentKey, orderId, amount }: PaymentConfirmPr
         if (response.ok && data.token) {
           trackFunnel("paid", data.token);
           trackKarrotPurchase();
-          trackMetaPurchase(amount);
+          trackMetaPurchase(amount, orderId);
           router.replace(`/report/${data.token}`);
           return;
         }

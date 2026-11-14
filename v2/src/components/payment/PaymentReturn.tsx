@@ -35,7 +35,7 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
               tracked.current = true;
               trackFunnel("paid", token);
               trackKarrotPurchase();
-              trackMetaPurchase(DETAILED_REPORT_PRICE);
+              trackMetaPurchase(DETAILED_REPORT_PRICE, orderId);
             }
             router.replace(data.product === "newyear2027" ? `/2027/report/${token}` : `/report/${token}`);
             return;

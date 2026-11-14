@@ -7,7 +7,8 @@ import {
   reportCheckoutAmount,
 } from "@/lib/constants/service";
 import { markAnalysisPaid, revokeAnalysisPaid } from "./analysis";
-import { getAnalysisStore, type OrderRecord } from "./store";
+import { sendMetaPurchaseEvent } from "./metaCapi";
+import { getAnalysisStore, type OrderMetaClick, type OrderRecord } from "./store";
 
 const PAYAPP_API = "https://api.payapp.kr/oapi/v2";
 const REQUEST_TIMEOUT_MS = 30_000;
@@ -112,6 +113,7 @@ export async function createPayappOrder(
   phone: string,
   marketingOptIn = false,
   couponApplied = false,
+  metaClick: OrderMetaClick | null = null,
 ): Promise<CreatePayappOrderResult> {
   const store = getAnalysisStore();
   const record = await store.get(token);
@@ -142,6 +144,7 @@ export async function createPayappOrder(
     createdAt: now,
     updatedAt: now,
     approvedAt: null,
+    metaClick,
   };
   await store.createOrder(order);
 
@@ -186,13 +189,31 @@ export async function createPayappOrder(
 }
 
 async function completePaidOrder(order: OrderRecord, mulNo: string, method: string | null) {
-  await getAnalysisStore().updateOrder(order.orderId, {
+  const store = getAnalysisStore();
+  const approvedAt = Date.now();
+  await store.updateOrder(order.orderId, {
     status: "paid",
     paymentKey: mulNo,
     method,
-    approvedAt: Date.now(),
+    approvedAt,
   });
   await markAnalysisPaid(order.token);
+
+  // 픽셀과 같은 event_id(주문번호)로 CAPI Purchase를 보낸다. 실패해도 결제는 유지한다.
+  const record = await store.get(order.token).catch(() => null);
+  const base = process.env.APP_URL?.replace(/\/+$/, "") ?? "";
+  void sendMetaPurchaseEvent({
+    orderId: order.orderId,
+    value: order.amount,
+    eventTimeSec: Math.floor(approvedAt / 1000),
+    eventSourceUrl: base
+      ? `${base}/payment/return?token=${encodeURIComponent(order.token)}&orderId=${encodeURIComponent(order.orderId)}`
+      : undefined,
+    email: record?.email ?? null,
+    phone: record?.phone ?? null,
+    externalId: order.token,
+    metaClick: order.metaClick,
+  });
 }
 
 /**
