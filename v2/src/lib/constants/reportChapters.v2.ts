@@ -21,7 +21,7 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
     key: "charm",
     title: "내 사주에는 어떤 예쁜 기운이 숨어 있을까?",
     question: "나는 어떤 매력을 타고났을까?",
-    targetChars: 1700,
+    targetChars: 1600,
     sections: [
       {
         title: "타고난 도화와 홍염의 비밀",
@@ -36,12 +36,12 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
       {
         title: "얼굴의 도화와 분위기의 도화",
         guide:
-          "문단1(근거): 일간·오행·매력살로 왜 그 자리에 도화가 맺히는지. 문단2(포인트): 매력 포인트 정확히 2개와 살아나는 순간. 문단3(연출): 살리는 연출 1개+피하면 좋은 연출 1개. 외모 등급·신체 성적 묘사 금지",
+          "문단1(근거): 일간·오행·매력살로 왜 얼굴·분위기에 도화가 맺히는지. 문단2~3(부위): 매력 있는 얼굴 부위를 구체적으로 집는다—눈매·눈빛·입술·코·웃는 모습·얼굴형·피부결 등에서 사주에 맞는 것을 고르고, 왜 그 부위인지·상대가 그걸 어떻게 느끼는지 장면으로. 이 소절에서는 헤어·메이크·패션·연출 팁을 쓰지 않는다(그건 PART4)",
       },
       {
         title: "나의 타고난 매력 유형",
         guide:
-          "사주 전체를 종합해 가장 적합한 매력 유형을 선정(예시에 억지로 맞추지 말고 새로 만들어도 됨). 마지막에 반드시 한 문장: '당신의 타고난 매력은 ○○한 매력입니다.' (이 한 줄은 closingLine에도 동일하게 넣는다)",
+          "사주 전체를 종합해 가장 적합한 매력 유형을 선정(예시에 억지로 맞추지 말고 새로 만들어도 됨). 마지막에 반드시 한 문장: '네 타고난 매력은 ○○한 매력이야.' (이 한 줄은 closingLine에도 동일하게 넣는다. '~이다/~입니다'로 끝내지 않는다)",
       },
     ],
   },
@@ -50,7 +50,7 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
     key: "impression",
     title: "남자들이 처음 본 너를 기억하는 이유",
     question: "다른 사람들은 나를 어떻게 바라볼까?",
-    targetChars: 1700,
+    targetChars: 1600,
     sections: [
       {
         title: "처음 봤을 때 느껴지는 너의 첫인상",
@@ -75,7 +75,7 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
     key: "vibe",
     title: "사주가 알려주는 나만의 분위기",
     question: "나는 어떤 분위기를 가진 사람일까?",
-    targetChars: 1500,
+    targetChars: 1200,
     sections: [],
     keywordCount: 3,
     keywordGuide:
@@ -86,7 +86,7 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
     key: "hidden",
     title: "나도 몰랐던 나의 숨겨진 매력",
     question: "어떻게 해야 내 매력을 가장 잘 살릴 수 있을까?",
-    targetChars: 1700,
+    targetChars: 1600,
     sections: [
       {
         title: "남들은 알아보지만 나는 모르는 매력",
@@ -103,7 +103,7 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
       {
         title: "나에게 어울리는 패션과 스타일링",
         guide:
-          "스타일 방향·실루엣·색·소재·액세서리·피하면 좋은 방향. 사주 분위기 살리는 제안으로. closingLine: '당신은 ○○한 매력으로 기억되는 사람입니다.'",
+          "스타일 방향·실루엣·색·소재·액세서리·피하면 좋은 방향. 사주 분위기 살리는 제안으로. closingLine: '넌 ○○한 매력으로 기억되는 사람이야.'",
       },
     ],
   },
@@ -112,12 +112,12 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
     key: "fate",
     title: "결국 너에게 빠질 남자는 어떤 사람일까?",
     question: "나는 어떤 남자와 인연을 맺고, 어떤 연애를 하게 될까?",
-    targetChars: 2700,
+    targetChars: 2500,
     sections: [
       {
         title: "나와 인연이 깊은 남자 — 얼굴, 분위기, 키와 나이, 직업",
         guide:
-          "성격·외모·분위기, 키는 반드시 'Ncm 전후'이며 179~188cm만. 나이 차이 경향, 직업·사회적 성향은 구체적으로, 연애 태도, 끌리는 이유. 배우자궁·일지·오행 관계를 쉬운 말로",
+          "성격·외모·분위기, 키는 '182cm 전후'처럼 숫자 하나+전후만(175~188 중 하나 선택). 본문에 175~188·179~188 같은 범위·구간 표현 금지. 나이 차이 경향, 직업·사회적 성향은 구체적으로, 연애 태도, 끌리는 이유. 배우자궁·일지·오행 관계를 쉬운 말로",
       },
       {
         title: "그 남자를 만나는 때",
@@ -141,8 +141,8 @@ export const REPORT_PARTS_V2: ReportPartMetaV2[] = [
 export type ReportPartKeyV2 = ReportPartMetaV2["key"];
 
 export const REPORT_CONCLUSION_GUIDE_V2 =
-  "핵심 매력·돋보이는 분위기·타인이 느끼는 매력·연애 특징·활용 방향을 연결. 일반 응원·추상 칭찬으로 끝내지 말고 인상적인 한 흐름으로 마무리 (~300자)";
+  "핵심 매력·돋보이는 분위기·타인이 느끼는 매력·연애 특징·활용 방향을 연결. 일반 응원·추상 칭찬으로 끝내지 말고 인상적인 한 흐름으로 마무리 (~250자)";
 
-export const INTRO_TARGET_CHARS_V2 = 400;
-export const CONCLUSION_TARGET_CHARS_V2 = 300;
-export const REPORT_BODY_TARGET_CHARS_V2 = 10_000;
+export const INTRO_TARGET_CHARS_V2 = 300;
+export const CONCLUSION_TARGET_CHARS_V2 = 250;
+export const REPORT_BODY_TARGET_CHARS_V2 = 9_000;

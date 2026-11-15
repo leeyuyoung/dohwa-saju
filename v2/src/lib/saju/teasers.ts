@@ -67,7 +67,7 @@ const PARTNER_VIBES: Record<FiveElementKey, string> = {
   water: "속을 알 수 없는 눈빛의, 머리 좋은 남자",
 };
 
-/** 키는 179~187cm 사이 숫자로 쓴다. */
+/** 키는 175~187cm 사이 숫자로 쓴다. */
 const PARTNER_BUILDS: Record<FiveElementKey, string> = {
   wood: "183cm · 모델 비율",
   fire: "180cm · 잔근육, 다부짐",
