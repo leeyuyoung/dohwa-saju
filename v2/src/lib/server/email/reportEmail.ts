@@ -7,7 +7,7 @@ const escapeHtml = (value: string) =>
 
 /** 리포트가 완성되면 보내는 링크 메일. 리포트 본문은 담지 않고 링크만 보낸다. */
 export function buildReportEmail({ name, reportUrl }: { name: string; reportUrl: string }) {
-  const subject = `[${SERVICE.name}] ${name}, 네 꽃, 끝까지 다 읽었다`;
+  const subject = `[${SERVICE.name}] ${name}, 도화살 리포트 완성됐어`;
   const safeName = escapeHtml(name);
   const safeUrl = escapeHtml(reportUrl);
 
@@ -33,9 +33,9 @@ export function buildReportEmail({ name, reportUrl }: { name: string; reportUrl:
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#17132b;border:1px solid #4a1a3a;border-radius:16px;">
         <tr><td style="padding:40px 32px;font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#f5ede6;">
-          <p style="margin:0 0 8px;font-size:12px;color:#e8899b;">끝까지 펼친 꽃</p>
+          <p style="margin:0 0 8px;font-size:12px;color:#e8899b;">도화살 리포트</p>
           <h1 style="margin:0 0 24px;font-size:22px;font-weight:400;line-height:1.5;color:#f5ede6;">
-            <span style="color:#f4b8c2;">${safeName}</span>,<br>네 꽃, 끝까지 다 읽었다
+            <span style="color:#f4b8c2;">${safeName}</span>,<br>도화살 리포트 완성됐어
           </h1>
           <p style="margin:0 0 28px;font-size:14px;line-height:1.8;color:#bcb0c4;">
             네 사주로만 쓴 연애·매력 리포트가 완성됐다.<br>

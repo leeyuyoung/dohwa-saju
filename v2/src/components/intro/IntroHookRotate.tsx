@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 const HOOK_LINES = ["홀리는 데는 다 이유가 있어", "도화살… 너한테도 있을까?"] as const;
-const INTERVAL_MS = 2800;
+const INTERVAL_MS = 2000;
 
 /**
  * CTA 위 흥미 문구 + 방문 수. 순서대로 바꿔 보여 준다.
@@ -34,8 +34,8 @@ export function IntroHookRotate() {
   const slides = useMemo(() => {
     const hooks = HOOK_LINES.map((text) => ({ key: text, content: text as ReactNode }));
     if (visitCount === null) return hooks;
+    // 방문·풀이 수 문구를 맨 앞에 둔다.
     return [
-      ...hooks,
       {
         key: `visit-${visitCount}`,
         content: (
@@ -46,7 +46,13 @@ export function IntroHookRotate() {
           </>
         ),
       },
+      ...hooks,
     ];
+  }, [visitCount]);
+
+  useEffect(() => {
+    if (visitCount === null) return;
+    setIndex(0);
   }, [visitCount]);
 
   useEffect(() => {
