@@ -281,7 +281,7 @@ export function PartnerCard({ result }: { result: FreeResultView }) {
       alt="얼굴을 흐리게 가린 남자"
       caption="그 남자의 얼굴"
       lockY="42%"
-      ratio="6 / 5"
+      ratio="1 / 1"
     />
   );
 }
@@ -295,7 +295,7 @@ export function FaceCard({ result }: { result: FreeResultView }) {
       alt="거울 속 얼굴이 흐리게 가려진 모습"
       caption="그 남자가 보는 네 얼굴"
       lockY="53%"
-      ratio="10 / 11"
+      ratio="1 / 1"
     />
   );
 }
