@@ -78,11 +78,6 @@ export function NewYearForm({ theme = "navi" }: { theme?: FateNaviThemeId }) {
   /** sheep/premium만 크림 배경. hanji(FateNavi3) 폼은 어두운 바탕이라 밝은 글자. */
   const isLight = theme === "sheep" || theme === "premium";
   const muteClass = isLight ? "text-[rgb(42_33_24/0.8)]" : theme === "hanji" ? "text-[#f6ecd8]" : "text-white";
-  const hintClass = isLight
-    ? "text-[rgb(42_33_24/0.45)]"
-    : theme === "hanji"
-      ? "text-[rgb(246_236_216/0.55)]"
-      : "text-white/45";
   const softClass = isLight
     ? "text-[rgb(42_33_24/0.8)]"
     : theme === "hanji"
@@ -271,7 +266,7 @@ export function NewYearForm({ theme = "navi" }: { theme?: FateNaviThemeId }) {
               type="text"
               inputMode="numeric"
               aria-label="태어난 시 (0~23)"
-              placeholder="00"
+              placeholder="15"
               value={values.birthHour}
               onChange={(event) => update({ birthHour: onlyDigits(event.target.value) })}
               className="ny-time-part"
@@ -282,14 +277,13 @@ export function NewYearForm({ theme = "navi" }: { theme?: FateNaviThemeId }) {
               type="text"
               inputMode="numeric"
               aria-label="태어난 분 (0~59)"
-              placeholder="00"
+              placeholder="30"
               value={values.birthMinute}
               onChange={(event) => update({ birthMinute: onlyDigits(event.target.value) })}
               className="ny-time-part"
             />
           </div>
         )}
-        <p className={`text-[12px] ${hintClass}`}>예) 오후 3시 30분 → 15 : 30</p>
         {errors.birthTime ? <p className="ny-form-error">{errors.birthTime}</p> : null}
       </section>
 

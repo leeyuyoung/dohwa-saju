@@ -154,41 +154,83 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
         </Link>
       }
     >
-      <section className="ny-hanji-poster" aria-label="운명내비 인트로">
-        <div className="ny-hanji-poster-media">
-          <HanjiIntroVideo />
-          <div className="ny-hanji-poster-scrim" aria-hidden />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/fatenavi3/cta-badge.png"
-            alt="정통 명리학 기반"
-            className="ny-hanji-cta-badge"
-          />
-          <div className="ny-hanji-poster-brand" aria-label={config.brand}>
-            {[
-              { src: "/images/fatenavi3/brand-chars/1-운.png?v=5", ch: "운" },
-              { src: "/images/fatenavi3/brand-chars/2-명.png?v=5", ch: "명" },
-              { src: "/images/fatenavi3/brand-chars/3-내.png?v=5", ch: "내" },
-              { src: "/images/fatenavi3/brand-chars/4-비.png?v=5", ch: "비" },
-            ].map((item, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={item.ch}
-                src={item.src}
-                alt=""
-                aria-hidden
-                className="ny-hanji-poster-brand-char"
-                style={{ animationDelay: `${0.18 + i * 0.24}s` }}
-              />
-            ))}
+      <div className="ny-hanji-landing">
+        <section className="ny-hanji-poster" aria-label="운명내비 인트로">
+          <div className="ny-hanji-poster-media">
+            <HanjiIntroVideo />
+            <div className="ny-hanji-poster-scrim" aria-hidden />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/fatenavi3/cta-badge.png"
+              alt="정통 명리학 기반"
+              className="ny-hanji-cta-badge"
+            />
+            <div className="ny-hanji-poster-brand" aria-label={config.brand}>
+              {[
+                { src: "/images/fatenavi3/brand-chars/1-운.png?v=5", ch: "운" },
+                { src: "/images/fatenavi3/brand-chars/2-명.png?v=5", ch: "명" },
+                { src: "/images/fatenavi3/brand-chars/3-내.png?v=5", ch: "내" },
+                { src: "/images/fatenavi3/brand-chars/4-비.png?v=5", ch: "비" },
+              ].map((item, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={item.ch}
+                  src={item.src}
+                  alt=""
+                  aria-hidden
+                  className="ny-hanji-poster-brand-char"
+                  style={{ animationDelay: `${0.18 + i * 0.24}s` }}
+                />
+              ))}
+            </div>
+            <p className="ny-hanji-poster-slogan">
+              좋은 말만 하지 않습니다.
+              <br />
+              가야 할 길을 짚어드립니다.
+            </p>
           </div>
-          <p className="ny-hanji-poster-slogan">
-            좋은 말만 하지 않습니다.
-            <br />
-            가야 할 길을 짚어드립니다.
-          </p>
-        </div>
-      </section>
+        </section>
+
+        <section className="ny-hanji-below" aria-label="설계서 안내">
+          <div className="ny-hanji-below-block">
+            <p className="ny-hanji-below-kicker">요약</p>
+            <h2 className="ny-hanji-below-title">인생 설계서 한 권</h2>
+            <p className="ny-hanji-below-body">
+              사주 원국부터 앞으로 10년 흐름까지.
+              <br />
+              좋은 말만 하지 않고, 막히는 구간과 우회로까지 적습니다.
+            </p>
+          </div>
+
+          <div className="ny-hanji-below-block">
+            <p className="ny-hanji-below-kicker">구성</p>
+            <h2 className="ny-hanji-below-title">이렇게 담깁니다</h2>
+            <div className="ny-hanji-below-features">
+              {[
+                { num: "01", label: "원국·기질", desc: "타고난 강점과 빈칸" },
+                { num: "02", label: "대운·세운", desc: "10년 흐름과 갈림길" },
+                { num: "03", label: "실행 포인트", desc: "지금 고민에 맞춘 길" },
+              ].map((item) => (
+                <div key={item.num} className="ny-hanji-below-feature">
+                  <span className="ny-hanji-below-feature-num">{item.num}</span>
+                  <p className="ny-hanji-below-feature-label">{item.label}</p>
+                  <p className="ny-hanji-below-feature-desc">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="ny-hanji-below-block">
+            <h2 className="ny-hanji-below-title">왜 운명내비인가</h2>
+            <ul className="ny-hanji-below-bullets">
+              <li>나쁜 구간도 숨기지 않습니다</li>
+              <li>명리학 근거를 짚어 드립니다</li>
+              <li>해결책·행동 포인트까지 줍니다</li>
+            </ul>
+            <p className="ny-hanji-below-note">정통 명리학 기반 · 1:1 맞춤 풀이</p>
+          </div>
+        </section>
+      </div>
     </NewYearShell>
   );
 }
