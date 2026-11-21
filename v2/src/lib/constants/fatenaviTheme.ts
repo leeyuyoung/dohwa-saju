@@ -38,7 +38,7 @@ export const FATENAVI_THEMES: Record<FateNaviThemeId, FateNaviTheme> = {
     id: "premium",
     basePath: "/FateNavi4",
     shellClass: "ny-premium",
-    brand: "운명내비",
+    brand: "프리미엄 종합사주",
     orderName: "프리미엄 종합사주",
     slogan: "말도 안 되는 방대한 분량, 1:1 맞춤 프리미엄 사주",
     ctaStart: "프리미엄 사주 신청하기",

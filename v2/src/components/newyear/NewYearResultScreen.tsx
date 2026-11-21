@@ -162,7 +162,7 @@ export function NewYearResultScreen({
             isSheep
               ? "/images/fatenavi2/mery-duo.png"
               : isPremium
-                ? "/images/fatenavi4/hero-animals.jpg"
+                ? "/images/fatenavi4/hero-zodiac.jpg?v=3"
                 : "/images/fatenavi3/intro.jpg"
           }
           alt=""

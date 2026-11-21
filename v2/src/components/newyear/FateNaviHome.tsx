@@ -55,10 +55,14 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
       <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
         <div className="ny-premium-landing">
           <section className="ny-premium-hero" aria-label="프리미엄 종합사주">
-            <p className="ny-premium-ribbon">종합사주</p>
+            <span className="ny-premium-hero-corner ny-premium-hero-corner-tl" aria-hidden />
+            <span className="ny-premium-hero-corner ny-premium-hero-corner-tr" aria-hidden />
+            <span className="ny-premium-hero-corner ny-premium-hero-corner-bl" aria-hidden />
+            <span className="ny-premium-hero-corner ny-premium-hero-corner-br" aria-hidden />
+            <p className="ny-premium-ribbon">태어나서부터 100세까지</p>
             <div className="ny-premium-hero-art">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/fatenavi4/hero-animals.jpg" alt="" />
+              <img src="/images/fatenavi4/hero-zodiac.jpg?v=3" alt="" />
             </div>
             <p className="ny-premium-hero-kicker">PREMIUM</p>
             <h1 className="ny-premium-hero-title">종합사주</h1>
@@ -66,7 +70,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
               <s>{formatPrice(NEWYEAR_LIST_PRICE)}</s>
               {formatPrice(NEWYEAR_REPORT_PRICE)}
               <br />
-              말도 안 되는 방대한 분량
+              5만자 이상의 미친 분량
             </p>
           </section>
 

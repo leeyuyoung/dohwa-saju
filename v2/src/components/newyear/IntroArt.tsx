@@ -21,7 +21,7 @@ export function IntroArt({ theme }: { theme: FateNaviThemeId }) {
       <div className="ny-intro-art" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/fatenavi4/hero-animals.jpg"
+          src="/images/fatenavi4/hero-zodiac.jpg?v=3"
           alt=""
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />

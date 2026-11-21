@@ -25,6 +25,15 @@
   color: #2a2118;
 }
 
+/* 인트로 랜딩만: 히어로 이미지와 맞는 상단 그라데이션 */
+.ny-premium:has(.ny-premium-landing) {
+  background:
+    radial-gradient(ellipse at 50% 6%, rgb(42 33 24 / 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 18%, rgb(196 160 90 / 0.1) 0%, transparent 52%),
+    radial-gradient(ellipse at 50% 0%, rgb(255 252 245 / 0.85), transparent 48%),
+    linear-gradient(180deg, #9a8770 0%, #d4c4a8 7%, #efe6d4 18%, #f3ead7 32%, #f3ead7 100%);
+}
+
 .ny-premium .ny-frame {
   background: transparent;
 }
@@ -173,69 +182,155 @@
 .ny-premium-hero {
   position: relative;
   overflow: hidden;
-  padding: 1.35rem 1.1rem 1.5rem;
-  border: 1px solid rgb(42 33 24 / 0.18);
-  border-radius: 4px;
+  padding: 0.85rem 1.25rem 1.65rem;
+  border: 1.25px solid rgb(42 33 24 / 0.5);
+  border-radius: 0;
   background:
-    linear-gradient(180deg, #fffdf8 0%, #f7f0e4 100%);
+    radial-gradient(ellipse at 50% 40%, rgb(255 252 240 / 0.55) 0%, transparent 58%),
+    linear-gradient(180deg, #ffffff 0%, #fffdf6 50%, #fbf3e4 100%);
   box-shadow: 0 14px 28px rgb(42 33 24 / 0.08);
+  outline: 1px solid rgb(42 33 24 / 0.35);
+  outline-offset: -5px;
   text-align: center;
 }
 
-.ny-premium-hero::before,
-.ny-premium-hero::after {
+.ny-premium-hero-corner {
+  position: absolute;
+  z-index: 4;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  border: 1.6px solid rgb(42 33 24 / 0.75);
+}
+
+.ny-premium-hero-corner::after {
   content: "";
   position: absolute;
-  width: 18px;
-  height: 18px;
-  border-color: rgb(42 33 24 / 0.45);
-  border-style: solid;
+  width: 6px;
+  height: 6px;
+  background: rgb(42 33 24 / 0.75);
+  transform: rotate(45deg);
 }
 
-.ny-premium-hero::before {
-  top: 10px;
-  left: 10px;
-  border-width: 1.5px 0 0 1.5px;
+.ny-premium-hero-corner-tl {
+  top: 6px;
+  left: 6px;
+  border-right: none;
+  border-bottom: none;
 }
 
-.ny-premium-hero::after {
-  right: 10px;
-  bottom: 10px;
-  border-width: 0 1.5px 1.5px 0;
+.ny-premium-hero-corner-tl::after {
+  top: 4px;
+  left: 4px;
+}
+
+.ny-premium-hero-corner-tr {
+  top: 6px;
+  right: 6px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.ny-premium-hero-corner-tr::after {
+  top: 4px;
+  right: 4px;
+}
+
+.ny-premium-hero-corner-bl {
+  bottom: 6px;
+  left: 6px;
+  border-right: none;
+  border-top: none;
+}
+
+.ny-premium-hero-corner-bl::after {
+  bottom: 4px;
+  left: 4px;
+}
+
+.ny-premium-hero-corner-br {
+  bottom: 6px;
+  right: 6px;
+  border-left: none;
+  border-top: none;
+}
+
+.ny-premium-hero-corner-br::after {
+  bottom: 4px;
+  right: 4px;
 }
 
 .ny-premium-ribbon {
   display: inline-block;
-  margin: 0 auto 0.95rem;
-  padding: 0.35rem 1.1rem;
+  position: relative;
+  z-index: 3;
+  margin: 0 auto -1.1rem;
+  padding: 0.35rem 1.35rem;
   background: #1c1611;
   color: #fff8f0;
   font-family: var(--font-brush), var(--font-classic-kr), "Song Myung", serif;
-  font-size: 0.92rem;
-  letter-spacing: 0.04em;
-  clip-path: polygon(4% 0, 96% 0, 100% 50%, 96% 100%, 4% 100%, 0 50%);
+  font-size: 0.84rem;
+  letter-spacing: 0.02em;
+  clip-path: polygon(3% 0, 97% 0, 100% 50%, 97% 100%, 3% 100%, 0 50%);
 }
 
 .ny-premium-hero-art {
-  width: min(72%, 14rem);
-  margin: 0 auto 1rem;
-  border: 1.5px solid #2a2118;
-  background: #fff;
+  position: relative;
+  z-index: 1;
+  width: calc(100% + 1.6rem);
+  max-width: none;
+  margin: -0.2rem -0.8rem -0.85rem;
+  aspect-ratio: 1.05 / 1;
+  overflow: hidden;
+  background: transparent;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
 }
 
 .ny-premium-hero-art img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  opacity: 0.72;
 }
 
 .ny-premium-hero-kicker {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   margin: 0 0 0.2rem;
   color: #9a7b3c;
   font-family: var(--font-serif), serif;
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.2em;
+}
+
+.ny-premium-hero-kicker::before,
+.ny-premium-hero-kicker::after {
+  content: "";
+  display: block;
+  flex: 1 1 auto;
+  max-width: 5.5rem;
+  height: 0.5px;
+  background: #9a7b3c;
 }
 
 .ny-premium-hero-title {

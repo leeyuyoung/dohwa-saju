@@ -20,7 +20,7 @@ export const NEWYEAR_PROMISES = [
 ] as const;
 
 /** 결제·표시에 쓰는 런칭가. */
-export const NEWYEAR_REPORT_PRICE = 29900;
+export const NEWYEAR_REPORT_PRICE = 19900;
 /** 화면 비교용 정가. */
 export const NEWYEAR_LIST_PRICE = 89900;
 
