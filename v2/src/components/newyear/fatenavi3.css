@@ -44,7 +44,7 @@
 .ny-hanji .ny-brand-logo {
   display: block;
   width: auto;
-  height: 2.15rem;
+  height: 2.45rem;
   object-fit: contain;
   filter: drop-shadow(0 1px 6px rgb(0 0 0 / 0.35));
 }
@@ -407,7 +407,7 @@
 .ny-hanji-poster-brand-char {
   display: block;
   width: auto;
-  height: clamp(4.1rem, 17.5vw, 5.7rem);
+  height: clamp(4.7rem, 19.5vw, 6.5rem);
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgb(0 0 0 / 0.5));
   opacity: 0;
@@ -499,7 +499,7 @@
 
 .ny-hanji-below-title {
   margin: 0 0 0.7rem;
-  color: #f6ecd8;
+  color: #c9a86a;
   font-family: var(--font-serif), "Noto Serif KR", serif;
   font-size: 1.2rem;
   font-weight: 700;
@@ -527,8 +527,10 @@
 .ny-hanji-below-feature {
   display: flex;
   flex-direction: column;
-  gap: 0.28rem;
-  padding: 0.7rem 0.4rem;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 6.4rem;
+  padding: 0.95rem 0.4rem;
   border: 1px solid rgb(201 168 106 / 0.22);
   border-radius: 10px;
   background: rgb(15 26 44 / 0.35);

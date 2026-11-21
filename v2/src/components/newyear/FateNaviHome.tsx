@@ -3,9 +3,6 @@ import { HanjiIntroVideo } from "@/components/newyear/HanjiIntroVideo";
 import { NewYearShell } from "@/components/newyear/NewYearShell";
 import { ReadingCountBubble } from "@/components/newyear/ReadingCountBubble";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
-import { NEWYEAR_LIST_PRICE, NEWYEAR_REPORT_PRICE } from "@/lib/constants/newyear";
-import { formatPrice } from "@/lib/constants/service";
-
 export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
   const config = themeOf(theme);
   const stickyCta = (
@@ -59,19 +56,14 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             <span className="ny-premium-hero-corner ny-premium-hero-corner-tr" aria-hidden />
             <span className="ny-premium-hero-corner ny-premium-hero-corner-bl" aria-hidden />
             <span className="ny-premium-hero-corner ny-premium-hero-corner-br" aria-hidden />
-            <p className="ny-premium-ribbon">태어나서부터 100세까지</p>
             <div className="ny-premium-hero-art">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/fatenavi4/hero-zodiac.jpg?v=3" alt="" />
+              <img src="/images/fatenavi4/hero-zodiac.jpg?v=6" alt="" />
+              <p className="ny-premium-ribbon">태어나서부터 100세까지</p>
             </div>
             <p className="ny-premium-hero-kicker">PREMIUM</p>
             <h1 className="ny-premium-hero-title">종합사주</h1>
-            <p className="ny-premium-price">
-              <s>{formatPrice(NEWYEAR_LIST_PRICE)}</s>
-              {formatPrice(NEWYEAR_REPORT_PRICE)}
-              <br />
-              5만자 이상의 미친 분량
-            </p>
+            <p className="ny-premium-price">5만자 이상의 미친 분량</p>
           </section>
 
           <section className="ny-premium-section" aria-label="구성 안내">
@@ -81,7 +73,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
               {[
                 { num: "01", label: "사주 원국\n정밀 분석" },
                 { num: "02", label: "대운·세운\n흐름 해석" },
-                { num: "03", label: "진로·재물\n관계 가이드" },
+                { num: "03", label: "재물/직업\n건강/결혼운" },
               ].map((item) => (
                 <div key={item.num} className="ny-premium-feature">
                   <span className="ny-premium-feature-num">{item.num}</span>
@@ -98,7 +90,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             </div>
             <ul className="ny-premium-bullets">
               <li>타고난 기질과 강점·약점</li>
-              <li>앞으로 10년 흐름과 갈림길</li>
+              <li>100년 인생 흐름과 갈림길</li>
               <li>지금 고민에 맞춘 실행 포인트</li>
             </ul>
             <p className="ny-premium-note">좋은 말만 하지 않습니다. 길을 알려드립니다.</p>
@@ -149,28 +141,34 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
 
         <section className="ny-hanji-below" aria-label="설계서 안내">
           <div className="ny-hanji-below-block">
-            <p className="ny-hanji-below-kicker">요약</p>
             <h2 className="ny-hanji-below-title">인생 설계서 한 권</h2>
             <p className="ny-hanji-below-body">
-              사주 원국부터 앞으로 10년 흐름까지.
+              사주 원국부터 100년 인생 흐름까지.
               <br />
-              좋은 말만 하지 않고, 막히는 구간과 우회로까지 적습니다.
+              좋은 말만 하지 않고, 막히는 구간과 해결법
+              <br />
+              모두 알려드립니다.
             </p>
           </div>
 
           <div className="ny-hanji-below-block">
-            <p className="ny-hanji-below-kicker">구성</p>
-            <h2 className="ny-hanji-below-title">이렇게 담깁니다</h2>
+            <h2 className="ny-hanji-below-title">구성</h2>
             <div className="ny-hanji-below-features">
               {[
-                { num: "01", label: "원국·기질", desc: "타고난 강점과 빈칸" },
-                { num: "02", label: "대운·세운", desc: "10년 흐름과 갈림길" },
-                { num: "03", label: "실행 포인트", desc: "지금 고민에 맞춘 길" },
+                { num: "01", label: "사주 원국\n정밀 분석" },
+                { num: "02", label: "대운·세운\n흐름 해석" },
+                { num: "03", label: "재물/직업\n건강/결혼운" },
               ].map((item) => (
                 <div key={item.num} className="ny-hanji-below-feature">
                   <span className="ny-hanji-below-feature-num">{item.num}</span>
-                  <p className="ny-hanji-below-feature-label">{item.label}</p>
-                  <p className="ny-hanji-below-feature-desc">{item.desc}</p>
+                  <p className="ny-hanji-below-feature-label">
+                    {item.label.split("\n").map((line) => (
+                      <span key={line}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
+                  </p>
                 </div>
               ))}
             </div>
@@ -179,9 +177,9 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
           <div className="ny-hanji-below-block">
             <h2 className="ny-hanji-below-title">왜 운명내비인가</h2>
             <ul className="ny-hanji-below-bullets">
-              <li>나쁜 구간도 숨기지 않습니다</li>
-              <li>명리학 근거를 짚어 드립니다</li>
-              <li>해결책·행동 포인트까지 줍니다</li>
+              <li>듣기 좋은 덕담 대신, 흉운의 시기까지 가감 없이</li>
+              <li>돈이 터지는 시기 - 타이밍과 돌파구 제시</li>
+              <li>100년 인생 풀이와 구체적인 행동 지침 제시</li>
             </ul>
             <p className="ny-hanji-below-note">정통 명리학 기반 · 1:1 맞춤 풀이</p>
           </div>
