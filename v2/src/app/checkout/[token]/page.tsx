@@ -7,6 +7,7 @@ import { CheckoutDealPrice } from "@/components/payment/CheckoutDealPrice";
 import { CheckoutWidget } from "@/components/payment/CheckoutWidget";
 import { Ornament } from "@/components/ui/SectionHeading";
 import { REPORT_CHAPTERS, REPORT_SECTION_COUNT } from "@/lib/constants/result";
+import { PRODUCT_NEWYEAR, productOf } from "@/lib/constants/newyear";
 import { DETAILED_REPORT_PRICE } from "@/lib/constants/service";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
 import { ORDER_NAME } from "@/lib/server/payments";
@@ -21,6 +22,9 @@ export default async function CheckoutPage({ params }: PageProps<"/checkout/[tok
   const { token } = await params;
   const record = TOKEN_PATTERN.test(token) ? await getAnalysisStore().get(token) : null;
   if (!record) notFound();
+  if (productOf(record) === PRODUCT_NEWYEAR) {
+    redirect(record.paidAt ? `/FateNavi/report/${token}` : `/FateNavi/checkout/${token}`);
+  }
   if (record.paidAt !== null) redirect(`/report/${token}`);
 
   return (

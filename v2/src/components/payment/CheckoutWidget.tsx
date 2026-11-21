@@ -13,6 +13,10 @@ type CheckoutWidgetProps = {
   amount: number;
   /** 이탈 2단 비밀쿠폰 적용 여부. 서버가 금액을 확정한다. */
   couponApplied?: boolean;
+  /** 동의 링크의 약관 경로. 도화는 /legal, 신년 사주는 /FateNavi/legal. */
+  legalBase?: string;
+  /** ink는 2027 먹색 버튼. 기본은 도화 배너 버튼. */
+  tone?: "dohwa" | "ink";
 };
 
 type ContactErrors = Partial<Record<"email" | "phone", string>>;
@@ -25,7 +29,7 @@ type OrderResponse = {
   message?: string;
 };
 
-export function CheckoutWidget({ token, amount, couponApplied = false }: CheckoutWidgetProps) {
+export function CheckoutWidget({ token, amount, couponApplied = false, legalBase = "/legal", tone = "dohwa" }: CheckoutWidgetProps) {
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
@@ -122,15 +126,15 @@ export function CheckoutWidget({ token, amount, couponApplied = false }: Checkou
         </Field>
         <p className="text-center font-gothic text-[clamp(7.5px,2.4vw,10px)] leading-snug tracking-[-0.02em] text-mist-dim">
           결제 정보를 확인했으며{" "}
-          <Link href="/legal/privacy" target="_blank" className="underline underline-offset-2">
+          <Link href={`${legalBase}/privacy`} target="_blank" className="underline underline-offset-2">
             개인정보 처리방침
           </Link>
           ·
-          <Link href="/legal/terms" target="_blank" className="underline underline-offset-2">
+          <Link href={`${legalBase}/terms`} target="_blank" className="underline underline-offset-2">
             이용약관
           </Link>
           ·
-          <Link href="/legal/refund" target="_blank" className="underline underline-offset-2">
+          <Link href={`${legalBase}/refund`} target="_blank" className="underline underline-offset-2">
             환불정책
           </Link>
           에 동의합니다.
@@ -176,9 +180,15 @@ export function CheckoutWidget({ token, amount, couponApplied = false }: Checkou
         </button>
       </div>
 
-      <Button onClick={pay} disabled={paying}>
-        {paying ? "결제창으로 이동 중…" : `${formatPrice(amount)} 결제하기`}
-      </Button>
+      {tone === "ink" ? (
+        <button type="button" className="ny-cta w-full" onClick={pay} disabled={paying}>
+          {paying ? "결제창으로 이동 중…" : `${formatPrice(amount)} 결제하기`}
+        </button>
+      ) : (
+        <Button onClick={pay} disabled={paying}>
+          {paying ? "결제창으로 이동 중…" : `${formatPrice(amount)} 결제하기`}
+        </Button>
+      )}
 
       <MarketingConsentModal open={marketingDetailOpen} onClose={() => setMarketingDetailOpen(false)} />
     </div>

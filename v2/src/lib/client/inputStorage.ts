@@ -73,6 +73,22 @@ export function clearPendingAnalysis() {
   } catch {}
 }
 
+const NEWYEAR_PENDING_KEY = "dohwa:pending-newyear:v1";
+
+export function savePendingNewYear(input: AnalysisInput) {
+  writeJson(NEWYEAR_PENDING_KEY, input);
+}
+
+export function loadPendingNewYear(): unknown {
+  return readJson(NEWYEAR_PENDING_KEY);
+}
+
+export function clearPendingNewYear() {
+  try {
+    window.sessionStorage.removeItem(NEWYEAR_PENDING_KEY);
+  } catch {}
+}
+
 export function saveAnalysisToken(token: string) {
   writeJson(TOKEN_KEY, token);
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
 import { isSameOrigin, jsonError as fail, readJsonBody } from "@/lib/server/http";
-import { ORDER_NAME, PaymentError, createPayappOrder, isPayappConfigured } from "@/lib/server/payments";
+import { PaymentError, createPayappOrder, isPayappConfigured } from "@/lib/server/payments";
 import { clientIp, consumeRateLimit } from "@/lib/server/rateLimit";
 import type { OrderMetaClick } from "@/lib/server/store";
 import { checkoutContactSchema } from "@/lib/validation/analysisInput";
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   if (retryAfter !== null) return fail(429, "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", { "Retry-After": String(retryAfter) });
 
   try {
-    const { order, payurl } = await createPayappOrder(
+    const { order, payurl, orderName } = await createPayappOrder(
       parsed.data.token,
       parsed.data.email,
       parsed.data.phone,
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       metaClickFromRequest(request),
     );
     return Response.json(
-      { orderId: order.orderId, amount: order.amount, orderName: ORDER_NAME, payurl },
+      { orderId: order.orderId, amount: order.amount, orderName, payurl },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {

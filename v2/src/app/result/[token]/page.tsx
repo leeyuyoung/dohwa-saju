@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { FreeResultScreen } from "@/components/result/FreeResultScreen";
+import { PRODUCT_NEWYEAR, productOf } from "@/lib/constants/newyear";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
 import { isPayappConfigured } from "@/lib/server/payments";
 import { toFreeResultView } from "@/lib/server/resultView";
@@ -16,6 +17,7 @@ export default async function ResultPage({ params }: PageProps<"/result/[token]"
   if (!TOKEN_PATTERN.test(token)) notFound();
   const record = await getAnalysisStore().get(token);
   if (!record) notFound();
+  if (productOf(record) === PRODUCT_NEWYEAR) redirect(`/FateNavi/result/${token}`);
   return (
     <FreeResultScreen
       result={toFreeResultView(record)}

@@ -17,7 +17,23 @@ const MAX_PENDING_BLOOM = 0.95;
 type Phase = "writing" | "failed";
 
 /** 결제 후 리포트가 완성될 때까지 기다린다. 완성되면 서버 화면을 다시 불러온다. */
-export function ReportWaiting({ token, failed }: { token: string; failed: boolean }) {
+export function ReportWaiting({
+  token,
+  failed,
+  messages = REPORT_WRITING_MESSAGES,
+  failedTitle = "꽃을 펼치다 잠시 바람이 불었구나.",
+  failedDetail = "결제는 안전하게 끝났으니, 다시 열어보면 돼.",
+  retryLabel = "다시 펼치기",
+  hint = "보통 1~2분 걸려요. 이 화면을 닫아도 리포트는 이메일로 보내드려요.",
+}: {
+  token: string;
+  failed: boolean;
+  messages?: readonly string[];
+  failedTitle?: string;
+  failedDetail?: string;
+  retryLabel?: string;
+  hint?: string;
+}) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>(failed ? "failed" : "writing");
   const [messageIndex, setMessageIndex] = useState(0);
@@ -73,11 +89,11 @@ export function ReportWaiting({ token, failed }: { token: string; failed: boolea
   useEffect(() => {
     if (phase !== "writing") return;
     const timer = window.setInterval(
-      () => setMessageIndex((index) => Math.min(index + 1, REPORT_WRITING_MESSAGES.length - 1)),
+      () => setMessageIndex((index) => Math.min(index + 1, messages.length - 1)),
       MESSAGE_INTERVAL_MS,
     );
     return () => window.clearInterval(timer);
-  }, [phase]);
+  }, [messages.length, phase]);
 
   const retry = useCallback(async () => {
     setRetryError(null);
@@ -113,8 +129,8 @@ export function ReportWaiting({ token, failed }: { token: string; failed: boolea
             transition={{ duration: 0.9 }}
             className="flex flex-col gap-3"
           >
-            <p className="font-serif text-lg font-light leading-relaxed text-paper">{REPORT_WRITING_MESSAGES[messageIndex]}</p>
-            <p className="text-xs text-mist-dim">보통 1~2분 걸려요. 이 화면을 닫아도 리포트는 이메일로 보내드려요.</p>
+            <p className="font-serif text-lg font-light leading-relaxed text-paper">{messages[messageIndex]}</p>
+            <p className="text-xs text-mist-dim">{hint}</p>
           </motion.div>
         ) : (
           <motion.div
@@ -124,11 +140,11 @@ export function ReportWaiting({ token, failed }: { token: string; failed: boolea
             className="flex w-full max-w-xs flex-col items-center gap-6"
           >
             <p className="font-serif text-base leading-relaxed text-paper">
-              꽃을 펼치다 잠시 바람이 불었구나.
+              {failedTitle}
               <br />
-              <span className="text-mist">결제는 안전하게 끝났으니, 다시 열어보면 돼.</span>
+              <span className="text-mist">{failedDetail}</span>
             </p>
-            <Button onClick={retry}>다시 펼치기</Button>
+            <Button onClick={retry}>{retryLabel}</Button>
             {retryError && (
               <p role="alert" className="text-xs text-cinnabar">
                 {retryError}

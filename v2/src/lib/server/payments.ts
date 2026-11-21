@@ -6,6 +6,7 @@ import {
   DETAILED_REPORT_ORDER_NAME,
   reportCheckoutAmount,
 } from "@/lib/constants/service";
+import { NEWYEAR_CHECKOUT_OPEN, NEWYEAR_ORDER_NAME, NEWYEAR_REPORT_PRICE, PRODUCT_NEWYEAR, productOf } from "@/lib/constants/newyear";
 import { markAnalysisPaid, revokeAnalysisPaid } from "./analysis";
 import { sendMetaPurchaseEvent } from "./metaCapi";
 import { getAnalysisStore, type OrderMetaClick, type OrderRecord } from "./store";
@@ -101,6 +102,7 @@ export type CreatePayappOrderResult = {
   order: OrderRecord;
   payurl: string;
   mulNo: string;
+  orderName: string;
 };
 
 /**
@@ -119,21 +121,30 @@ export async function createPayappOrder(
   const record = await store.get(token);
   if (!record) throw new PaymentError(404, "결제할 리포트를 찾지 못했습니다.");
   if (record.paidAt !== null) throw new PaymentError(409, "이미 결제가 완료된 리포트입니다.");
+  if (productOf(record) === PRODUCT_NEWYEAR && !NEWYEAR_CHECKOUT_OPEN) {
+    throw new PaymentError(503, "결제는 준비 중입니다.");
+  }
   if (record.email !== email || record.phone !== phone || record.marketingOptIn !== marketingOptIn) {
     await store.update(token, { email, phone, marketingOptIn });
   }
 
-  const amount = reportCheckoutAmount(couponApplied);
-  if (!(DETAILED_REPORT_ALLOWED_AMOUNTS as readonly number[]).includes(amount)) {
+  const amount =
+    productOf(record) === PRODUCT_NEWYEAR ? NEWYEAR_REPORT_PRICE : reportCheckoutAmount(couponApplied);
+  const allowed =
+    productOf(record) === PRODUCT_NEWYEAR
+      ? amount === NEWYEAR_REPORT_PRICE
+      : (DETAILED_REPORT_ALLOWED_AMOUNTS as readonly number[]).includes(amount);
+  if (!allowed) {
     throw new PaymentError(400, "결제 금액이 올바르지 않습니다.", `amount not allowed: ${amount}`);
   }
+  const orderName = productOf(record) === PRODUCT_NEWYEAR ? NEWYEAR_ORDER_NAME : ORDER_NAME;
 
   const now = Date.now();
   await store.deleteStalePendingOrders(now - STALE_ORDER_MS).catch((error) => {
     console.error("[payment] stale order cleanup failed", error);
   });
 
-  const orderId = `dohwa_${randomBytes(16).toString("base64url")}`;
+  const orderId = `${productOf(record) === PRODUCT_NEWYEAR ? "ny" : "dohwa"}_${randomBytes(16).toString("base64url")}`;
   const order: OrderRecord = {
     orderId,
     token,
@@ -155,7 +166,7 @@ export async function createPayappOrder(
   const pay = await callPayapp({
     cmd: "payrequest",
     userid: payappUserId(),
-    goodname: ORDER_NAME,
+    goodname: orderName,
     price: String(amount),
     recvphone: phone,
     smsuse: "n",
@@ -185,6 +196,7 @@ export async function createPayappOrder(
     order: { ...order, paymentKey: pay.parsed.mul_no, updatedAt: Date.now() },
     payurl: pay.parsed.payurl,
     mulNo: pay.parsed.mul_no,
+    orderName,
   };
 }
 

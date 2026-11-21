@@ -1,11 +1,21 @@
 import "server-only";
 
+import { PRODUCT_NEWYEAR, productOf } from "@/lib/constants/newyear";
 import type { AnalysisRecord } from "@/lib/server/store";
 import { getAnalysisStore } from "@/lib/server/store";
 import { buildReportEmail } from "./reportEmail";
 
 const RESEND_API = "https://api.resend.com/emails";
 const REQUEST_TIMEOUT_MS = 10_000;
+const NEWYEAR_FROM_NAME = "운명내비";
+
+/** 도화는 EMAIL_FROM 그대로. 운명내비는 같은 주소에 표시 이름만 바꾼다. */
+function senderFor(product: ReturnType<typeof productOf>, configured: string): string {
+  if (product !== PRODUCT_NEWYEAR) return configured;
+  const bracket = configured.match(/<([^>]+)>/);
+  const address = (bracket?.[1] ?? configured).trim();
+  return `${NEWYEAR_FROM_NAME} <${address}>`;
+}
 
 async function markEmailResult(token: string, ok: boolean, error: string | null) {
   try {
@@ -24,7 +34,9 @@ async function markEmailResult(token: string, ok: boolean, error: string | null)
  * 메일 실패가 결제를 되돌리면 안 되므로 예외를 던지지 않고 결과만 돌려준다.
  * 발송 성공/실패는 analyses.email_sent_at / email_error에 남겨 관리자 화면에서 본다.
  */
-export async function sendReportEmail(record: Pick<AnalysisRecord, "token" | "name" | "email">): Promise<boolean> {
+export async function sendReportEmail(
+  record: Pick<AnalysisRecord, "token" | "name" | "email" | "product">,
+): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
   const appUrl = process.env.APP_URL;
@@ -39,8 +51,10 @@ export async function sendReportEmail(record: Pick<AnalysisRecord, "token" | "na
     return false;
   }
 
-  const reportUrl = new URL(`/report/${record.token}`, appUrl).toString();
-  const { subject, html, text } = buildReportEmail({ name: record.name, reportUrl });
+  const product = productOf(record);
+  const reportPath = product === PRODUCT_NEWYEAR ? `/FateNavi/report/${record.token}` : `/report/${record.token}`;
+  const reportUrl = new URL(reportPath, appUrl).toString();
+  const { subject, html, text } = buildReportEmail({ name: record.name, reportUrl, product });
 
   try {
     const response = await fetch(RESEND_API, {
@@ -50,7 +64,7 @@ export async function sendReportEmail(record: Pick<AnalysisRecord, "token" | "na
         "Content-Type": "application/json",
         "Idempotency-Key": `report-email/${record.token}`,
       },
-      body: JSON.stringify({ from, to: [record.email], subject, html, text }),
+      body: JSON.stringify({ from: senderFor(product, from), to: [record.email], subject, html, text }),
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
     if (!response.ok) {

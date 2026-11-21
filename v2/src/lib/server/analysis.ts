@@ -4,10 +4,13 @@ import { randomBytes } from "node:crypto";
 import { after } from "next/server";
 import { buildSajuProfile, calculateSaju } from "@/lib/saju";
 import type { AnalysisInput } from "@/lib/validation/analysisInput";
+import { PRODUCT_DOHWA, productOf, type ProductId } from "@/lib/constants/newyear";
 import { CURRENT_REPORT_VERSION, resolveReportVersion } from "@/lib/constants/reportVersion";
 import { AiReportError, generateReport } from "./ai/generateReport";
+import { generateNewYearReport } from "./ai/generateNewYearReport";
 import { aiReportSchemaV1, type AiReportV1 } from "./ai/reportSchema.v1";
 import { aiReportSchemaV2, type AiReportV2 } from "./ai/reportSchema.v2";
+import { aiNewYearSchema, type AiNewYearReport } from "./ai/reportSchema.newyear";
 import { sendReportEmail } from "./email/sendReportEmail";
 import { getAnalysisStore, type AnalysisRecord, type StoredAiReport } from "./store";
 
@@ -22,6 +25,10 @@ const newToken = () => randomBytes(16).toString("base64url");
 /** 저장된 리포트가 해당 버전 스키마에 맞을 때만 돌려준다. */
 export function storedReport(record: AnalysisRecord): StoredAiReport | null {
   if (!record.report) return null;
+  if (productOf(record) === "newyear2027") {
+    const parsed = aiNewYearSchema.safeParse(record.report);
+    return parsed.success ? parsed.data : null;
+  }
   const version = resolveReportVersion(record.reportVersion);
   if (version === 1) {
     const parsed = aiReportSchemaV1.safeParse(record.report);
@@ -34,14 +41,15 @@ export function storedReport(record: AnalysisRecord): StoredAiReport | null {
   return null;
 }
 
-export type { AiReportV1, AiReportV2 };
+export type { AiReportV1, AiReportV2, AiNewYearReport };
 
 /** 만세력 계산만으로 무료 결과를 만든다. AI는 결제 후에만 호출한다. 계산 오류는 그대로 던진다(SajuCalculationError). */
-export async function createAnalysis(input: AnalysisInput): Promise<AnalysisRecord> {
+export async function createAnalysis(input: AnalysisInput, product: ProductId = PRODUCT_DOHWA): Promise<AnalysisRecord> {
   const profile = buildSajuProfile(calculateSaju({ birth: input.birth, gender: input.gender }));
   const now = Date.now();
   const record: AnalysisRecord = {
     token: newToken(),
+    product,
     status: "ready",
     createdAt: now,
     updatedAt: now,
@@ -52,7 +60,12 @@ export async function createAnalysis(input: AnalysisInput): Promise<AnalysisReco
     phone: null,
     marketingOptIn: null,
     relationshipStatus: input.relationshipStatus,
-    concern: null,
+    concern: (() => {
+      const job = typeof input.job === "string" ? input.job.trim() : "";
+      const concern = typeof input.concern === "string" ? input.concern.trim() : "";
+      if (!job && !concern) return null;
+      return [job ? `직업/직무: ${job}` : null, concern || null].filter(Boolean).join("\n\n");
+    })(),
     attribution: input.attribution
       ? {
           utmSource: input.attribution.utmSource ?? null,
@@ -115,8 +128,15 @@ async function runReportGeneration(token: string): Promise<void> {
   try {
     const record = await store.get(token);
     if (!record) return;
-    const report = await generateReport(record.profile, { relationshipStatus: record.relationshipStatus });
-    await store.update(token, { status: "ready", report, reportVersion: CURRENT_REPORT_VERSION });
+    const report =
+      productOf(record) === "newyear2027"
+        ? await generateNewYearReport(record.profile)
+        : await generateReport(record.profile, { relationshipStatus: record.relationshipStatus });
+    await store.update(token, {
+      status: "ready",
+      report,
+      reportVersion: productOf(record) === "newyear2027" ? null : CURRENT_REPORT_VERSION,
+    });
     const latest = await store.get(token);
     if (latest?.paidAt) await sendReportEmail(latest);
   } catch (error) {

@@ -1,0 +1,14 @@
+import type { Metadata } from "next";
+import { FateNaviHome } from "@/components/newyear/FateNaviHome";
+import { themeOf } from "@/lib/constants/fatenaviTheme";
+
+const theme = themeOf("hanji");
+
+export const metadata: Metadata = {
+  title: { absolute: `${theme.orderName} · 한지` },
+  description: theme.slogan,
+};
+
+export default function FateNavi3Page() {
+  return <FateNaviHome theme="hanji" />;
+}

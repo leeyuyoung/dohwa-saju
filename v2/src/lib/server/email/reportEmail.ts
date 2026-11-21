@@ -1,12 +1,22 @@
 import "server-only";
 
+import { PRODUCT_NEWYEAR, type ProductId } from "@/lib/constants/newyear";
 import { SERVICE } from "@/lib/constants/service";
 
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!);
 
 /** 리포트가 완성되면 보내는 링크 메일. 리포트 본문은 담지 않고 링크만 보낸다. */
-export function buildReportEmail({ name, reportUrl }: { name: string; reportUrl: string }) {
+export function buildReportEmail({
+  name,
+  reportUrl,
+  product = "dohwa",
+}: {
+  name: string;
+  reportUrl: string;
+  product?: ProductId;
+}) {
+  if (product === PRODUCT_NEWYEAR) return buildNewYearEmail({ name, reportUrl });
   const subject = `[${SERVICE.name}] ${name}, 도화살 리포트 완성됐어`;
   const safeName = escapeHtml(name);
   const safeUrl = escapeHtml(reportUrl);
@@ -62,5 +72,42 @@ export function buildReportEmail({ name, reportUrl }: { name: string; reportUrl:
 </body>
 </html>`;
 
+  return { subject, html, text };
+}
+
+function buildNewYearEmail({ name, reportUrl }: { name: string; reportUrl: string }) {
+  const subject = `${name}님의 인생 설계서가 준비되었습니다`;
+  const safeName = escapeHtml(name);
+  const safeUrl = escapeHtml(reportUrl);
+  const text = [
+    `${name}님의 인생 설계서가 완성되었습니다.`,
+    "",
+    "아래 링크에서 다시 열어볼 수 있습니다.",
+    "",
+    reportUrl,
+    "",
+    "이 링크는 리포트를 여는 주소입니다. 다른 사람과 공유하지 말아 주세요.",
+    "",
+    "문의는 yylee00@naver.com 으로 메일 주세요.",
+  ].join("\n");
+  const html = `<!doctype html>
+<html lang="ko">
+<body style="margin:0;background:#000000;color:#F5F1E8;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#000000;">
+    <tr><td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" style="max-width:480px;">
+        <tr><td style="font-family:sans-serif;">
+          <p style="margin:0 0 8px;font-size:12px;color:#E0A526;">운명내비</p>
+          <p style="margin:0 0 16px;font-size:18px;line-height:1.6;">${safeName}님의 인생 설계서가 완성되었습니다.</p>
+          <p style="margin:0 0 20px;font-size:14px;line-height:1.7;color:#D9D4C7;">아래 링크에서 다시 열어볼 수 있습니다.</p>
+          <a href="${safeUrl}" style="display:inline-block;padding:14px 18px;border-radius:8px;background:#E0A526;color:#000000;text-decoration:none;font-size:14px;font-weight:700;">설계서 열기</a>
+          <p style="margin:20px 0 0;font-size:12px;line-height:1.7;color:#9aa3b0;">이 링크는 리포트를 여는 주소입니다. 다른 사람과 공유하지 말아 주세요.</p>
+          <p style="margin:16px 0 0;font-size:12px;line-height:1.7;color:#9aa3b0;">문의는 <a href="mailto:yylee00@naver.com" style="color:#E0A526;">yylee00@naver.com</a> 으로 메일 주세요.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
   return { subject, html, text };
 }

@@ -53,6 +53,16 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
 });
 
+/** 귀여운 손글씨체 (Gaegu, OFL) — FateNavi2 헤드라인 */
+const cuteHand = localFont({
+  src: [
+    { path: "./fonts/Gaegu-Regular.ttf", weight: "400", style: "normal" },
+    { path: "./fonts/Gaegu-Bold.ttf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-gaegu",
+  preload: false,
+});
+
 export const metadata: Metadata = {
   title: {
     default: `숨겨진 도화력 분석 | ${SERVICE.name}`,
@@ -79,7 +89,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
-      className={`${notoSerifKr.variable} ${notoSansKr.variable} ${classicKr.variable} ${handwriting.variable} ${cormorant.variable} h-full antialiased`}
+      className={`${notoSerifKr.variable} ${notoSansKr.variable} ${classicKr.variable} ${handwriting.variable} ${cormorant.variable} ${cuteHand.variable} h-full antialiased`}
     >
       <head>
         {/* Meta Pixel Code — head 안에 설치 (메타 가이드와 동일) */}

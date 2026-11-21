@@ -1,0 +1,534 @@
+/* FateNavi3 — 한지·전통 사주 톤 */
+.ny-hanji {
+  --bg-light: #f3ead7;
+  --bg-dark: #1a140e;
+  --ny-bg: #1a140e;
+  --ny-card: #241c14;
+  --ny-ink: #f6ecd8;
+  --ny-muted: rgb(246 236 216 / 0.68);
+  --ny-line: rgb(246 236 216 / 0.2);
+  --route: #9b2d1f;
+  --ny-warn: #9b2d1f;
+  --ny-seal: #9b2d1f;
+  --ny-seal-deep: #7a2016;
+  --good: #3f6b4a;
+  --ny-go: #3f6b4a;
+  --bad: #9b2d1f;
+  --ny-stop: #9b2d1f;
+  --text: #f6ecd8;
+  --text-sub: rgb(246 236 216 / 0.68);
+  --line: rgb(246 236 216 / 0.2);
+  background: #1a140e;
+  color: #f6ecd8;
+}
+
+.ny-hanji .ny-frame {
+  background:
+    radial-gradient(ellipse at top, rgb(155 45 31 / 0.12), transparent 50%),
+    #1a140e;
+}
+
+.ny-hanji .ny-brand,
+.ny-hanji .ny-title,
+.ny-hanji .ny-sub {
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  letter-spacing: 0.04em;
+}
+
+.ny-hanji .ny-brand {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.ny-hanji .ny-brand-logo {
+  display: block;
+  width: auto;
+  height: 2.15rem;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 6px rgb(0 0 0 / 0.35));
+}
+
+.ny-hanji .ny-free-brand-logo {
+  display: block;
+  width: min(11.5rem, 58vw);
+  height: auto;
+  margin: 0 0 0.15rem;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px rgb(0 0 0 / 0.45));
+}
+
+.ny-hanji .ny-en,
+.ny-hanji .ny-kicker {
+  color: #c9a86a;
+  letter-spacing: 0.22em;
+}
+
+.ny-hanji .ny-field,
+.ny-hanji .ny-choice,
+.ny-hanji .ny-card,
+.ny-hanji .ny-paper,
+.ny-hanji .ny-segment,
+.ny-hanji .ny-compare {
+  border-radius: 10px;
+  border-color: rgb(201 168 106 / 0.35);
+  background: #241c14;
+}
+
+.ny-hanji .ny-textarea {
+  border-radius: 10px;
+}
+
+.ny-hanji .ny-choice.is-on {
+  background: #f3ead7;
+  border-color: #f3ead7;
+  color: #1a140e;
+}
+
+/* 양력/음력·시간모름 등 보조 선택 글자 — 어두운 바탕에서 읽히게 */
+.ny-hanji .ny-form button[role="radio"],
+.ny-hanji .ny-form button[aria-pressed]:not(.ny-choice) {
+  color: #f6ecd8 !important;
+}
+
+.ny-hanji .ny-form button[role="radio"] span.rounded-full,
+.ny-hanji .ny-form button[aria-pressed]:not(.ny-choice) span.rounded-full {
+  border-color: rgb(246 236 216 / 0.55) !important;
+}
+
+.ny-hanji .ny-form button[role="radio"][aria-checked="true"] span.rounded-full,
+.ny-hanji .ny-form button[aria-pressed="true"]:not(.ny-choice) span.rounded-full {
+  border-color: #f6ecd8 !important;
+  background: #f6ecd8 !important;
+}
+
+.ny-hanji .ny-form button[role="radio"][aria-checked="true"] span.rounded-full svg,
+.ny-hanji .ny-form button[aria-pressed="true"]:not(.ny-choice) span.rounded-full svg {
+  color: #1a140e !important;
+}
+
+.ny-hanji.ny-ink,
+.ny-hanji.ny-ink .ny-frame {
+  background: #1a140e;
+}
+
+/* 정보입력 하단 여백: 기본 유지, 짧은 화면에서만 축소 (CTA는 sticky 유지) */
+.ny-hanji .ny-form-bottom {
+  padding-bottom: 6rem;
+}
+
+.ny-hanji.ny-ink .ny-main {
+  padding-bottom: 5.5rem;
+}
+
+@media (max-height: 780px) {
+  .ny-hanji .ny-form-bottom {
+    padding-bottom: 2.5rem;
+  }
+
+  .ny-hanji.ny-ink .ny-main {
+    padding-bottom: 4.5rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .ny-hanji .ny-form-bottom {
+    padding-bottom: 0.75rem;
+  }
+
+  .ny-hanji.ny-ink .ny-main {
+    padding-bottom: calc(3.85rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-height: 640px) {
+  .ny-hanji .ny-form-bottom {
+    padding-bottom: 0;
+  }
+
+  .ny-hanji.ny-ink .ny-main {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+  }
+}
+
+.ny-hanji .ny-chapter-num {
+  border-radius: 2px;
+  background: #9b2d1f;
+  color: #f6ecd7;
+}
+
+.ny-hanji-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(180deg, #2a2118 0%, #1a140e 100%);
+}
+
+.ny-hanji-scroll {
+  position: relative;
+  width: 11rem;
+  height: 9.5rem;
+  border: 1px solid rgb(201 168 106 / 0.45);
+  background:
+    linear-gradient(180deg, #f6ecd8 0%, #e8d7b8 100%);
+  color: #1a140e;
+  box-shadow: inset 0 0 0 4px rgb(155 45 31 / 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.ny-hanji-title {
+  margin: 0;
+  font-family: var(--font-serif), serif;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+}
+
+.ny-hanji-sub {
+  margin: 0;
+  font-family: var(--font-serif), serif;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: #5a4632;
+}
+
+.ny-hanji-seal {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 0.7rem;
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #9b2d1f;
+  color: #9b2d1f;
+  font-family: var(--font-serif), serif;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.9;
+  transform: rotate(-8deg);
+}
+
+.ny-hanji .ny-sticky-cta {
+  background: linear-gradient(180deg, transparent, rgb(26 20 14 / 0.97) 28%);
+}
+
+.ny-hanji-cta-badge {
+  position: absolute;
+  top: max(1.1rem, calc(env(safe-area-inset-top) + 0.35rem));
+  left: 50%;
+  z-index: 2;
+  display: block;
+  width: min(78vw, 17rem);
+  height: auto;
+  margin: 0;
+  transform: translateX(-50%);
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ny-hanji .ny-btn,
+.ny-hanji .ny-cta {
+  height: auto;
+  aspect-ratio: 1024 / 430;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  background-image: url("/images/fatenavi3/cta-btn.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #f6ecd8;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.55);
+}
+
+.ny-hanji .ny-btn:hover,
+.ny-hanji .ny-cta:hover {
+  filter: brightness(1.06);
+  border-color: transparent;
+}
+
+.ny-hanji .ny-btn:active,
+.ny-hanji .ny-cta:active {
+  filter: brightness(0.96);
+  box-shadow: none;
+}
+
+.ny-hanji:has(.ny-hanji-poster) .ny-sticky-cta {
+  background: linear-gradient(180deg, rgb(26 20 14 / 0) 0%, rgb(26 20 14 / 0.88) 42%, #1a140e 78%);
+}
+
+.ny-hanji-slogan-card {
+  position: absolute;
+  left: 50%;
+  bottom: calc(9.2rem + env(safe-area-inset-bottom));
+  z-index: 2;
+  width: min(78vw, 17.5rem);
+  height: auto;
+  margin: 0;
+  transform: translateX(-50%);
+  object-fit: contain;
+  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.32));
+  pointer-events: none;
+  user-select: none;
+}
+
+.ny-hanji .ny-intro-caption {
+  color: rgb(246 236 216 / 0.7);
+}
+
+/* 인트로 — 일월오봉·용 풀스크린 */
+.ny-hanji:has(.ny-hanji-poster) {
+  height: 100dvh;
+  overflow: hidden;
+  background: #0f1a2c;
+}
+
+.ny-hanji:has(.ny-hanji-poster) .ny-frame {
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #0f1a2c;
+}
+
+.ny-hanji:has(.ny-hanji-poster) .ny-main {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ny-hanji-poster {
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+}
+
+.ny-hanji-poster-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0f1a2c;
+}
+
+.ny-hanji-poster-img,
+.ny-hanji-poster-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+.ny-hanji-poster-video {
+  pointer-events: none;
+}
+
+.ny-hanji-poster-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(15 26 44 / 0.35) 0%, transparent 22%),
+    linear-gradient(0deg, rgb(26 20 14 / 0.72) 0%, transparent 28%);
+  pointer-events: none;
+}
+
+.ny-hanji-poster-brand {
+  position: absolute;
+  top: max(5.8rem, calc(env(safe-area-inset-top) + 5.1rem));
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.25rem, 1.8vw, 0.65rem);
+  width: min(96vw, 27rem);
+  margin: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.ny-hanji-poster-brand-char {
+  display: block;
+  width: auto;
+  height: clamp(4.1rem, 17.5vw, 5.7rem);
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgb(0 0 0 / 0.5));
+  opacity: 0;
+  transform: translateY(0.5rem);
+  animation: ny-hanji-char-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes ny-hanji-char-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ny-hanji-poster-brand-char {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+.ny-hanji-poster-slogan {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  z-index: 1;
+  width: min(88vw, 20rem);
+  margin: 0;
+  transform: translate(-50%, -50%);
+  color: #f6ecd8;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: clamp(0.98rem, 3.8vw, 1.12rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.55;
+  text-align: center;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 0.65);
+  pointer-events: none;
+}
+
+.ny-hanji .ny-poster-above {
+  color: rgb(246 236 216 / 0.78);
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+}
+
+/* 로딩 — 인트로와 같은 일월오봉 배경 */
+.ny-hanji:has(.ny-loading) {
+  background: #0f1a2c;
+}
+
+.ny-hanji:has(.ny-loading) .ny-frame {
+  background: #0f1a2c;
+}
+
+.ny-hanji .ny-loading {
+  background: transparent;
+}
+
+.ny-hanji .ny-loading-media {
+  background: #0f1a2c;
+}
+
+.ny-hanji .ny-loading-img {
+  object-fit: cover;
+  object-position: center 42%;
+  filter: none;
+  transform: scale(1.02);
+  animation: ny-hanji-loading-drift 14s ease-in-out infinite alternate;
+}
+
+.ny-hanji .ny-loading-scrim {
+  background:
+    radial-gradient(ellipse at 50% 42%, rgb(15 26 44 / 0.15) 0%, rgb(15 26 44 / 0.55) 58%, rgb(10 14 24 / 0.88) 100%),
+    linear-gradient(180deg, rgb(15 26 44 / 0.45) 0%, transparent 28%, transparent 55%, rgb(10 14 24 / 0.9) 100%);
+}
+
+.ny-hanji .ny-loading-compass,
+.ny-hanji .ny-loading-needle {
+  display: none;
+}
+
+.ny-hanji .ny-loading-title {
+  color: #f6ecd8;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 16px rgb(0 0 0 / 0.55);
+}
+
+.ny-hanji .ny-loading-caption {
+  color: rgb(201 168 106 / 0.88);
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  letter-spacing: 0.04em;
+}
+
+.ny-hanji .ny-loading-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: min(100%, 16rem);
+  margin: 0.35rem 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.ny-hanji .ny-loading-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: rgb(246 236 216 / 0.42);
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  transition: color 0.35s ease;
+}
+
+.ny-hanji .ny-loading-checklist-item.is-done {
+  color: #f6ecd8;
+}
+
+.ny-hanji .ny-loading-checklist-mark {
+  display: inline-flex;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(201 168 106 / 0.35);
+  border-radius: 999px;
+  color: transparent;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+.ny-hanji .ny-loading-checklist-item.is-done .ny-loading-checklist-mark {
+  border-color: #c9a86a;
+  background: rgb(201 168 106 / 0.22);
+  color: #c9a86a;
+}
+
+.ny-hanji .ny-loading-bar {
+  background: rgb(201 168 106 / 0.18);
+}
+
+.ny-hanji .ny-loading-bar-fill {
+  background: linear-gradient(90deg, #c9a86a, #9b2d1f);
+  box-shadow: 0 0 12px rgb(201 168 106 / 0.35);
+}
+
+@keyframes ny-hanji-loading-drift {
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to { transform: scale(1.06) translate3d(0, -1%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ny-hanji .ny-loading-img {
+    animation: none;
+  }
+}

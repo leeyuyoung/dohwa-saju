@@ -13,7 +13,7 @@ export default async function AdminPage() {
   const authed = await requireAdminSession();
   return (
     <div className="min-h-dvh bg-night text-paper">
-      <AdminDashboard initiallyAuthed={authed} />
+      <AdminDashboard initiallyAuthed={authed} product="dohwa" />
     </div>
   );
 }

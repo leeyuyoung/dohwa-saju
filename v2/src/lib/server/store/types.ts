@@ -1,10 +1,12 @@
+import type { ProductId } from "@/lib/constants/newyear";
 import type { FunnelEvent, FunnelStep, FunnelStepCount, FunnelSummaryRange } from "@/lib/server/funnel";
 import type { AiReportV1 } from "@/lib/server/ai/reportSchema.v1";
 import type { AiReportV2 } from "@/lib/server/ai/reportSchema.v2";
+import type { AiNewYearReport } from "@/lib/server/ai/reportSchema.newyear";
 import type { SajuProfile } from "@/lib/saju";
 import type { AttributionInput, RelationshipStatus } from "@/lib/validation/analysisInput";
 
-export type StoredAiReport = AiReportV1 | AiReportV2;
+export type StoredAiReport = AiReportV1 | AiReportV2 | AiNewYearReport;
 export type Attribution = AttributionInput;
 
 /** 유료 리포트 생성 상태. 무료 결과는 만세력 계산만으로 만들어 처음부터 ready다. */
@@ -13,6 +15,8 @@ export type AnalysisStatus = "generating" | "ready" | "failed";
 /** 분석 1건. 리포트는 결제가 확인된 뒤에만 생성한다. */
 export type AnalysisRecord = {
   token: string;
+  /** 없으면 기존 도화 리포트. 신년 상품은 profile JSON 안의 표시로 복원한다. */
+  product: ProductId;
   status: AnalysisStatus;
   createdAt: number;
   updatedAt: number;

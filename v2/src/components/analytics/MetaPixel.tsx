@@ -11,7 +11,7 @@ declare global {
 
 /**
  * head에 심은 Meta Pixel 베이스 코드의 첫 PageView 이후,
- * App Router 이동 시 추가 PageView를 보낸다. /2027은 제외.
+ * App Router 이동 시 추가 PageView를 보낸다. /FateNavi은 제외한다.
  */
 export function MetaPixelPageView() {
   const pathname = usePathname();
@@ -19,7 +19,7 @@ export function MetaPixelPageView() {
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.fbq) return;
-    if (pathname.startsWith("/2027")) return;
+    if (pathname.startsWith("/FateNavi")) return; // FateNavi2·3 포함
     if (lastPath.current === null) {
       lastPath.current = pathname;
       return;

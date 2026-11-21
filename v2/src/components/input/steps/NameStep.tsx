@@ -2,7 +2,12 @@ import { NAME_MAX_LENGTH } from "@/lib/validation/analysisInput";
 import { FieldError } from "../fields/Field";
 import type { StepProps } from "./types";
 
-export function NameStep({ values, errors, update }: StepProps) {
+export function NameStep({
+  values,
+  errors,
+  update,
+  placeholder = "이름",
+}: StepProps & { placeholder?: string }) {
   return (
     <div className="flex flex-col gap-3">
       <input
@@ -11,7 +16,7 @@ export function NameStep({ values, errors, update }: StepProps) {
         aria-label="이름"
         autoComplete="off"
         maxLength={NAME_MAX_LENGTH}
-        placeholder="이름"
+        placeholder={placeholder}
         value={values.name}
         onChange={(event) => update({ name: event.target.value })}
         aria-invalid={!!errors.name}

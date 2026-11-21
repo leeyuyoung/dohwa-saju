@@ -1,3 +1,4 @@
+import { PRODUCT_NEWYEAR, productOf, type ProductId } from "@/lib/constants/newyear";
 import { buildFunnelSummary, FUNNEL_STEPS, parseFunnelDateRange, type FunnelStep } from "@/lib/server/funnel";
 import { isAdminConfigured, requireAdminSession } from "@/lib/server/adminAuth";
 import { jsonError as fail } from "@/lib/server/http";
@@ -14,14 +15,18 @@ export async function GET(request: Request) {
   if (!(await requireAdminSession())) return fail(401, "로그인이 필요합니다.");
 
   const params = new URL(request.url).searchParams;
+  const product: ProductId = params.get("product") === PRODUCT_NEWYEAR ? PRODUCT_NEWYEAR : "dohwa";
   const funnelRange = parseFunnelDateRange(params.get("from"), params.get("to"));
   const store = getAnalysisStore();
 
-  const funnelResult = await store.funnelSummary(funnelRange).catch((error) => {
-    console.error("[admin/overview] funnel", error);
-    const zeros = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
-    return buildFunnelSummary(zeros);
-  });
+  const funnelResult =
+    product === PRODUCT_NEWYEAR
+      ? []
+      : await store.funnelSummary(funnelRange).catch((error) => {
+          console.error("[admin/overview] funnel", error);
+          const zeros = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
+          return buildFunnelSummary(zeros);
+        });
 
   let records;
   try {
@@ -38,6 +43,7 @@ export async function GET(request: Request) {
       return [
         {
           token: record.token,
+          product: productOf(record),
           createdAt: record.createdAt,
           name: record.name,
           email: record.email,
@@ -62,6 +68,7 @@ export async function GET(request: Request) {
       return [
         {
           token: record.token,
+          product: productOf(record),
           createdAt: record.createdAt,
           name: record.name,
           email: record.email,
@@ -78,8 +85,10 @@ export async function GET(request: Request) {
     }
   });
 
+  const visible = analyses.filter((row) => row.product === product);
+
   return Response.json(
-    { funnel: funnelResult, analyses, generatedAt: Date.now() },
+    { funnel: funnelResult, analyses: visible, generatedAt: Date.now() },
     { status: 200, headers: { "Cache-Control": "no-store" } },
   );
 }

@@ -16,6 +16,7 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
   const router = useRouter();
   const [timedOut, setTimedOut] = useState(false);
   const tracked = useRef(false);
+  const newyear = orderId.startsWith("ny_");
 
   useEffect(() => {
     let active = true;
@@ -36,7 +37,7 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
               trackKarrotPurchase();
               trackMetaPurchase(DETAILED_REPORT_PRICE, orderId);
             }
-            router.replace(data.product === "newyear2027" ? `/2027/report/${token}` : `/report/${token}`);
+            router.replace(data.product === "newyear2027" ? `/FateNavi/report/${token}` : `/report/${token}`);
             return;
           }
         } catch {
@@ -63,8 +64,8 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
           </p>
         </div>
         <div className="flex w-full max-w-xs flex-col gap-3">
-          <ButtonLink href={`/report/${token}`}>리포트 확인하기</ButtonLink>
-          <ButtonLink href={`/result/${token}`} variant="ghost">
+          <ButtonLink href={newyear ? `/FateNavi/report/${token}` : `/report/${token}`}>리포트 확인하기</ButtonLink>
+          <ButtonLink href={newyear ? `/FateNavi/result/${token}` : `/result/${token}`} variant="ghost">
             결과로 돌아가기
           </ButtonLink>
         </div>
@@ -78,7 +79,7 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
       <div className="flex flex-col gap-3">
         <h1 className="font-serif text-2xl font-light">결제를 확인하고 있습니다</h1>
         <p className="text-sm leading-relaxed text-mist">
-          확인이 끝나면 당신의 도화력이 보여집니다.
+          {newyear ? "확인이 끝나면 운명내비 인생 설계서로 이어집니다." : "확인이 끝나면 당신의 도화력이 보여집니다."}
           <br />
           이 화면을 닫지 말고 잠시만 기다려주세요.
         </p>

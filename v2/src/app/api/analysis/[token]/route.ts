@@ -1,4 +1,5 @@
 import { TOKEN_PATTERN, startReportGeneration, storedReport } from "@/lib/server/analysis";
+import { productOf } from "@/lib/constants/newyear";
 import { isSameOrigin, jsonError as fail } from "@/lib/server/http";
 import { clientIp, consumeRateLimit } from "@/lib/server/rateLimit";
 import { getAnalysisStore } from "@/lib/server/store";
@@ -18,6 +19,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/analysis/[t
       status: record.status,
       paid: record.paidAt !== null,
       reportReady: storedReport(record) !== null,
+      product: productOf(record),
     },
     { headers: NO_STORE },
   );

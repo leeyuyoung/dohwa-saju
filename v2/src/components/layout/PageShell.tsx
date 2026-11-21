@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { NightGardenBackground } from "@/components/night/NightGardenBackground";
-import { LEGAL_LINKS } from "@/lib/constants/legal";
+import { LEGAL_LINKS, NEWYEAR_LEGAL_LINKS } from "@/lib/constants/legal";
 import { SERVICE } from "@/lib/constants/service";
 
 type PageShellProps = {
@@ -14,6 +14,8 @@ type PageShellProps = {
   background?: "garden" | "navy";
   /** 화면 아래에 떠 있는 버튼이 있으면 맨 끝 내용이 가리지 않게 그만큼 비워 둔다 */
   withStickyBar?: boolean;
+  /** LegalDoc 등에서 넘기는 브랜드. 도화 화면은 기본값. */
+  brand?: "dohwa" | "newyear";
 };
 
 export function PageShell({
@@ -23,7 +25,10 @@ export function PageShell({
   intensity = "soft",
   background = "garden",
   withStickyBar = false,
+  brand = "dohwa",
 }: PageShellProps) {
+  const homeHref = brand === "newyear" ? "/FateNavi" : "/";
+  const brandLabel = brand === "newyear" ? "운명내비" : SERVICE.name;
   return (
     <div className={`relative isolate flex min-h-dvh flex-col ${withStickyBar ? "pb-34" : ""}`}>
       {background === "navy" ? <NavyDocumentBackground /> : <NightGardenBackground intensity={intensity} />}
@@ -34,14 +39,20 @@ export function PageShell({
           }`}
         >
           <div className="mx-auto flex h-14 max-w-xl items-center justify-between px-5">
-            <Link href="/">
-              <span className="font-serif text-[15px] tracking-[0.2em] text-gold-soft">{SERVICE.name}</span>
+            <Link href={homeHref}>
+              <span
+                className={`font-serif text-[15px] text-gold-soft ${
+                  brand === "newyear" ? "tracking-[0.14em]" : "tracking-[0.2em]"
+                }`}
+              >
+                {brandLabel}
+              </span>
             </Link>
           </div>
         </header>
       )}
       <main className="mx-auto flex w-full max-w-xl flex-1 flex-col px-5">{children}</main>
-      {showFooter && <SiteFooter compact={withStickyBar} />}
+      {showFooter && <SiteFooter compact={withStickyBar} brand={brand} />}
     </div>
   );
 }
@@ -58,7 +69,8 @@ function NavyDocumentBackground() {
   );
 }
 
-function SiteFooter({ compact = false }: { compact?: boolean }) {
+function SiteFooter({ compact = false, brand = "dohwa" }: { compact?: boolean; brand?: "dohwa" | "newyear" }) {
+  const links = brand === "newyear" ? NEWYEAR_LEGAL_LINKS : LEGAL_LINKS;
   return (
     <footer className={`border-t border-line/50 ${compact ? "mt-3" : "mt-12"}`}>
       <div
@@ -66,15 +78,17 @@ function SiteFooter({ compact = false }: { compact?: boolean }) {
           compact ? "pt-4" : "pt-8"
         }`}
       >
-        <p className="font-serif tracking-[0.2em] text-mist">
-          {SERVICE.tagline} | {SERVICE.name}
-        </p>
+        {brand === "dohwa" && (
+          <p className="font-serif tracking-[0.2em] text-mist">
+            {SERVICE.tagline} | {SERVICE.name}
+          </p>
+        )}
         <p>
           본 서비스의 해석은 사주 명리학의 전통적 해석 체계를 바탕으로 한 참고용 콘텐츠이며, 의료·법률·투자 등
           전문적인 판단을 대신하지 않습니다.
         </p>
         <nav className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-          {LEGAL_LINKS.map((link, index) => (
+          {links.map((link, index) => (
             <span key={link.href} className="inline-flex items-center gap-x-1.5">
               {index > 0 && <span aria-hidden>·</span>}
               <Link href={link.href} className="underline-offset-2 hover:text-mist hover:underline">

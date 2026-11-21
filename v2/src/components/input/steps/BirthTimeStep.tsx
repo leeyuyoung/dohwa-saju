@@ -8,7 +8,13 @@ const TIME_INPUT =
 
 const onlyDigits = (value: string) => value.replace(/\D/g, "").slice(0, 2);
 
-export function BirthTimeStep({ values, errors, update }: StepProps) {
+export function BirthTimeStep({
+  values,
+  errors,
+  update,
+  guide = true,
+  hint,
+}: StepProps & { guide?: boolean; hint?: string }) {
   const unknown = values.birthTimeUnknown;
   const hour = Number(values.birthHour);
   const hourBranch = !unknown && values.birthHour !== "" && hour <= 23 ? hourBranchOf(hour) : null;
@@ -52,13 +58,19 @@ export function BirthTimeStep({ values, errors, update }: StepProps) {
         </button>
       </div>
       <div className="h-px bg-line" />
-      <p className="text-xs leading-relaxed text-paper/70">
-        {unknown
-          ? "괜찮다. 시각 없이도 여섯 글자면 충분하지."
-          : hourBranch
-            ? `${hourBranch.name}(${hourBranch.hanja}) · ${hourBranch.range}이로구나.`
-            : "24시간 기준으로 적거라. 예) 오후 3시 30분 → 15 : 30"}
-      </p>
+      {hint ? (
+        <p className="text-xs leading-relaxed whitespace-pre-line text-paper/70">{hint}</p>
+      ) : (
+        guide && (
+          <p className="text-xs leading-relaxed text-paper/70">
+            {unknown
+              ? "괜찮다. 시각 없이도 여섯 글자면 충분하지."
+              : hourBranch
+                ? `${hourBranch.name}(${hourBranch.hanja}) · ${hourBranch.range}이로구나.`
+                : "24시간 기준으로 적거라. 예) 오후 3시 30분 → 15 : 30"}
+          </p>
+        )
+      )}
       <FieldError message={errors.birthTime} />
     </div>
   );

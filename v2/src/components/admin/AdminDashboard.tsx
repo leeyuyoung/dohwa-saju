@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { PRODUCT_NEWYEAR, type ProductId } from "@/lib/constants/newyear";
 
 type FunnelRow = {
   step: string;
@@ -120,8 +121,15 @@ function SortHeader({
   );
 }
 
-/** 관리자 로그인·퍼널·제출 목록. 공개 UI와 분리된 운영 화면. */
-export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }) {
+/** 관리자 로그인·퍼널·제출 목록. 도화와 신년 사주는 화면을 따로 연다. */
+export function AdminDashboard({
+  initiallyAuthed,
+  product = "dohwa",
+}: {
+  initiallyAuthed: boolean;
+  product?: ProductId;
+}) {
+  const isNewYear = product === PRODUCT_NEWYEAR;
   const [authed, setAuthed] = useState(initiallyAuthed);
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -141,6 +149,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
     setLoadError(null);
     try {
       const params = new URLSearchParams();
+      if (isNewYear) params.set("product", PRODUCT_NEWYEAR);
       if (funnelFrom) params.set("from", funnelFrom);
       if (funnelTo) params.set("to", funnelTo);
       const qs = params.toString();
@@ -164,7 +173,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
     } finally {
       setLoading(false);
     }
-  }, [funnelFrom, funnelTo]);
+  }, [funnelFrom, funnelTo, isNewYear]);
 
   useEffect(() => {
     if (authed) void loadOverview();
@@ -249,7 +258,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
   if (!authed) {
     return (
       <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center gap-6 px-5 py-16">
-        <h1 className="font-serif text-xl text-paper">관리자 로그인</h1>
+        <h1 className="font-serif text-xl text-paper">{isNewYear ? "2027 관리자 로그인" : "관리자 로그인"}</h1>
         <form onSubmit={login} className="flex flex-col gap-3">
           <label className="flex flex-col gap-1.5 text-sm text-mist">
             비밀번호
@@ -282,7 +291,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
     <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-10 px-5 py-10">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-serif text-xl text-paper">운영 현황</h1>
+          <h1 className="font-serif text-xl text-paper">{isNewYear ? "운명내비 종합사주" : "운영 현황"}</h1>
           {overview && (
             <p className="mt-1 text-xs text-mist-dim">갱신 {formatWhen(overview.generatedAt)}</p>
           )}
@@ -314,6 +323,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
 
       {overview && (
         <>
+          {!isNewYear && (
           <section className="flex flex-col gap-3">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <h2 className="font-serif text-base text-gold-soft">퍼널 (고유 세션)</h2>
@@ -394,6 +404,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
               </table>
             </div>
           </section>
+          )}
 
           <section className="flex flex-col gap-3">
             <div className="flex flex-wrap items-center justify-between gap-3">

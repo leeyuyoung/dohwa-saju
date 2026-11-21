@@ -146,7 +146,7 @@ export function validateStep(stepIndex: number, values: AnalysisFormValues): Fie
   return errors;
 }
 
-/** 서버와 만세력 계산에 넘기는 정규화된 입력. 여성 전용 서비스라 성별은 묻지 않고 female로 고정한다(대운 방향 계산에 쓰인다). */
+/** 서버와 만세력 계산에 넘기는 정규화된 입력. 도화 폼은 여성으로 고정하고, 2027은 남·여를 받는다. */
 export const analysisInputSchema = z.object({
   name: nameRule,
   birth: z.object({
@@ -158,8 +158,11 @@ export const analysisInputSchema = z.object({
     hour: z.number().int().min(0).max(23).nullable(),
     minute: z.number().int().min(0).max(59).nullable(),
   }),
-  gender: z.literal("female"),
+  gender: z.enum(["female", "male"]),
   relationshipStatus: z.enum(RELATIONSHIP_STATUS_VALUES),
+  /** 운명내비 고민 입력. 없으면 null. */
+  job: z.string().max(40).nullable().optional(),
+  concern: z.string().max(500).nullable().optional(),
   attribution: attributionSchema,
 });
 

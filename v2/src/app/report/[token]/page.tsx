@@ -4,6 +4,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { ReportScreenV1 } from "@/components/result/ReportScreen.v1";
 import { ReportScreenV2 } from "@/components/result/ReportScreen.v2";
 import { ReportWaiting } from "@/components/result/ReportWaiting";
+import { PRODUCT_NEWYEAR, productOf } from "@/lib/constants/newyear";
 import { resolveReportVersion } from "@/lib/constants/reportVersion";
 import { TOKEN_PATTERN } from "@/lib/server/analysis";
 import { toFullReportView, toFullReportViewV2 } from "@/lib/server/resultView";
@@ -18,6 +19,9 @@ export default async function ReportPage({ params }: PageProps<"/report/[token]"
   const { token } = await params;
   const record = TOKEN_PATTERN.test(token) ? await getAnalysisStore().get(token) : null;
   if (!record) notFound();
+  if (productOf(record) === PRODUCT_NEWYEAR) {
+    redirect(record.paidAt ? `/FateNavi/report/${token}` : `/FateNavi/result/${token}`);
+  }
   // 결제가 확인되지 않았으면 본문을 보내지 않고 무료 화면으로 돌려보낸다.
   if (record.paidAt === null) redirect(`/result/${token}`);
 

@@ -28,6 +28,14 @@ type ResponsesPayload = {
   output?: { type: string; content?: { type: string; text?: string; refusal?: string }[] }[];
 };
 
+type StructuredReportRequest<T> = {
+  instructions: string;
+  input: string;
+  schemaName: string;
+  schema: object;
+  parse: (json: unknown) => T;
+};
+
 function readConfig() {
   const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL;
@@ -35,7 +43,7 @@ function readConfig() {
   return { apiKey, model };
 }
 
-async function requestOnce(input: string): Promise<AiReportV2> {
+async function requestOnce<T>(request: StructuredReportRequest<T>): Promise<T> {
   const { apiKey, model } = readConfig();
   let response: Response;
   try {
@@ -44,12 +52,12 @@ async function requestOnce(input: string): Promise<AiReportV2> {
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model,
-        instructions: REPORT_INSTRUCTIONS_V2,
-        input,
+        instructions: request.instructions,
+        input: request.input,
         reasoning: { effort: "low" },
         max_output_tokens: MAX_OUTPUT_TOKENS,
         store: false,
-        text: { format: { type: "json_schema", name: "saju_report_v2", strict: true, schema: AI_REPORT_JSON_SCHEMA_V2 } },
+        text: { format: { type: "json_schema", name: request.schemaName, strict: true, schema: request.schema } },
       }),
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
@@ -77,20 +85,15 @@ async function requestOnce(input: string): Promise<AiReportV2> {
   } catch {
     throw new AiReportError("INVALID_OUTPUT", "JSON 파싱 실패");
   }
-  const parsed = aiReportSchemaV2.safeParse(scrubDeep(json));
-  if (!parsed.success) {
-    throw new AiReportError("INVALID_OUTPUT", parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join("; "));
-  }
-  return parsed.data;
+  return request.parse(json);
 }
 
-/** 계산된 사주로 연애 리포트 v2 전체를 한 번에 생성한다. 형식이 어긋나거나 일시 오류면 한 번 더 시도한다. */
-export async function generateReport(profile: SajuProfile, context: ReportContext): Promise<AiReportV2> {
-  const input = buildReportInputV2(profile, context);
+/** 같은 OpenAI 설정으로 스키마만 바꿔 호출한다. 형식 오류나 일시 오류면 한 번 더 시도한다. */
+export async function requestStructuredReport<T>(request: StructuredReportRequest<T>): Promise<T> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
-      return await requestOnce(input);
+      return await requestOnce(request);
     } catch (error) {
       lastError = error;
       const retryable = error instanceof AiReportError && (error.code === "INVALID_OUTPUT" || error.code === "UPSTREAM");
@@ -98,4 +101,24 @@ export async function generateReport(profile: SajuProfile, context: ReportContex
     }
   }
   throw lastError;
+}
+
+/** 계산된 사주로 연애 리포트 v2 전체를 한 번에 생성한다. */
+export async function generateReport(profile: SajuProfile, context: ReportContext): Promise<AiReportV2> {
+  return requestStructuredReport({
+    instructions: REPORT_INSTRUCTIONS_V2,
+    input: buildReportInputV2(profile, context),
+    schemaName: "saju_report_v2",
+    schema: AI_REPORT_JSON_SCHEMA_V2,
+    parse(json) {
+      const parsed = aiReportSchemaV2.safeParse(scrubDeep(json));
+      if (!parsed.success) {
+        throw new AiReportError(
+          "INVALID_OUTPUT",
+          parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join("; "),
+        );
+      }
+      return parsed.data;
+    },
+  });
 }

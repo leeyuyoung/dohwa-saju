@@ -1,8 +1,13 @@
 import "server-only";
 
+import { PRODUCT_NEWYEAR, productOf, type ProductId } from "@/lib/constants/newyear";
 import { FUNNEL_STEPS, type FunnelStep } from "@/lib/funnelSteps";
 import { buildFunnelSummary, type FunnelEvent, type FunnelSummaryRange } from "@/lib/server/funnel";
+import type { SajuProfile } from "@/lib/saju";
 import type { AnalysisRecord, AnalysisStore, OrderPatch, OrderRecord } from "./types";
+
+/** 컬럼을 추가하지 않는다. 기존 도화 행의 insert 형태를 유지하고, 신년 상품만 profile 안에 표시를 넣는다. */
+const PRODUCT_MARKER = "__product";
 
 const TABLE = "analyses";
 const ORDER_TABLE = "orders";
@@ -72,6 +77,19 @@ const fromOrderRow = (row: OrderRow): OrderRecord => ({
   metaClick: row.meta_click ?? null,
 });
 
+function profileForStorage(record: AnalysisRecord): SajuProfile {
+  if (productOf(record) !== PRODUCT_NEWYEAR) return record.profile;
+  return { ...record.profile, [PRODUCT_MARKER]: PRODUCT_NEWYEAR } as SajuProfile;
+}
+
+function readStoredProfile(profile: SajuProfile): { product: ProductId; profile: SajuProfile } {
+  const stored = profile as SajuProfile & { [PRODUCT_MARKER]?: unknown };
+  if (stored[PRODUCT_MARKER] !== PRODUCT_NEWYEAR) return { product: "dohwa", profile };
+  const rest = { ...stored };
+  delete rest[PRODUCT_MARKER];
+  return { product: PRODUCT_NEWYEAR, profile: rest };
+}
+
 function toRow(record: AnalysisRecord): Row {
   return {
     token: record.token,
@@ -85,7 +103,7 @@ function toRow(record: AnalysisRecord): Row {
     relationship_status: record.relationshipStatus,
     concern: record.concern,
     attribution: record.attribution,
-    profile: record.profile,
+    profile: profileForStorage(record),
     report: record.report,
     report_version: record.reportVersion,
     paid_at: record.paidAt === null ? null : toIso(record.paidAt),
@@ -95,8 +113,10 @@ function toRow(record: AnalysisRecord): Row {
 }
 
 function fromRow(row: Row): AnalysisRecord {
+  const stored = readStoredProfile(row.profile);
   return {
     token: row.token,
+    product: stored.product,
     status: row.status,
     createdAt: Date.parse(row.created_at),
     updatedAt: Date.parse(row.updated_at),
@@ -107,7 +127,7 @@ function fromRow(row: Row): AnalysisRecord {
     relationshipStatus: row.relationship_status,
     concern: row.concern,
     attribution: row.attribution ?? null,
-    profile: row.profile,
+    profile: stored.profile,
     report: row.report,
     reportVersion: row.report_version ?? null,
     paidAt: row.paid_at === null ? null : Date.parse(row.paid_at),
@@ -188,9 +208,19 @@ export class SupabaseAnalysisStore implements AnalysisStore {
   }
 
   async update(token: string, patch: Patch) {
+    let storedPatch = patch;
+    if (patch.profile) {
+      const current = await this.get(token);
+      if (current && productOf(current) === PRODUCT_NEWYEAR) {
+        storedPatch = {
+          ...patch,
+          profile: profileForStorage({ ...current, profile: patch.profile, product: PRODUCT_NEWYEAR }),
+        };
+      }
+    }
     await this.request(`${TABLE}?token=eq.${encodeURIComponent(token)}`, {
       method: "PATCH",
-      body: JSON.stringify(patchToRow(patch)),
+      body: JSON.stringify(patchToRow(storedPatch)),
       prefer: "return=minimal",
     });
   }

@@ -1,3 +1,4 @@
+import { NEWYEAR_ORDER_NAME, NEWYEAR_REPORT_PRICE } from "@/lib/constants/newyear";
 import { DETAILED_REPORT_LIST_PRICE, DETAILED_REPORT_ORDER_NAME, DETAILED_REPORT_PRICE, SERVICE } from "@/lib/constants/service";
 
 /**
@@ -26,10 +27,24 @@ export const LEGAL_LINKS = [
   { href: "/legal/refund", label: "환불정책" },
 ] as const;
 
+export const NEWYEAR_LEGAL_LINKS = [
+  { href: "/FateNavi/legal/business", label: "사업자 정보" },
+  { href: "/FateNavi/legal/terms", label: "이용약관" },
+  { href: "/FateNavi/legal/privacy", label: "개인정보처리방침" },
+  { href: "/FateNavi/legal/refund", label: "환불정책" },
+] as const;
+
 export const LEGAL_META = {
   serviceName: SERVICE.name,
   orderName: DETAILED_REPORT_ORDER_NAME,
   price: DETAILED_REPORT_PRICE,
   listPrice: DETAILED_REPORT_LIST_PRICE,
   effectiveDate: "2026년 11월 3일",
+} as const;
+
+export const NEWYEAR_LEGAL_META = {
+  serviceName: NEWYEAR_ORDER_NAME,
+  orderName: NEWYEAR_ORDER_NAME,
+  price: NEWYEAR_REPORT_PRICE,
+  effectiveDate: "2026년 11월 10일",
 } as const;

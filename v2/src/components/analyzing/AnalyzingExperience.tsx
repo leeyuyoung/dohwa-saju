@@ -28,9 +28,16 @@ type Phase =
 
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
+type RunOptions = {
+  endpoint: string;
+  load: () => unknown;
+  clear: () => void;
+  track: boolean;
+};
+
 /** 보관된 입력으로 무료 결과를 저장하고 토큰을 받는다. AI는 호출하지 않는다. */
-async function runAnalysis(): Promise<Phase> {
-  const raw = loadPendingAnalysis();
+async function runAnalysis({ endpoint, load, clear, track }: RunOptions): Promise<Phase> {
+  const raw = load();
   if (!raw || typeof raw !== "object") return { kind: "missing" };
   const pending = analysisInputSchema.safeParse({
     ...raw,
@@ -38,16 +45,18 @@ async function runAnalysis(): Promise<Phase> {
   });
   if (!pending.success) return { kind: "missing" };
   try {
-    const response = await fetch("/api/analysis", {
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(pending.data),
     });
     const data = (await response.json().catch(() => ({}))) as { token?: string; message?: string };
     if (response.ok && data.token) {
-      clearPendingAnalysis();
-      trackFunnel("submit", data.token);
-      trackKarrot("SubmitApplication");
+      clear();
+      if (track) {
+        trackFunnel("submit", data.token);
+        trackKarrot("SubmitApplication");
+      }
       return { kind: "ready", token: data.token };
     }
     return {
@@ -60,7 +69,49 @@ async function runAnalysis(): Promise<Phase> {
   }
 }
 
-export function AnalyzingExperience() {
+type AnalyzingCopy = { found: string; tease: string; cta: string };
+
+type AnalyzingExperienceProps = {
+  endpoint?: string;
+  loadPending?: () => unknown;
+  clearPending?: () => void;
+  trackSubmit?: boolean;
+  resultHref?: (token: string) => string;
+  retryHref?: string;
+  workingCopy?: string;
+  readyCopy?: AnalyzingCopy;
+  missingCopy?: AnalyzingCopy;
+  /** ink는 2027 화면. 기본은 도화 영상. */
+  appearance?: "dohwa" | "ink";
+  /** ink 로딩에 이름을 넣어 “○○님의 …”처럼 보여 준다. */
+  subjectName?: string;
+  /** true면 준비 완료 중간 화면 없이 바로 무료 결과로 이동한다. */
+  autoGoResult?: boolean;
+  /** ink 로딩 배경/캐릭터 이미지. 기본은 지도 히어로. */
+  loadingImageSrc?: string;
+  /** ink 로딩 하단 캡션. */
+  loadingCaption?: string;
+  /** ink 로딩 하단 체크리스트. 있으면 캡션 대신 보여 준다. */
+  loadingChecklist?: string[];
+};
+
+export function AnalyzingExperience({
+  endpoint = "/api/analysis",
+  loadPending = loadPendingAnalysis,
+  clearPending = clearPendingAnalysis,
+  trackSubmit = true,
+  resultHref = (token) => `/result/${token}`,
+  retryHref = "/start",
+  workingCopy = ANALYSIS_WORKING_COPY,
+  readyCopy = ANALYSIS_READY_COPY,
+  missingCopy = ANALYSIS_MISSING_COPY,
+  appearance = "dohwa",
+  subjectName,
+  autoGoResult = false,
+  loadingImageSrc = "/images/fatenavi/hero.jpg",
+  loadingCaption = "같은 운명이라도, 길은 다시 그릴 수 있습니다",
+  loadingChecklist,
+}: AnalyzingExperienceProps = {}) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>({ kind: "working" });
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -81,17 +132,26 @@ export function AnalyzingExperience() {
         // 자동재생이 막히면 첫 프레임이 배경처럼 남는다.
       });
     }
-    void runAnalysis().then(async (next) => {
+    void runAnalysis({
+      endpoint,
+      load: loadPending,
+      clear: clearPending,
+      track: trackSubmit,
+    }).then(async (next) => {
       if (!activeRef.current) return;
       if (next.kind === "ready") {
         await wait(Math.max(0, MIN_RITUAL_MS - (Date.now() - startedAt)));
         if (!activeRef.current) return;
+        if (autoGoResult) {
+          router.replace(resultHref(next.token));
+          return;
+        }
         setPhase(next);
         return;
       }
       setPhase(next);
     });
-  }, []);
+  }, [autoGoResult, clearPending, endpoint, loadPending, resultHref, router, trackSubmit]);
 
   useEffect(() => {
     activeRef.current = true;
@@ -130,8 +190,103 @@ export function AnalyzingExperience() {
     phase.kind === "ready"
       ? 1
       : Math.min(1 - Math.exp(-elapsedMs / PROGRESS_TIME_CONSTANT_MS), MAX_PENDING_PROGRESS);
-  const centerCopy =
-    phase.kind === "ready" ? ANALYSIS_READY_COPY : phase.kind === "missing" ? ANALYSIS_MISSING_COPY : null;
+  const centerCopy = phase.kind === "ready" ? readyCopy : phase.kind === "missing" ? missingCopy : null;
+
+  if (appearance === "ink") {
+    const title = subjectName
+      ? `${subjectName}님의 인생 경로를\n그리고 있습니다`
+      : workingCopy;
+    return (
+      <div className="ny-loading">
+        <div className="ny-loading-media" aria-hidden>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={loadingImageSrc} alt="" className="ny-loading-img" />
+          <div className="ny-loading-scrim" />
+        </div>
+        <div className="ny-loading-body">
+          {working && (
+            <>
+              <div className="ny-loading-compass" aria-hidden>
+                <span className="ny-loading-needle" />
+              </div>
+              <p className="ny-loading-title whitespace-pre-line">{title}</p>
+              <div
+                role="progressbar"
+                aria-label="사주를 읽는 중"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(progress * 100)}
+                className="ny-loading-bar"
+              >
+                <motion.div
+                  className="ny-loading-bar-fill"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: progress }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                />
+              </div>
+              {loadingChecklist && loadingChecklist.length > 0 ? (
+                <ul className="ny-loading-checklist" aria-label="진행 단계">
+                  {loadingChecklist.map((item, index) => {
+                    const done = progress >= (index + 1) / (loadingChecklist.length + 0.35);
+                    return (
+                      <li
+                        key={item}
+                        className={`ny-loading-checklist-item${done ? " is-done" : ""}`}
+                      >
+                        <span className="ny-loading-checklist-mark" aria-hidden>
+                          {done ? "✓" : ""}
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="ny-loading-caption">{loadingCaption}</p>
+              )}
+            </>
+          )}
+          {centerCopy && (
+            <p className="ny-loading-title">
+              {centerCopy.found}
+              <br />
+              <span className="ny-loading-caption">{centerCopy.tease}</span>
+            </p>
+          )}
+          {phase.kind === "error" && (
+            <p role="alert" className="ny-loading-caption">
+              {phase.message}
+            </p>
+          )}
+        </div>
+        {(phase.kind === "ready" || phase.kind === "error" || phase.kind === "missing") && (
+          <div className="ny-sticky-cta">
+            {phase.kind === "ready" && (
+              <button type="button" className="ny-cta" onClick={() => router.replace(resultHref(phase.token))}>
+                {readyCopy.cta}
+              </button>
+            )}
+            {phase.kind === "error" &&
+              (phase.canRetry ? (
+                <button type="button" className="ny-cta" onClick={begin}>
+                  다시 시도하기
+                </button>
+              ) : (
+                <a href={retryHref} className="ny-cta">
+                  입력 다시 확인하기
+                </a>
+              ))}
+            {phase.kind === "missing" && (
+              <a href={retryHref} className="ny-cta">
+                {missingCopy.cta}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex flex-1 flex-col text-center">
@@ -177,7 +332,7 @@ export function AnalyzingExperience() {
             transition={{ duration: 0.45 }}
             className="pointer-events-none fixed inset-x-0 top-1/2 z-20 mx-auto w-fit -translate-y-1/2 rounded-full bg-black/45 px-4 py-2 font-sans text-[13px] tracking-[-0.01em] text-paper/95 backdrop-blur-sm [text-shadow:0_1px_6px_rgb(0_0_0_/_0.55)]"
           >
-            {ANALYSIS_WORKING_COPY}
+            {workingCopy}
           </motion.p>
         )}
         {centerCopy && (
@@ -209,8 +364,8 @@ export function AnalyzingExperience() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 16 }}
             >
-              <MythicButtonLink onClick={() => router.replace(`/result/${phase.token}`)}>
-                {ANALYSIS_READY_COPY.cta}
+              <MythicButtonLink onClick={() => router.replace(resultHref(phase.token))}>
+                {readyCopy.cta}
               </MythicButtonLink>
             </motion.div>
           )}
@@ -228,7 +383,7 @@ export function AnalyzingExperience() {
               {phase.canRetry ? (
                 <Button onClick={begin}>다시 시도하기</Button>
               ) : (
-                <ButtonLink href="/start">입력 다시 확인하기</ButtonLink>
+                <ButtonLink href={retryHref}>입력 다시 확인하기</ButtonLink>
               )}
             </motion.div>
           )}
@@ -240,7 +395,7 @@ export function AnalyzingExperience() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 16 }}
             >
-              <MythicButtonLink href="/start">{ANALYSIS_MISSING_COPY.cta}</MythicButtonLink>
+              <MythicButtonLink href={retryHref}>{missingCopy.cta}</MythicButtonLink>
             </motion.div>
           )}
         </AnimatePresence>
