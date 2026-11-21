@@ -216,13 +216,13 @@
 }
 
 .ny-hanji .ny-sticky-cta {
-  bottom: -1.1rem;
-  padding: 0 0.35rem 0;
+  bottom: -1.55rem;
+  padding: 0 0.3rem 0;
   background: linear-gradient(180deg, transparent, rgb(26 20 14 / 0.97) 28%);
 }
 
 .ny-hanji .ny-sticky-cta .ny-btn {
-  margin-bottom: -0.45rem;
+  margin-bottom: -0.6rem;
 }
 
 .ny-hanji-cta-badge {
@@ -421,7 +421,7 @@
 
 .ny-hanji-poster-slogan {
   position: absolute;
-  top: 48%;
+  top: 51%;
   left: 50%;
   z-index: 3;
   width: min(88vw, 20rem);
