@@ -112,43 +112,43 @@
   background: #1a140e;
 }
 
-/* 정보입력 하단 여백: 기본 유지, 짧은 화면에서만 축소 (CTA는 sticky 유지) */
+/* 정보입력: 섹션·필드 간격 살짝 압축 */
+.ny-hanji .ny-header {
+  padding: 0.7rem 1rem 0.25rem;
+}
+
+.ny-hanji .ny-form {
+  gap: 1.05rem;
+}
+
+.ny-hanji .ny-form > section {
+  gap: 0.45rem;
+}
+
+.ny-hanji .ny-form .grid {
+  gap: 0.55rem;
+}
+
+.ny-hanji .ny-form-label {
+  font-size: 14px;
+}
+
+.ny-hanji .ny-field,
+.ny-hanji .ny-choice {
+  height: 48px;
+}
+
+.ny-hanji .ny-form .text-\[12px\] {
+  margin-top: -0.1rem;
+}
+
+/* 정보입력 스크롤: FateNavi4와 동일 — 하단 여백 고정, 짧은 화면에서도 축소하지 않음 */
 .ny-hanji .ny-form-bottom {
-  padding-bottom: 6rem;
+  padding-bottom: 7.5rem;
 }
 
 .ny-hanji.ny-ink .ny-main {
-  padding-bottom: 5.5rem;
-}
-
-@media (max-height: 780px) {
-  .ny-hanji .ny-form-bottom {
-    padding-bottom: 2.5rem;
-  }
-
-  .ny-hanji.ny-ink .ny-main {
-    padding-bottom: 4.5rem;
-  }
-}
-
-@media (max-height: 700px) {
-  .ny-hanji .ny-form-bottom {
-    padding-bottom: 0.75rem;
-  }
-
-  .ny-hanji.ny-ink .ny-main {
-    padding-bottom: calc(3.85rem + env(safe-area-inset-bottom));
-  }
-}
-
-@media (max-height: 640px) {
-  .ny-hanji .ny-form-bottom {
-    padding-bottom: 0;
-  }
-
-  .ny-hanji.ny-ink .ny-main {
-    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
-  }
+  padding: 0.85rem 1rem 5.5rem;
 }
 
 .ny-hanji .ny-chapter-num {
