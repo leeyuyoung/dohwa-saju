@@ -5,9 +5,49 @@ import { cookies } from "next/headers";
 
 const COOKIE_NAME = "dohwa_admin";
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
-const LOGIN_LIMIT = { limit: 8, windowMs: 15 * 60 * 1000 };
+/** 비밀번호 실패 허용 횟수. 초과하면 수동 해제 전까지 잠근다. */
+export const ADMIN_LOGIN_MAX_FAILURES = 5;
 
-export { COOKIE_NAME as ADMIN_COOKIE_NAME, LOGIN_LIMIT as ADMIN_LOGIN_LIMIT };
+export { COOKIE_NAME as ADMIN_COOKIE_NAME };
+
+type AdminLoginLockState = { failures: number; locked: boolean };
+
+const globalForAdminLogin = globalThis as typeof globalThis & {
+  __dohwaAdminLoginLocks?: Map<string, AdminLoginLockState>;
+};
+const loginLocks = (globalForAdminLogin.__dohwaAdminLoginLocks ??= new Map<string, AdminLoginLockState>());
+
+function lockState(ip: string): AdminLoginLockState {
+  return loginLocks.get(ip) ?? { failures: 0, locked: false };
+}
+
+export function isAdminLoginLocked(ip: string): boolean {
+  return lockState(ip).locked;
+}
+
+export function getAdminLoginFailureCount(ip: string): number {
+  return lockState(ip).failures;
+}
+
+/** 실패 1회 기록. 한도 도달 시 locked=true. */
+export function recordAdminLoginFailure(ip: string): { locked: boolean; failures: number } {
+  const state = lockState(ip);
+  if (state.locked) return { locked: true, failures: state.failures };
+  state.failures += 1;
+  if (state.failures >= ADMIN_LOGIN_MAX_FAILURES) state.locked = true;
+  loginLocks.set(ip, state);
+  return { locked: state.locked, failures: state.failures };
+}
+
+/** 로그인 성공 시 해당 IP 실패·잠금을 지운다. */
+export function clearAdminLoginLock(ip: string): void {
+  loginLocks.delete(ip);
+}
+
+/** Cursor 등에서 수동 해제할 때 모든 IP 잠금을 푼다. */
+export function clearAllAdminLoginLocks(): void {
+  loginLocks.clear();
+}
 
 function adminPassword(): string | null {
   const value = process.env.ADMIN_PASSWORD?.trim();

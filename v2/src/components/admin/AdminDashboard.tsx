@@ -125,6 +125,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
   const [authed, setAuthed] = useState(initiallyAuthed);
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginLocked, setLoginLocked] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
   const [overview, setOverview] = useState<Overview | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -171,6 +172,7 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
 
   const login = async (event: FormEvent) => {
     event.preventDefault();
+    if (loginLocked) return;
     setLoggingIn(true);
     setLoginError(null);
     try {
@@ -180,11 +182,27 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
         credentials: "same-origin",
         body: JSON.stringify({ password }),
       });
-      const data = (await response.json().catch(() => ({}))) as { message?: string };
+      const data = (await response.json().catch(() => ({}))) as {
+        message?: string;
+        failures?: number;
+        maxFailures?: number;
+        locked?: boolean;
+      };
       if (!response.ok) {
-        setLoginError(data.message ?? "로그인에 실패했습니다.");
+        const locked = response.status === 423 || data.locked === true;
+        setLoginLocked(locked);
+        if (locked) {
+          setLoginError(
+            data.message ?? "로그인 실패 횟수를 초과해 잠겼습니다. 관리자에게 잠금 해제를 요청해주세요.",
+          );
+        } else if (typeof data.failures === "number" && typeof data.maxFailures === "number") {
+          setLoginError(`비밀번호가 올바르지 않습니다. (${data.failures}/${data.maxFailures})`);
+        } else {
+          setLoginError(data.message ?? "로그인에 실패했습니다.");
+        }
         return;
       }
+      setLoginLocked(false);
       setPassword("");
       setAuthed(true);
     } catch {
@@ -250,10 +268,10 @@ export function AdminDashboard({ initiallyAuthed }: { initiallyAuthed: boolean }
           )}
           <button
             type="submit"
-            disabled={loggingIn || !password}
+            disabled={loggingIn || loginLocked || !password}
             className="rounded-full bg-cinnabar/90 px-4 py-3 text-sm text-paper disabled:opacity-40"
           >
-            {loggingIn ? "확인 중…" : "들어가기"}
+            {loggingIn ? "확인 중…" : loginLocked ? "잠김" : "들어가기"}
           </button>
         </form>
       </main>
