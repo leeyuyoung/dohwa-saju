@@ -108,7 +108,7 @@ export function AnalyzingExperience({
   appearance = "dohwa",
   subjectName,
   autoGoResult = false,
-  loadingImageSrc = "/images/fatenavi/hero.jpg",
+  loadingImageSrc = "/images/fatenavi3/intro.jpg",
   loadingCaption = "같은 운명이라도, 길은 다시 그릴 수 있습니다",
   loadingChecklist,
 }: AnalyzingExperienceProps = {}) {

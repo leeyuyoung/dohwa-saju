@@ -1,24 +1,5 @@
-import type { Metadata } from "next";
-import { NewYearResultScreen } from "@/components/newyear/NewYearResultScreen";
-import { NewYearShell } from "@/components/newyear/NewYearShell";
-import { sampleNewYearFreeView } from "@/lib/server/newyearView";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "인생 설계서 예시",
-  robots: { index: false, follow: false },
-};
-
-export default function FateNaviResultSamplePage() {
-  return (
-    <NewYearShell theme="navi" tone="ink" showFooter>
-      <NewYearResultScreen
-        theme="navi"
-        result={sampleNewYearFreeView()}
-        token="sample"
-        paid={false}
-        paymentsReady={false}
-        sample
-      />
-    </NewYearShell>
-  );
+export default function FateNaviResultSampleRedirect() {
+  redirect("/FateNavi3/result/sample");
 }

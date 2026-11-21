@@ -12,9 +12,9 @@ export function NewYearShell({
   showHeader = true,
   showFooter = false,
   stickyCta,
-  /** ink: 입력 화면용 순흑 배경 (navi 기본). sheep/hanji는 테마 CSS가 덮는다. */
+  /** ink: 입력 화면용 순흑 배경. sheep/hanji/premium은 테마 CSS가 덮는다. */
   tone = "navy",
-  theme = "navi",
+  theme = "hanji",
 }: {
   children: ReactNode;
   showHeader?: boolean;

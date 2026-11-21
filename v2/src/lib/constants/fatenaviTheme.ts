@@ -1,4 +1,4 @@
-export type FateNaviThemeId = "navi" | "sheep" | "hanji" | "premium";
+export type FateNaviThemeId = "sheep" | "hanji" | "premium";
 
 export type FateNaviTheme = {
   id: FateNaviThemeId;
@@ -14,16 +14,6 @@ export type FateNaviTheme = {
 };
 
 export const FATENAVI_THEMES: Record<FateNaviThemeId, FateNaviTheme> = {
-  navi: {
-    id: "navi",
-    basePath: "/FateNavi",
-    shellClass: "",
-    brand: "운명내비",
-    orderName: "운명내비 종합사주",
-    slogan: "좋은 말만 하지 않습니다. 길을 알려드립니다.",
-    ctaStart: "인생 설계서 열기",
-    introNote: "신호등 경로 버전",
-  },
   sheep: {
     id: "sheep",
     basePath: "/FateNavi2",

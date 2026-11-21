@@ -10,7 +10,7 @@ import { sanitizeMultiLine, sanitizeSingleLine } from "@/lib/validation/sanitize
 const JOB_MAX = 40;
 const CONCERN_MAX = 500;
 
-export function NewYearConcernForm({ theme = "navi" }: { theme?: FateNaviThemeId }) {
+export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeId }) {
   const router = useRouter();
   const basePath = themeOf(theme).basePath;
   const [ready, setReady] = useState(false);

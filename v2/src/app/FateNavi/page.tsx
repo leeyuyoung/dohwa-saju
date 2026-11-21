@@ -1,14 +1,6 @@
-import type { Metadata } from "next";
-import { FateNaviHome } from "@/components/newyear/FateNaviHome";
-import { themeOf } from "@/lib/constants/fatenaviTheme";
+import { redirect } from "next/navigation";
 
-const theme = themeOf("navi");
-
-export const metadata: Metadata = {
-  title: { absolute: theme.orderName },
-  description: theme.slogan,
-};
-
+/** 버전1 제거. 기본 진입은 FateNavi3. */
 export default function FateNaviPage() {
-  return <FateNaviHome theme="navi" />;
+  redirect("/FateNavi3");
 }

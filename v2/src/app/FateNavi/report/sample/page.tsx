@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function NewYearReportSamplePage() {
   return (
-    <NewYearShell>
+    <NewYearShell theme="hanji">
       <p className="ny-caption mb-10 text-center">화면 예시 · 결제와 무관한 문장</p>
       <NewYearReportScreen report={sampleNewYearReportView()} />
     </NewYearShell>

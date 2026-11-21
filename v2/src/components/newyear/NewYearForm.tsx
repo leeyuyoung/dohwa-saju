@@ -72,7 +72,7 @@ function RadioMark({ checked, light }: { checked: boolean; light?: boolean }) {
   );
 }
 
-export function NewYearForm({ theme = "navi" }: { theme?: FateNaviThemeId }) {
+export function NewYearForm({ theme = "hanji" }: { theme?: FateNaviThemeId }) {
   const router = useRouter();
   const basePath = themeOf(theme).basePath;
   /** sheep/premium만 크림 배경. hanji(FateNavi3) 폼은 어두운 바탕이라 밝은 글자. */

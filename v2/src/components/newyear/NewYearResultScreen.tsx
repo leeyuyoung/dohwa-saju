@@ -91,7 +91,7 @@ export function NewYearResultScreen({
   paid,
   paymentsReady,
   sample = false,
-  theme = "navi",
+  theme = "hanji",
 }: {
   result: NewYearFreeView;
   token: string;
@@ -161,11 +161,9 @@ export function NewYearResultScreen({
           src={
             isSheep
               ? "/images/fatenavi2/mery-duo.png"
-              : isHanji
-                ? "/images/fatenavi3/intro.jpg"
-                : isPremium
-                  ? "/images/fatenavi4/hero-animals.jpg"
-                  : "/images/fatenavi/hero.jpg"
+              : isPremium
+                ? "/images/fatenavi4/hero-animals.jpg"
+                : "/images/fatenavi3/intro.jpg"
           }
           alt=""
           className="ny-free-hero-img"

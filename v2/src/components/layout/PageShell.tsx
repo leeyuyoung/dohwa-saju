@@ -27,7 +27,7 @@ export function PageShell({
   withStickyBar = false,
   brand = "dohwa",
 }: PageShellProps) {
-  const homeHref = brand === "newyear" ? "/FateNavi" : "/";
+  const homeHref = brand === "newyear" ? "/FateNavi3" : "/";
   const brandLabel = brand === "newyear" ? "운명내비" : SERVICE.name;
   return (
     <div className={`relative isolate flex min-h-dvh flex-col ${withStickyBar ? "pb-34" : ""}`}>

@@ -17,28 +17,6 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
     </div>
   );
 
-  if (theme === "navi") {
-    return (
-      <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
-        <section className="ny-poster" aria-label="운명내비 인트로">
-          <div className="ny-poster-media">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/fatenavi/hero.jpg"
-              alt=""
-              className="ny-poster-img"
-            />
-            <div className="ny-poster-scrim" aria-hidden />
-            <div className="ny-poster-copy">
-              <p className="ny-poster-lead">당신의 운명,</p>
-              <p className="ny-poster-question">어디까지 바꿀 수 있을까요?</p>
-            </div>
-          </div>
-        </section>
-      </NewYearShell>
-    );
-  }
-
   if (theme === "sheep") {
     return (
       <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>

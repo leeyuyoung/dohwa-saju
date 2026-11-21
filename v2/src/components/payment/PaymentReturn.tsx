@@ -65,7 +65,7 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
         </div>
         <div className="flex w-full max-w-xs flex-col gap-3">
           <ButtonLink href={newyear ? `/FateNavi/report/${token}` : `/report/${token}`}>리포트 확인하기</ButtonLink>
-          <ButtonLink href={newyear ? `/FateNavi/result/${token}` : `/result/${token}`} variant="ghost">
+          <ButtonLink href={newyear ? `/FateNavi3/result/${token}` : `/result/${token}`} variant="ghost">
             결과로 돌아가기
           </ButtonLink>
         </div>

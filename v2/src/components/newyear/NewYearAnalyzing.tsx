@@ -11,7 +11,7 @@ const MISSING = {
   cta: "정보 입력하기",
 };
 
-export function NewYearAnalyzing({ theme = "navi" }: { theme?: FateNaviThemeId }) {
+export function NewYearAnalyzing({ theme = "hanji" }: { theme?: FateNaviThemeId }) {
   const basePath = themeOf(theme).basePath;
   const isSheep = theme === "sheep";
   const isHanji = theme === "hanji";
@@ -28,19 +28,15 @@ export function NewYearAnalyzing({ theme = "navi" }: { theme?: FateNaviThemeId }
     ? subjectName
       ? `${subjectName}님의 레벨업 가이드를\n준비하는 중`
       : "레벨업 가이드를\n준비하는 중"
-    : isHanji || isPremium
-      ? subjectName
-        ? `${subjectName}님의\n인생 설계서를 펼치는 중`
-        : "인생 설계서를 펼치는 중"
-      : "인생 경로를 놓고 있습니다";
+    : subjectName
+      ? `${subjectName}님의\n인생 설계서를 펼치는 중`
+      : "인생 설계서를 펼치는 중";
 
   const loadingImageSrc = isSheep
     ? "/images/fatenavi2/mery-red.png"
-    : isHanji
-      ? "/images/fatenavi3/intro.jpg"
-      : isPremium
-        ? "/images/fatenavi4/hero-animals.jpg"
-        : "/images/fatenavi/hero.jpg";
+    : isPremium
+      ? "/images/fatenavi4/hero-animals.jpg"
+      : "/images/fatenavi3/intro.jpg";
 
   const loadingCaption = isSheep
     ? "메리가 당신 흐름을 읽는 중"
