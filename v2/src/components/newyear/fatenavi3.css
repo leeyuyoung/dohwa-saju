@@ -58,6 +58,11 @@
   filter: drop-shadow(0 2px 10px rgb(0 0 0 / 0.45));
 }
 
+/* 무료 결과: 하단 고정 PNG CTA에 가리지 않게 */
+.ny-hanji .ny-free {
+  padding-bottom: 5.5rem;
+}
+
 .ny-hanji .ny-en,
 .ny-hanji .ny-kicker {
   color: #c9a86a;
@@ -142,13 +147,13 @@
   margin-top: -0.1rem;
 }
 
-/* 정보입력 스크롤: FateNavi4와 동일 — 하단 여백 고정, 짧은 화면에서도 축소하지 않음 */
+/* 정보입력: PNG 버튼 하단 빈 여백을 잘라 쓰므로 스크롤 여백도 줄임 */
 .ny-hanji .ny-form-bottom {
-  padding-bottom: 7.5rem;
+  padding-bottom: 4.25rem;
 }
 
 .ny-hanji.ny-ink .ny-main {
-  padding: 0.85rem 1rem 5.5rem;
+  padding: 0.5rem 1rem 1rem;
 }
 
 .ny-hanji .ny-chapter-num {
@@ -215,13 +220,18 @@
   transform: rotate(-8deg);
 }
 
+/* PNG 버튼 하단 투명 여백을 뷰포트 밖으로 내려 스크롤을 막음 */
 .ny-hanji .ny-sticky-cta {
+  position: fixed;
   bottom: -1.55rem;
+  left: 50%;
+  z-index: 40;
+  width: min(100%, var(--ny-col));
+  transform: translateX(-50%);
   padding: 0 0.3rem 0;
   background: linear-gradient(180deg, transparent, rgb(26 20 14 / 0.97) 28%);
 }
 
-/* CTA PNG가 세로로 커서, 말풍선이 빈 여백 위에 뜸 → 시각 버튼에 붙인다 */
 .ny-hanji .ny-sticky-cta .ny-poster-cta {
   gap: 0;
 }
@@ -575,12 +585,17 @@
 }
 
 .ny-hanji-below-bullets li {
-  color: #f6ecd8;
+  color: rgb(246 236 216 / 0.78);
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.01em;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.6;
+}
+
+.ny-hanji-below-em {
+  color: #e24a3a;
+  font-weight: inherit;
 }
 
 .ny-hanji-below-bullets li::before {

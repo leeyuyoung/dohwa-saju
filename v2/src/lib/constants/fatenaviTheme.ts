@@ -21,7 +21,7 @@ export const FATENAVI_THEMES: Record<FateNaviThemeId, FateNaviTheme> = {
     brand: "인생 레벨업 가이드북",
     orderName: "인생 레벨업 가이드북",
     slogan: "어휴, 올해도 버티느라 고생 많았어!",
-    ctaStart: "내 레벨업 시작하기",
+    ctaStart: "2027년 레벨업 하기",
     introNote: "",
   },
   hanji: {

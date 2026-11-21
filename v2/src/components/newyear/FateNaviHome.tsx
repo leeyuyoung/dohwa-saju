@@ -28,14 +28,14 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             <div className="ny-sheep-poster-scrim" aria-hidden />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/fatenavi2/mery-brand-logo.png"
+              src="/images/fatenavi2/mery-brand-logo.png?v=3"
               alt={config.brand}
               className="ny-sheep-poster-brand"
             />
             <div className="ny-sheep-poster-bubble">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/fatenavi2/mery-bubble.png"
+                src="/images/fatenavi2/mery-bubble.png?v=2"
                 alt=""
                 className="ny-sheep-poster-bubble-img"
               />
@@ -177,9 +177,16 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
           <div className="ny-hanji-below-block">
             <h2 className="ny-hanji-below-title">왜 운명내비인가</h2>
             <ul className="ny-hanji-below-bullets">
-              <li>듣기 좋은 덕담 대신, 흉운의 시기까지 가감 없이</li>
-              <li>돈이 터지는 시기 - 타이밍과 돌파구 제시</li>
-              <li>100년 인생 풀이와 구체적인 행동 지침 제시</li>
+              <li>
+                듣기 좋은 덕담 대신, <span className="ny-hanji-below-em">흉운의 시기</span>까지 가감
+                없이
+              </li>
+              <li>
+                <span className="ny-hanji-below-em">돈이 터지는 시기</span> - 타이밍과 돌파구 제시
+              </li>
+              <li>
+                <span className="ny-hanji-below-em">100년 인생 풀이</span>와 구체적인 행동 지침 제시
+              </li>
             </ul>
             <p className="ny-hanji-below-note">정통 명리학 기반 · 1:1 맞춤 풀이</p>
           </div>

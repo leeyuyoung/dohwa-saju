@@ -4,6 +4,7 @@ import { PriceCompare } from "@/components/newyear/PriceCompare";
 import { RouteTimeline } from "@/components/newyear/RouteTimeline";
 import { SectionHeader } from "@/components/newyear/SectionHeader";
 import { SegmentCard } from "@/components/newyear/SegmentCard";
+import { StickyFormCta } from "@/components/newyear/StickyFormCta";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
 import {
   NEWYEAR_CHAPTERS,
@@ -418,7 +419,7 @@ export function NewYearResultScreen({
           <p className="ny-body">{config.slogan}</p>
         </section>
       </div>
-      {sticky ? <div className="ny-sticky-cta">{sticky}</div> : null}
+      {sticky ? <StickyFormCta>{sticky}</StickyFormCta> : null}
     </div>
   );
 }

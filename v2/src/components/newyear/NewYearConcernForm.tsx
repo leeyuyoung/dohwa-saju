@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { StickyFormCta } from "@/components/newyear/StickyFormCta";
 import { loadPendingNewYear, savePendingNewYear } from "@/lib/client/inputStorage";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
 import { analysisInputSchema, type AnalysisInput } from "@/lib/validation/analysisInput";
@@ -47,15 +48,19 @@ export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeI
     router.push(`${basePath}/analyzing`);
   };
 
+  const formId = useId();
+
   if (!ready) {
     return <div className="ny-form min-h-[40vh]" aria-hidden />;
   }
 
   return (
+    <>
     <form
+      id={formId}
       noValidate
       onSubmit={handleSubmit}
-      className={`ny-form flex flex-col gap-7 ${theme === "hanji" || theme === "premium" ? "ny-form-bottom" : "pb-24"}`}
+      className="ny-form ny-form-bottom flex flex-col gap-7"
     >
       <section className="flex flex-col gap-2.5">
         <p className="ny-form-label">직업/직무</p>
@@ -84,11 +89,12 @@ export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeI
         />
       </section>
 
-      <div className="ny-sticky-cta">
-        <button type="submit" className="ny-btn" disabled={submitting}>
-          {submitting ? "잠시만요…" : "다음 단계로"}
-        </button>
-      </div>
     </form>
+    <StickyFormCta>
+      <button type="submit" form={formId} className="ny-btn" disabled={submitting}>
+        {submitting ? "사주 풀이 중" : "다음 단계로"}
+      </button>
+    </StickyFormCta>
+    </>
   );
 }
