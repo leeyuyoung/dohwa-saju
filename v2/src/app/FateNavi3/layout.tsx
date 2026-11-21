@@ -5,7 +5,7 @@ const theme = themeOf("hanji");
 
 export const metadata: Metadata = {
   title: {
-    default: `${theme.orderName} · 한지`,
+    default: theme.orderName,
     template: "%s",
   },
 };

@@ -5,7 +5,7 @@ import { themeOf } from "@/lib/constants/fatenaviTheme";
 const theme = themeOf("hanji");
 
 export const metadata: Metadata = {
-  title: { absolute: `${theme.orderName} · 한지` },
+  title: { absolute: theme.orderName },
   description: theme.slogan,
 };
 

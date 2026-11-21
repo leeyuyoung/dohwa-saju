@@ -24,6 +24,12 @@ export const NEWYEAR_REPORT_PRICE = 29900;
 /** 화면 비교용 정가. */
 export const NEWYEAR_LIST_PRICE = 89900;
 
+/**
+ * CTA 위 “N명 풀이 중” 표시.
+ * 런칭 전 고정값. 서비스 오픈 후 실제 수치로 교체한다.
+ */
+export const NEWYEAR_READING_COUNT_DISPLAY = 2314;
+
 /** 배포 직전에 true로 켠다. false면 결제 화면과 결제 주문을 열지 않는다. */
 export const NEWYEAR_CHECKOUT_OPEN = false;
 

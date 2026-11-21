@@ -1,27 +1,25 @@
 import Link from "next/link";
 import { HanjiIntroVideo } from "@/components/newyear/HanjiIntroVideo";
 import { NewYearShell } from "@/components/newyear/NewYearShell";
+import { ReadingCountBubble } from "@/components/newyear/ReadingCountBubble";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
 import { NEWYEAR_LIST_PRICE, NEWYEAR_REPORT_PRICE } from "@/lib/constants/newyear";
 import { formatPrice } from "@/lib/constants/service";
 
 export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
   const config = themeOf(theme);
+  const stickyCta = (
+    <div className="ny-poster-cta">
+      <ReadingCountBubble />
+      <Link href={`${config.basePath}/start`} className="ny-btn">
+        {config.ctaStart}
+      </Link>
+    </div>
+  );
 
   if (theme === "navi") {
     return (
-      <NewYearShell
-        theme={theme}
-        showHeader={false}
-        stickyCta={
-          <div className="ny-poster-cta">
-            <p className="ny-poster-above">같은 운명이라도 인생은 달라질 수 있습니다.</p>
-            <Link href={`${config.basePath}/start`} className="ny-btn">
-              {config.ctaStart}
-            </Link>
-          </div>
-        }
-      >
+      <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
         <section className="ny-poster" aria-label="운명내비 인트로">
           <div className="ny-poster-media">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -43,15 +41,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
 
   if (theme === "sheep") {
     return (
-      <NewYearShell
-        theme={theme}
-        showHeader={false}
-        stickyCta={
-          <Link href={`${config.basePath}/start`} className="ny-btn">
-            {config.ctaStart}
-          </Link>
-        }
-      >
+      <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
         <section className="ny-sheep-poster" aria-label="인생 레벨업 인트로">
           <div className="ny-sheep-poster-media">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -84,15 +74,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
 
   if (theme === "premium") {
     return (
-      <NewYearShell
-        theme={theme}
-        showHeader={false}
-        stickyCta={
-          <Link href={`${config.basePath}/start`} className="ny-btn">
-            {config.ctaStart}
-          </Link>
-        }
-      >
+      <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
         <div className="ny-premium-landing">
           <section className="ny-premium-hero" aria-label="프리미엄 종합사주">
             <p className="ny-premium-ribbon">종합사주</p>
@@ -145,15 +127,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
   }
 
   return (
-    <NewYearShell
-      theme={theme}
-      showHeader={false}
-      stickyCta={
-        <Link href={`${config.basePath}/start`} className="ny-btn">
-          {config.ctaStart}
-        </Link>
-      }
-    >
+    <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
       <div className="ny-hanji-landing">
         <section className="ny-hanji-poster" aria-label="운명내비 인트로">
           <div className="ny-hanji-poster-media">

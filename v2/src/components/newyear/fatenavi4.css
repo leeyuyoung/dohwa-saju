@@ -488,6 +488,16 @@
   text-shadow: none;
 }
 
+.ny-premium .ny-cta-bubble {
+  background: rgb(42 33 24 / 0.82);
+  color: rgb(255 248 240 / 0.95);
+  box-shadow: 0 6px 16px rgb(42 33 24 / 0.14);
+}
+
+.ny-premium .ny-cta-bubble-num {
+  color: #c9a86a;
+}
+
 .ny-premium .ny-hanja[data-el="목"] { background: #c5d4b8; color: #2a2118; }
 .ny-premium .ny-hanja[data-el="화"] { background: #e4b4a8; color: #2a2118; }
 .ny-premium .ny-hanja[data-el="토"] { background: #e6d0a4; color: #2a2118; }
