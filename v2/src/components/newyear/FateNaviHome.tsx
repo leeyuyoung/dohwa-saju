@@ -17,7 +17,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
   if (theme === "sheep") {
     return (
       <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
-        <section className="ny-sheep-poster" aria-label="인생 레벨업 인트로">
+        <section className="ny-sheep-poster" aria-label="메리운세 인트로">
           <div className="ny-sheep-poster-media">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -26,12 +26,6 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
               className="ny-sheep-poster-img"
             />
             <div className="ny-sheep-poster-scrim" aria-hidden />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/fatenavi2/mery-brand-logo.png?v=3"
-              alt={config.brand}
-              className="ny-sheep-poster-brand"
-            />
             <div className="ny-sheep-poster-bubble">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

@@ -37,6 +37,13 @@ export function NewYearShell({
                   alt={config.brand}
                   className="ny-brand-logo"
                 />
+              ) : theme === "sheep" ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src="/images/fatenavi2/mery-face.png?v=1"
+                  alt={config.brand}
+                  className="ny-brand-logo ny-sheep-brand-face"
+                />
               ) : (
                 config.brand
               )}

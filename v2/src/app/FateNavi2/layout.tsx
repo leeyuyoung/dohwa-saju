@@ -5,7 +5,7 @@ const theme = themeOf("sheep");
 
 export const metadata: Metadata = {
   title: {
-    default: `${theme.orderName} · 양`,
+    default: theme.orderName,
     template: "%s",
   },
 };

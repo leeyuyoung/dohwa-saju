@@ -179,6 +179,13 @@ export function NewYearResultScreen({
               alt={config.brand}
               className="ny-free-brand-logo"
             />
+          ) : isSheep ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/images/fatenavi2/mery-face.png?v=1"
+              alt={config.brand}
+              className="ny-free-brand-logo ny-sheep-free-face"
+            />
           ) : (
             <p className="ny-free-brand">{config.brand}</p>
           )}

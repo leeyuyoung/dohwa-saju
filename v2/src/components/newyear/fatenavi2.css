@@ -1,4 +1,4 @@
-/* FateNavi2 — 메리(Mery) · 인생 레벨업 */
+/* FateNavi2 — 메리운세 */
 
 .ny-sheep {
   --bg-light: #f7efe6;
@@ -38,10 +38,43 @@
   background: transparent;
 }
 
+.ny-sheep .ny-header {
+  padding: 0.55rem 1rem 0.2rem;
+}
+
+.ny-sheep .ny-main:has(.ny-form) {
+  padding-top: 0.15rem;
+  padding-bottom: 4.5rem;
+}
+
+.ny-sheep .ny-form {
+  gap: 1rem;
+}
+
+.ny-sheep .ny-form > section {
+  gap: 0.45rem;
+}
+
+.ny-sheep .ny-field,
+.ny-sheep .ny-choice {
+  height: 48px;
+}
+
 .ny-sheep .ny-brand {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
   color: #c45b4a;
   font-family: var(--font-serif), serif;
   letter-spacing: 0.08em;
+}
+
+.ny-sheep .ny-sheep-brand-face {
+  display: block;
+  width: auto;
+  height: 2.35rem;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgb(122 72 56 / 0.22));
 }
 
 .ny-sheep .ny-en,
@@ -249,8 +282,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 28%;
-  transform: translateY(4.5%);
+  object-position: center 18%;
+  transform: translateY(-3%);
 }
 
 .ny-sheep-poster-scrim {
@@ -262,23 +295,9 @@
   pointer-events: none;
 }
 
-.ny-sheep-poster-brand {
-  position: absolute;
-  top: max(0.85rem, calc(env(safe-area-inset-top) + 0.2rem));
-  left: 50%;
-  z-index: 1;
-  width: min(78vw, 17.5rem);
-  height: auto;
-  margin: 0;
-  transform: translateX(-50%);
-  object-fit: contain;
-  pointer-events: none;
-  user-select: none;
-}
-
 .ny-sheep-poster-bubble {
   position: absolute;
-  top: clamp(8.8rem, 24vh, 12.5rem);
+  top: clamp(4.2rem, 12vh, 7.5rem);
   left: 50%;
   z-index: 2;
   width: min(58vw, 12.5rem);
@@ -484,6 +503,15 @@
 .ny-sheep .ny-free-brand {
   color: #c45b4a;
   font-family: var(--font-serif), serif;
+}
+
+.ny-sheep .ny-sheep-free-face {
+  display: block;
+  width: min(5.5rem, 28vw);
+  height: auto;
+  margin: 0 auto 0.35rem;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 10px rgb(122 72 56 / 0.28));
 }
 
 .ny-sheep .ny-free-title {

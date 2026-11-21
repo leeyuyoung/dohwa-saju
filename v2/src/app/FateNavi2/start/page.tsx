@@ -10,9 +10,7 @@ export const metadata: Metadata = {
 export default function FateNavi2StartPage() {
   return (
     <NewYearShell theme="sheep">
-      <div className="pt-2">
-        <NewYearForm theme="sheep" />
-      </div>
+      <NewYearForm theme="sheep" />
     </NewYearShell>
   );
 }
