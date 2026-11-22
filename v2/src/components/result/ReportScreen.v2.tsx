@@ -190,6 +190,11 @@ export function ReportScreenV2({ report }: { report: FullReportViewV2 }) {
           <section id="conclusion" className="scroll-mt-24 flex flex-col items-center gap-5 px-2 py-10 text-center">
             <p className="text-[11px] tracking-[0.22em] text-cinnabar">최종 결론</p>
             <p className="max-w-md font-serif text-[17px] font-light leading-[1.95] text-paper">{report.conclusion}</p>
+            <p className="mt-4 max-w-sm font-serif text-[16px] font-light leading-[1.9] text-gold-soft">
+              숨겨진 매력을 발견했다면,
+              <br />
+              이제는 네 방식대로 빛낼 차례야
+            </p>
           </section>
         </Reveal>
 

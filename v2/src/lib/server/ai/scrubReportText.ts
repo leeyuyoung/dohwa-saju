@@ -24,19 +24,27 @@ function scrubSpeechTone(value: string): string {
     .replace(new RegExp(`없다${END}`, "g"), "없어")
     .replace(/당신은/g, "넌")
     .replace(/당신이/g, "네가")
-    .replace(/당신의/g, "네");
+    .replace(/당신의/g, "네")
+    /** 모델이 '너는'을 '네는'으로 쓰는 오타 */
+    .replace(/네는/g, "너는");
 }
+
+/** JSON 구조 조각만으로 이뤄진 문단(예: ]}], ). */
+const JSON_DEBRIS_ONLY = /^[\s\[\]{},:"'\\]+$/;
 
 /** 프롬프트 태그·영문 키가 본문에 새면 사용자에게 보이지 않게 고친다. */
 export function scrubReportLeakage(value: string): string {
   const trimmed = value.trim();
   if (SCHEMA_KEY_ONLY.test(trimmed)) return "";
+  if (JSON_DEBRIS_ONLY.test(trimmed)) return "";
   return scrubSpeechTone(
     trimmed
       .replace(/<\/?meetingWindow>/gi, "")
       .replace(/\bmeetingWindow\b/gi, "만남이 열리기 쉬운 시기")
       .replace(/\bclosingLine\b/gi, "")
       .replace(/\bPART\s*([1-5])\b/gi, "파트 $1")
+      /** 문단 끝에 붙는 JSON 꼬리 */
+      .replace(/\s*"?\s*\]\s*\}\s*\]\s*,?\s*$/g, "")
       .replace(/\s{2,}/g, " ")
       .trim(),
   );
