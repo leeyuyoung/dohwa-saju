@@ -101,7 +101,7 @@ export function FreeResultScreen({
               <div className="rounded-3xl border border-cinnabar/30 bg-gradient-to-b from-crimson-deep/50 via-night/90 to-night px-5 py-6">
                 <div className="flex items-end justify-between gap-3">
                   <p className="font-serif text-[15px] text-mist">
-                    지금 제일 센 축 · <span className="text-blossom-glow">{preview.saekgi.axisLabel}</span>
+                    대표 매력 · <span className="text-blossom-glow">{preview.saekgi.axisLabel}</span>
                   </p>
                   <p className="font-serif leading-none">
                     <span className="text-blossom-glow text-[40px] font-light">{preview.saekgi.score}</span>

@@ -54,28 +54,28 @@ export type FreeVibeKeyword = { name: string };
 const CHARM_BY_ELEMENT: Record<FiveElementKey, FreeCharmType> = {
   wood: {
     label: "볼수록 빠져드는 은은한 매력형",
-    vibeLine: "편해 보이는데, 웃는 순간부터 상대가 방심하는 타입이야.",
+    vibeLine: "부드럽고 편안한 분위기지만, 웃는 순간 묘하게 사람을 설레게 하는 타입이야.",
     reason:
       "일간에 나무 기운이 있어서 경계가 쉽게 풀려. 다들 편한 사람이라 착각하다가, 정신 차려 보면 이미 네 생각에 빠져 있어.",
   },
   fire: {
     label: "첫인상부터 시선을 끄는 화려한 매력형",
-    vibeLine: "들어서면 공기가 달라지고, 한 번 보면 쉽게 안 잊히는 타입이야.",
+    vibeLine: "등장만으로 분위기를 바꾸고, 한 번 마주치면 쉽게 잊히지 않는 타입이야.",
     reason: "일간에 불 기운이 있어서 눈빛과 표정만으로도 분위기를 압도해. 데일 걸 알면서도 다들 너한테 손이 가.",
   },
   earth: {
     label: "차분하지만 강한 존재감을 지닌 매력형",
-    vibeLine: "멀리선 단정해 보이는데, 가까이 갈수록 온기가 진해지는 타입이야.",
+    vibeLine: "차분하고 단정해 보이지만, 가까워질수록 깊은 매력이 느껴지는 타입이야.",
     reason: "일간에 흙 기운이 있어서 옆에 있으면 마음이 편해져. 가까이 둘수록 자꾸 기대게 되는 타입이야.",
   },
   metal: {
     label: "우아하고 고급스러운 분위기형",
-    vibeLine: "쉽게 곁을 안 내주니까, 오히려 더 보고 싶어지는 타입이야.",
+    vibeLine: "쉽게 마음을 드러내지 않아서, 오히려 더 궁금하고 끌리는 타입이야.",
     reason: "일간에 쇠 기운이 있어서 차가워보이는 거리감과 말 아끼는 그 태도가 오히려 시선을 붙잡아.",
   },
   water: {
     label: "신비롭고 쉽게 잊히지 않는 매력형",
-    vibeLine: "속을 다 보여 주지 않아서, 한 번 시선이 가면 계속 남게 되는 타입이야.",
+    vibeLine: "알 듯 말 듯한 신비로운 분위기로, 한 번 빠지면 쉽게 헤어나오기 어려운 타입이야.",
     reason: "일간에 물 기운이 있어서 눈매가 깊고 여백이 있는 분위기야. 알면 알수록 더 궁금한 타입이 돼.",
   },
 };
@@ -87,14 +87,14 @@ function refineCharmType(base: FreeCharmType, reading: DohwaReading): FreeCharmT
   if (hongyeom && hongyeom.positions.length > 0) {
     return {
       label: "첫인상부터 시선을 끄는 화려한 매력형",
-      vibeLine: "가만히 있어도 시선이 쏠리는 타입이야.",
+      vibeLine: "가만히 있어도 시선이 쏠리고, 특별히 꾸미지 않아도 묘한 매력이 풍기는 타입이야.",
       reason: `${base.reason} 여기에 홍염까지 겹쳐서, 눈길 받는 힘이 더 세.`,
     };
   }
   if (hwagae && hwagae.positions.length > 0) {
     return {
       label: "신비롭고 쉽게 잊히지 않는 매력형",
-      vibeLine: "혼자만의 분위기가 뚜렷해서, 한번 기억되면 잘 안 지워지는 타입이야.",
+      vibeLine: "자신만의 분위기가 뚜렷해서, 스쳐 지나가도 오래도록 기억에 남는 타입이야.",
       reason: `${base.reason} 화개까지 겹쳐서, 남들과는 다른 독립적인 인상이 더해져.`,
     };
   }
@@ -111,11 +111,11 @@ export function freeIntroLines(profile: SajuProfile, reading: DohwaReading, name
   const starHits = reading.stars.filter((star) => star.positions.length > 0).map((star) => star.name);
   const starHint =
     starHits.length > 0
-      ? `네 사주에 ${starHits.join("·")}이 보여.`
-      : "겉으로 요란한 매력살보다, 일간과 오행 균형에서 매력이 읽히는 사주야.";
+      ? `네 사주에 ${starHits.join("·")}이 있네. 사람을 끌어당기는 너만의 매력, 이제부터 하나씩 알려줄게.`
+      : "겉으로 요란한 매력살보단, 고유한 매력이 숨어 있어. 그 매력이 어떤 모습으로 드러나는지 알려줄게.";
   return [
     `${name}, 네 일주는 ${josa(ganjiKorean(day.stem.korean, day.branch.korean), "이야", "야")}. ${type.vibeLine}`,
-    `${starHint} 이 페이지에선 그 핵심만 먼저 열어 줄게.`,
+    starHint,
   ];
 }
 
