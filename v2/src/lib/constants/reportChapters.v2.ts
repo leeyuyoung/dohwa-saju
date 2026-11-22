@@ -21,7 +21,7 @@ export type ReportPartMetaV2 = {
  */
 export const REPORT_SAEKGI_V2 = {
   key: "saekgi" as const,
-  title: "네 색기력, 무슨 맛일까?",
+  title: "나에게도 사람을 홀리는 색기가 있을까?",
   question: "상대가 나를 야하다고 느끼는 지점은 어딜까?",
   targetChars: 700,
   guide: `색기력은 예쁘다·호감 설명이 아니다. 상대를 관능적으로 흔드는 기운 — 야함, 유혹, 은근한 요염.
