@@ -10,6 +10,7 @@ import {
   freeFirstImpressionLine,
   freeIntroLines,
   freePartLeadIns,
+  freeSaekgiTeaser,
   freeVibeKeywords,
 } from "@/lib/saju/freeResultCopy";
 import { ganjiKorean } from "@/lib/constants/sajuLabels";
@@ -95,6 +96,7 @@ function freeView(name: string, profile: SajuProfile): FreeResultView {
     preview: {
       intro: freeIntroLines(profile, reading, name),
       partLeadIns: freePartLeadIns(profile.calculation.gender),
+      saekgi: freeSaekgiTeaser(reading),
       charmType,
       firstImpression: freeFirstImpressionLine(profile, reading),
       vibeKeywords: freeVibeKeywords(profile, reading),
@@ -194,7 +196,6 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
       ? {
           title: withPartner(REPORT_SAEKGI_V2.title, gender),
           question: withPartner(REPORT_SAEKGI_V2.question, gender),
-          headline: displayLine(report.saekgi.headline),
           paragraphs: displayLines(report.saekgi.paragraphs),
         }
       : null,

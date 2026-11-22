@@ -51,6 +51,13 @@ export type FreeResultView = {
     intro: [string, string];
     /** PART 1~5 앞에 붙는 말투 리드인. */
     partLeadIns: [string, string, string, string, string];
+    /** 만세력 색기력 티저. 1등 축 템플릿 2문장. */
+    saekgi: {
+      score: number;
+      axisKey: string;
+      axisLabel: string;
+      lines: [string, string];
+    };
     charmType: { label: string; vibeLine: string; reason: string };
     firstImpression: string;
     vibeKeywords: { name: string }[];
@@ -105,7 +112,6 @@ export type FullReportView = FreeResultView & {
 export type SaekgiBlockView = {
   title: string;
   question: string;
-  headline: string;
   paragraphs: string[];
 };
 

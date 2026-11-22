@@ -10,6 +10,7 @@ import {
 } from "@/lib/constants/reportChapters.v2";
 import { CHARM_INDICES, DOHWA_TYPES, gradeOf, withPartner } from "@/lib/constants/result";
 import { readDohwa, type CharmIndexKey, type SajuProfile } from "@/lib/saju";
+import { SAEKGI_AXIS_COPY } from "@/lib/saju/freeResultCopy";
 import { ELEMENT_KOREAN } from "@/lib/saju/tables";
 import { relationshipLabel, type RelationshipStatus } from "@/lib/validation/analysisInput";
 import { meetingWindowFromProfile } from "./meetingWindow";
@@ -23,7 +24,7 @@ const SAEKGI_GUIDE = `  색기력 도입부 (원국 아래 · PART1 위). 필드
   핵심 질문: ${REPORT_SAEKGI_V2.question}
   분량 상한: ${REPORT_SAEKGI_V2.targetChars}자. 새 내용이 없으면 더 짧게.
   ${REPORT_SAEKGI_V2.guide}
-  headline + paragraphs(2~5). closingLine 없음.`;
+  paragraphs(2~5)만. headline·closingLine 없음.`;
 
 const PART_GUIDE = REPORT_PARTS_V2.map((part) => {
   const header = `  PART ${part.part}. ${part.title}\n  핵심 질문: ${part.question}\n  분량 상한: ${part.targetChars}자. 새 내용이 없으면 더 짧게. 비슷한 말로 채우지 말 것`;
@@ -61,7 +62,8 @@ export const REPORT_INSTRUCTIONS_V2 = `당신은 '도화신당'의 도화선녀�
 [색기력 정의]
 - 색기력 = 상대를 관능적으로 흔드는 기운. 예쁘다·호감과 다르다. 야하고, 유혹하고, 묘하게 은근하고, 요염한 아우라.
 - <dohwa>.score가 색기력 점수다. indices는 관능·유혹·요염. dohwaPower(도화력)는 재료일 뿐 색기력과 등치하지 않는다.
-- 허용 워딩: 야하다/야함, 은근, 묘함, 색기, 눈빛.
+- saekgi 톤: 아슬아슬·도발. 매력 나열이 아니라 상대가 너에게 어떻게 반응하는지(상상·욕망·애탐·잔상)를 쓰게 한다. 무료 티저 결을 참고하되 문장은 사주마다 새로.
+- 허용 워딩: 야하다/야함, 은근, 묘함, 색기, 눈빛, 욕망, 밀당, 갈망.
 - 금지: '문란' 단정, 색기 없음=매력 없음, 도화살 없음=색기 없음, 신체 성적 묘사.
 
 [사주 원칙]
@@ -91,7 +93,7 @@ export const REPORT_INSTRUCTIONS_V2 = `당신은 '도화신당'의 도화선녀�
 
 [출력 형식 — JSON 필드만, 소제목 문자열은 쓰지 말고 paragraphs 본문만]
 - intro: 도입부. 상한 ${INTRO_TARGET_CHARS_V2}자. 새 내용이 없으면 더 짧게. 비슷한 말로 채우지 말 것. 이 사주의 눈에 띄는 특징·일간/오행·주목점·흥미 포인트. 일반 인사·누구에게나 되는 칭찬으로 시작하지 않는다.
-- saekgi: 원국 아래 색기력 도입부. headline + paragraphs만. closingLine 없음. headline은 <dohwa>.topAxis·색기력 점수·신살 위치에 맞춰 사주마다 다르게. 고정 예시 문장 복붙 금지. 색기력 파트에서 도화살·홍염살·화개살의 stars 점수(예: 도화살 86점)를 절대 말하지 않는다. '도화살이 월지에 드러나 있어'처럼 위치·유무만. PART1과 역할을 겹치지 않는다(여기는 색기력·3축, PART1은 도화·홍염·얼굴·매력 유형).
+- saekgi: 원국 아래 색기력 도입부. paragraphs만. headline·closingLine 없음(제목 아래 핑크 한 줄 금지). 도발적·상대 반응 중심. 본문은 topAxis·점수·신살 위치에 맞춰 사주마다 다르게. 무료 티저 문장 복붙 금지. 신살 ○○점 금지(위치만). PART1과 역할 분리(여기는 색기·상대 반응, PART1은 도화·홍염·얼굴·매력 유형).
 - part1~part5: 아래 가이드. 각 part에 headline(그 PART를 찌르는 한 문장). part1은 closingLine 없음. part2~5는 closingLine(한 줄 정리).
 - part3만 keywords 배열 3개(name + paragraphs). sections 없음.
 - 그 외 part는 sections를 소절 수만큼, 가이드에 적힌 순서 그대로. part5 sections[0]=인연 남자, [1]=만나는 때(시기·장소만), [2]=어필 분위기(시기 금지), [3]=오해 습관. 순서를 바꾸거나 내용을 엇갈리게 쓰지 않는다.
@@ -109,20 +111,22 @@ ${PART_GUIDE}
 const element = (key: keyof typeof ELEMENT_KOREAN) => ELEMENT_KOREAN[key];
 const POSITION_LABEL = { year: "년지", month: "월지", day: "일지", hour: "시지" } as const;
 
-function topIndexLabel(indices: Record<CharmIndexKey, number>): string {
-  const top = CHARM_INDICES.reduce((best, index) => (indices[index.key] > indices[best.key] ? index : best));
-  return top.label;
+function topCharmIndex(indices: Record<CharmIndexKey, number>) {
+  return CHARM_INDICES.reduce((best, index) => (indices[index.key] > indices[best.key] ? index : best));
 }
 
 function dohwaPayload(profile: SajuProfile) {
   const reading = readDohwa(profile);
   const type = DOHWA_TYPES[reading.typeKey];
+  const topAxis = topCharmIndex(reading.indices);
   return {
     /** 히어로 색기력 (관능·유혹·요염 가중합) */
     score: reading.score,
     scoreLabel: "색기력",
     grade: gradeOf(reading.score).label,
-    topAxis: topIndexLabel(reading.indices),
+    topAxis: topAxis.label,
+    /** 무료 티저 톤 참고용. 문장 복붙 금지 — 사주에 맞게 더 길고 도발적으로 새로 쓸 것 */
+    freeTeaserTone: SAEKGI_AXIS_COPY[topAxis.key],
     type: `${type.name}(${type.hanja}) · ${type.alias}`,
     indices: Object.fromEntries(CHARM_INDICES.map((index) => [index.label, reading.indices[index.key]])),
     /** 도화력 — 색기력과 다름. 재료로만 언급 */

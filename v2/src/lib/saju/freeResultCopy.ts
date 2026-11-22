@@ -1,10 +1,47 @@
+import { CHARM_INDICES } from "@/lib/constants/result";
 import { ganjiKorean, josa } from "@/lib/constants/sajuLabels";
-import type { DohwaReading } from "./dohwa";
+import type { CharmIndexKey, DohwaReading } from "./dohwa";
 import type { FiveElementKey, SajuProfile } from "./profileTypes";
 
 /**
  * 무료 결과 카피. AI 없이 만세력·도화 판독만으로 같은 사주는 항상 같은 문장이 나온다.
  */
+
+/** 무료 색기력 티저. 1등 축에 맞춰 고정 템플릿 2문장. */
+export const SAEKGI_AXIS_COPY: Record<CharmIndexKey, [string, string]> = {
+  sensual: [
+    "아무것도 하지 않았는데 상대의 상상력을 자극하는 사람이야.",
+    "본능부터 자극하는 타고난 색기를 가졌어.",
+  ],
+  flirt: [
+    "상대의 욕망을 자극하고 애타게 만드는, 치명적인 밀당의 기술을 가졌네.",
+    "상대를 더 갈망하게 만들어.",
+  ],
+  enchant: [
+    "노골적이지 않아도 묘하게 야한 분위기를 풍기는 사람이야.",
+    "한 번 빠지면 헤어 나오기 힘든, 은밀한 색기를 가졌어.",
+  ],
+};
+
+export type FreeSaekgiTeaser = {
+  score: number;
+  axisKey: CharmIndexKey;
+  axisLabel: string;
+  lines: [string, string];
+};
+
+/** 색기력 점수·1등 축으로 무료 티저 카피를 고른다. AI 없음. */
+export function freeSaekgiTeaser(reading: DohwaReading): FreeSaekgiTeaser {
+  const top = CHARM_INDICES.reduce((best, index) =>
+    reading.indices[index.key] > reading.indices[best.key] ? index : best,
+  );
+  return {
+    score: reading.score,
+    axisKey: top.key,
+    axisLabel: top.label,
+    lines: SAEKGI_AXIS_COPY[top.key],
+  };
+}
 
 export type FreeCharmType = {
   label: string;

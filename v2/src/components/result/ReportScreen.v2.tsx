@@ -52,7 +52,6 @@ export function ReportScreenV2({ report }: { report: FullReportViewV2 }) {
                 <p className="text-[11px] tracking-[0.22em] text-cinnabar">색기력</p>
                 <h2 className="font-eerie text-[clamp(1.45rem,6vw,1.9rem)] leading-snug text-paper break-keep">{report.saekgi.title}</h2>
                 <p className="text-sm text-mist">{report.saekgi.question}</p>
-                <p className="mt-1 font-serif text-[16px] font-light leading-[1.85] text-blossom-glow">{report.saekgi.headline}</p>
               </header>
               <div className="flex flex-col gap-4 font-serif text-[16px] font-light leading-[2] text-paper/90">
                 {report.saekgi.paragraphs.map((paragraph, index) => (

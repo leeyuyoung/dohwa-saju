@@ -81,7 +81,8 @@ function normalizePart5Sections(sections: { paragraphs: string[] }[]): { paragra
 }
 
 const saekgiBlock = z.object({
-  headline: text(160),
+  /** 구 생성본에만 있을 수 있음. 화면·신규 생성에서는 쓰지 않는다. */
+  headline: text(160).optional(),
   paragraphs,
   /** 구 생성본에만 있을 수 있음. 화면·신규 생성에서는 쓰지 않는다. */
   closingLine: text(120).optional(),
@@ -164,9 +165,8 @@ const partSchema = (sectionCount: number, withClosingLine = true) =>
 const saekgiSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["headline", "paragraphs"],
+  required: ["paragraphs"],
   properties: {
-    headline: { type: "string" },
     paragraphs: { type: "array", items: { type: "string" }, minItems: PARAGRAPH_COUNT_V2.min, maxItems: PARAGRAPH_COUNT_V2.max },
   },
 } as const;

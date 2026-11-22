@@ -9,7 +9,7 @@ import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { StickyCheckoutBar } from "@/components/result/StickyCheckoutBar";
 import { FaceCard, PartnerCard, PartSunnyeoLeadIn } from "@/components/result/TeaserCards";
 import { Reveal } from "@/components/ui/Reveal";
-import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
+import { REPORT_PARTS_V2, REPORT_SAEKGI_V2 } from "@/lib/constants/reportChapters.v2";
 import { DETAILED_REPORT_ORDER_NAME } from "@/lib/constants/service";
 import type { FreeResultView } from "@/types/result";
 
@@ -86,6 +86,37 @@ export function FreeResultScreen({
                 ))}
               </div>
             </section>
+          </Reveal>
+
+          {/* 색기력 티저 — AI 없이 만세력 1등 축 템플릿 */}
+          <Reveal>
+            <article id="free-saekgi" className="scroll-mt-24 flex flex-col gap-5">
+              <header className="flex flex-col gap-2">
+                <p className="text-[11px] tracking-[0.22em] text-cinnabar">색기력</p>
+                <h2 className="font-eerie text-[clamp(1.35rem,5.5vw,1.7rem)] leading-snug text-paper break-keep">
+                  {REPORT_SAEKGI_V2.title}
+                </h2>
+                <p className="text-sm text-mist break-keep">{REPORT_SAEKGI_V2.question}</p>
+              </header>
+              <div className="rounded-3xl border border-cinnabar/30 bg-gradient-to-b from-crimson-deep/50 via-night/90 to-night px-5 py-6">
+                <div className="flex items-end justify-between gap-3">
+                  <p className="font-serif text-[15px] text-mist">
+                    지금 제일 센 축 · <span className="text-blossom-glow">{preview.saekgi.axisLabel}</span>
+                  </p>
+                  <p className="font-serif leading-none">
+                    <span className="text-blossom-glow text-[40px] font-light">{preview.saekgi.score}</span>
+                    <span className="ml-1 text-sm text-mist">점</span>
+                  </p>
+                </div>
+                <div className="mt-5 flex flex-col gap-3 border-t border-line/50 pt-5 font-serif text-[15px] font-light leading-[1.9] text-paper/95">
+                  {preview.saekgi.lines.map((line) => (
+                    <p key={line} className="break-keep">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </article>
           </Reveal>
 
           {/* PART 1 */}
