@@ -55,7 +55,7 @@ export function FreeResultScreen({
     <CheckoutSheetProvider checkout={checkout} href={cta.href}>
       <PageShell withStickyBar>
         {token && !sample ? <FunnelBeacon step="result" token={token} /> : null}
-        <h1 className="sr-only">{result.name}의 도화 풀이</h1>
+        <h1 className="sr-only">{result.name}의 도화살 사주 풀이</h1>
 
         <header className="relative -mx-5 overflow-hidden px-5 pb-10 pt-10">
           <div
@@ -63,10 +63,10 @@ export function FreeResultScreen({
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgb(156_63_98_/_0.32),transparent_55%),linear-gradient(180deg,rgb(13_11_25)_0%,rgb(7_6_14)_100%)]"
           />
           <div className="relative flex flex-col items-center gap-4 text-center">
-            <p className="text-[11px] tracking-[0.28em] text-cinnabar/90">나의 매력 발견</p>
+            <p className="text-[11px] tracking-[0.28em] text-cinnabar/90">매력 리포트</p>
             <h2 className="font-eerie text-[clamp(1.9rem,8vw,2.5rem)] leading-tight text-paper">
               {result.name}
-              <span className="mt-2 block font-serif text-[1.05rem] font-light tracking-normal text-blossom">의 사주 미리보기</span>
+              <span className="mt-2 block font-serif text-[1.05rem] font-light tracking-normal text-blossom">의 도화살 사주 풀이</span>
             </h2>
           </div>
         </header>
