@@ -138,17 +138,18 @@ export function freePartLeadIns(gender: "female" | "male"): [string, string, str
 export function freeFirstImpressionLine(profile: SajuProfile, reading: DohwaReading): string {
   const type = freeCharmType(profile, reading);
   if (type.label.includes("화려한")) {
-    return "첫인상부터 강한 인상으로 박히는 타입이야. 그런데 가까워지면, 처음에 봤던 화려함과는 또 다른 매력이 나와.";
+    return "넌 처음부터 강렬한 인상으로 시선을 사로잡아. 한 번 눈에 들어오면 쉽게 잊히지 않는 타입이야.";
   }
   if (type.label.includes("우아")) {
-    return "첫인상부터 선이 또렷한 인상으로 박혀. 그런데 가까워질수록, 처음에 본 그 선 너머로 다른 매력이 더 보여.";
+    return "넌 쉽게 다가가기 어려운 우아한 분위기를 풍겨. 오히려 그 거리감 때문에 더 궁금해지는 타입이야.";
   }
-  const hook = type.label.includes("신비")
-    ? "쉽게 읽히지 않는 인상"
-    : type.label.includes("차분")
-      ? "단정하고 안정적인 인상"
-      : "은은하게 남는 인상";
-  return `넌 ${hook}으로 기억될 가능성이 커. 그런데 가까워질수록 처음과는 다른 매력이 더 드러나.`;
+  if (type.label.includes("신비")) {
+    return "넌 속을 쉽게 알 수 없는 묘한 분위기를 풍겨. 알면 알수록 더 알고 싶어지는 타입이야.";
+  }
+  if (type.label.includes("차분")) {
+    return "넌 단정하고 안정적인 첫인상을 남겨. 그런데 가까워질수록 처음과는 다른 매력이 더 드러나.";
+  }
+  return "넌 상대에게 은은하고 자연스럽게 스며들어. 시간이 지날수록 문득문득 생각나는 타입이야.";
 }
 
 const VIBE_POOL = [
