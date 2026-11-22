@@ -55,7 +55,7 @@ export function FreeResultScreen({
     <CheckoutSheetProvider checkout={checkout} href={cta.href}>
       <PageShell withStickyBar>
         {token && !sample ? <FunnelBeacon step="result" token={token} /> : null}
-        <h1 className="sr-only">{result.name}의 도화살 사주 풀이</h1>
+        <h1 className="sr-only">{result.name} 도화살 사주 풀이</h1>
 
         <header className="relative -mx-5 overflow-hidden px-5 pb-10 pt-10">
           <div
@@ -66,7 +66,7 @@ export function FreeResultScreen({
             <p className="text-[11px] tracking-[0.28em] text-cinnabar/90">매력 리포트</p>
             <h2 className="font-eerie text-[clamp(1.9rem,8vw,2.5rem)] leading-tight text-paper">
               {result.name}
-              <span className="mt-2 block font-serif text-[1.05rem] font-light tracking-normal text-blossom">의 도화살 사주 풀이</span>
+              <span className="mt-2 block font-serif text-[1.05rem] font-light tracking-normal text-blossom">도화살 사주 풀이</span>
             </h2>
           </div>
         </header>
