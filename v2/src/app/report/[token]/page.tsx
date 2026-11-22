@@ -11,7 +11,7 @@ import { toFullReportView, toFullReportViewV2 } from "@/lib/server/resultView";
 import { getAnalysisStore } from "@/lib/server/store";
 
 export const metadata: Metadata = {
-  title: "나의 연애·매력 리포트",
+  title: "나의 색기·연애 리포트",
   robots: { index: false, follow: false },
 };
 

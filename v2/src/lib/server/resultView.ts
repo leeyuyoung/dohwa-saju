@@ -1,7 +1,7 @@
 import "server-only";
 
 import { REPORT_CHAPTERS_V1 } from "@/lib/constants/reportChapters.v1";
-import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
+import { REPORT_PARTS_V2, REPORT_SAEKGI_V2 } from "@/lib/constants/reportChapters.v2";
 import { resolveReportVersion } from "@/lib/constants/reportVersion";
 import { CHARM_INDICES, DOHWA_TYPES, gradeOf, withPartner } from "@/lib/constants/result";
 import { buildSajuProfile, calculateSaju, readDohwa, type DohwaReading, type SajuProfile } from "@/lib/saju";
@@ -190,6 +190,14 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
     ...toFreeResultView(record),
     analyzedAt: formatKoreanDate(record.createdAt),
     intro: displayLine(report.intro),
+    saekgi: report.saekgi
+      ? {
+          title: withPartner(REPORT_SAEKGI_V2.title, gender),
+          question: withPartner(REPORT_SAEKGI_V2.question, gender),
+          headline: displayLine(report.saekgi.headline),
+          paragraphs: displayLines(report.saekgi.paragraphs),
+        }
+      : null,
     stars: charmStars(profile),
     fiveElements: {
       counts: profile.fiveElements.counts,
@@ -206,7 +214,7 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
           title: withPartner(meta.title, gender),
           question: withPartner(meta.question, gender),
           headline: displayLine(body.headline),
-          closingLine: displayLine(body.closingLine),
+          closingLine: "closingLine" in body && body.closingLine ? displayLine(body.closingLine) : "",
           sections: [],
           keywords: body.keywords.map((keyword) => ({
             name: displayLine(keyword.name),
@@ -221,7 +229,7 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
           title: withPartner(meta.title, gender),
           question: withPartner(meta.question, gender),
           headline: displayLine(body.headline),
-          closingLine: displayLine(body.closingLine),
+          closingLine: "closingLine" in body && body.closingLine ? displayLine(body.closingLine) : "",
           sections: [],
         };
       }
@@ -231,7 +239,7 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
         title: withPartner(meta.title, gender),
         question: withPartner(meta.question, gender),
         headline: displayLine(body.headline),
-        closingLine: displayLine(body.closingLine),
+        closingLine: "closingLine" in body && body.closingLine ? displayLine(body.closingLine) : "",
         sections: meta.sections.map((section, sectionIndex) => ({
           title: withPartner(section.title, gender),
           paragraphs: displayLines(body.sections[sectionIndex].paragraphs),

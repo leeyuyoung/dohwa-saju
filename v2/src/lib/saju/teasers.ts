@@ -92,11 +92,9 @@ export function partnerTeaser(profile: SajuProfile): PartnerTeaser {
 }
 
 const CHARM_POINTS: Record<CharmIndexKey, string> = {
-  allure: "한 번 마주치면 헤어나오기 힘든 눈웃음",
-  sensual: "촉촉하고 관능적인 입술",
+  sensual: "촉촉하고 야한 결이 도는 입술",
   flirt: "밤에 생각나는 목소리와 말투",
-  popularity: "자기 전 생각나는 웃는 미소",
-  mystery: "긴장시키는 묘하고 깊은 눈빛",
+  enchant: "묘하고 은근해서 더 위험한 눈빛",
 };
 
 /** 부족한 오행을 채워 주는 색 */

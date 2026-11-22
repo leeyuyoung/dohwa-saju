@@ -27,11 +27,11 @@ const sectionBlockLoose = z.object({
   paragraphs: z.array(text(2200)).min(1).max(10),
 });
 
-const partWithSections = (sectionCount: number) =>
+const partWithSections = (sectionCount: number, closing: "required" | "optional" = "required") =>
   z.object({
     headline: text(160),
     sections: z.array(sectionBlock).length(sectionCount),
-    closingLine: text(120),
+    closingLine: closing === "optional" ? text(120).optional() : text(120),
   });
 
 const part1Meta = REPORT_PARTS_V2.find((part) => part.part === 1)!;
@@ -80,9 +80,19 @@ function normalizePart5Sections(sections: { paragraphs: string[] }[]): { paragra
   return next;
 }
 
+const saekgiBlock = z.object({
+  headline: text(160),
+  paragraphs,
+  /** 구 생성본에만 있을 수 있음. 화면·신규 생성에서는 쓰지 않는다. */
+  closingLine: text(120).optional(),
+});
+
 const reportObjectSchema = z.object({
   intro: text(700),
-  part1: partWithSections(part1Meta.sections.length),
+  /** 원국 아래 색기력 도입부. 구 저장본에는 없을 수 있다. */
+  saekgi: saekgiBlock.optional(),
+  /** PART1은 하단 한 줄 요약 없음. 구 저장본에 closingLine이 있을 수만 있음. */
+  part1: partWithSections(part1Meta.sections.length, "optional"),
   part2: partWithSections(part2Meta.sections.length),
   part3: z.object({
     headline: text(160),
@@ -131,11 +141,11 @@ const sectionSchema = {
   },
 } as const;
 
-const partSchema = (sectionCount: number) =>
+const partSchema = (sectionCount: number, withClosingLine = true) =>
   ({
     type: "object",
     additionalProperties: false,
-    required: ["headline", "sections", "closingLine"],
+    required: withClosingLine ? ["headline", "sections", "closingLine"] : ["headline", "sections"],
     properties: {
       headline: { type: "string" },
       sections: {
@@ -144,20 +154,31 @@ const partSchema = (sectionCount: number) =>
         maxItems: sectionCount,
         items: sectionSchema,
       },
-      closingLine: { type: "string" },
+      ...(withClosingLine ? { closingLine: { type: "string" } } : {}),
     },
   }) as const;
 
 /**
  * OpenAI Structured Outputs용 JSON Schema (v2). 신규는 항상 4소절 part5.
  */
+const saekgiSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["headline", "paragraphs"],
+  properties: {
+    headline: { type: "string" },
+    paragraphs: { type: "array", items: { type: "string" }, minItems: PARAGRAPH_COUNT_V2.min, maxItems: PARAGRAPH_COUNT_V2.max },
+  },
+} as const;
+
 export const AI_REPORT_JSON_SCHEMA_V2 = {
   type: "object",
   additionalProperties: false,
-  required: ["intro", "part1", "part2", "part3", "part4", "part5", "conclusion"],
+  required: ["intro", "saekgi", "part1", "part2", "part3", "part4", "part5", "conclusion"],
   properties: {
     intro: { type: "string" },
-    part1: partSchema(part1Meta.sections.length),
+    saekgi: saekgiSchema,
+    part1: partSchema(part1Meta.sections.length, false),
     part2: partSchema(part2Meta.sections.length),
     part3: {
       type: "object",

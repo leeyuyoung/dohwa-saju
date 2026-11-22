@@ -8,7 +8,7 @@ import { toFreeResultView } from "@/lib/server/resultView";
 import { getAnalysisStore } from "@/lib/server/store";
 
 export const metadata: Metadata = {
-  title: "나의 도화 지수",
+  title: "나의 색기력",
   robots: { index: false, follow: false },
 };
 

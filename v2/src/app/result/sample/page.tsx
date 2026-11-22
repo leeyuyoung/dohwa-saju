@@ -3,7 +3,7 @@ import { FreeResultScreen } from "@/components/result/FreeResultScreen";
 import { isSampleType, sampleFreeResult } from "@/lib/server/resultView";
 
 export const metadata: Metadata = {
-  title: "도화 지수 예시",
+  title: "색기력 예시",
   robots: { index: false, follow: false },
 };
 

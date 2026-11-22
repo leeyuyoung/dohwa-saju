@@ -3,7 +3,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { ReviewCarousel } from "@/components/result/ReviewCarousel";
 import { LockedPicture } from "@/components/result/TeaserCards";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
-import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
+import { REPORT_PARTS_V2, REPORT_SAEKGI_V2 } from "@/lib/constants/reportChapters.v2";
 import { HERO_COPY } from "@/lib/constants/service";
 
 /** 미리보기용 고정 샘플 초상. 결제 전 이탈 방지용으로만 쓴다. */
@@ -74,9 +74,18 @@ export function ReportPreviewScreen() {
         <section className="flex flex-col gap-4">
           <div className="flex flex-col items-center gap-1.5 text-center">
             <p className="text-[12px] tracking-[0.2em] text-gold-soft">목차</p>
-            <h2 className="font-serif text-[18px] text-paper">{REPORT_PARTS_V2.length}개 PART</h2>
+            <h2 className="font-serif text-[18px] text-paper">색기력 + {REPORT_PARTS_V2.length}개 PART</h2>
           </div>
           <ol className="flex flex-col gap-2">
+            <li className="rounded-2xl border border-line/70 bg-night/70 px-4 py-3.5">
+              <div className="flex items-baseline gap-2.5">
+                <span className="shrink-0 text-[11px] tracking-[0.16em] text-cinnabar">색기력</span>
+                <div className="min-w-0 flex-1">
+                  <p className="font-serif text-[15px] text-paper break-keep">{REPORT_SAEKGI_V2.title}</p>
+                  <p className="mt-0.5 text-[12.5px] leading-snug text-mist break-keep">{REPORT_SAEKGI_V2.question}</p>
+                </div>
+              </div>
+            </li>
             {REPORT_PARTS_V2.map((part) => (
               <li key={part.key} className="rounded-2xl border border-line/70 bg-night/70 px-4 py-3.5">
                 <div className="flex items-baseline gap-2.5">

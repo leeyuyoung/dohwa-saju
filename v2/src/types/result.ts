@@ -101,10 +101,20 @@ export type FullReportView = FreeResultView & {
   portraits: { self: ReportPortraitView; partner: ReportPortraitView };
 };
 
+/** 원국 아래 · PART1 위 색기력 도입부. 구 저장본에는 없을 수 있다. */
+export type SaekgiBlockView = {
+  title: string;
+  question: string;
+  headline: string;
+  paragraphs: string[];
+};
+
 /** 유료 리포트 v2 화면용. PART 구조. */
 export type FullReportViewV2 = FreeResultView & {
   analyzedAt: string;
   intro: string;
+  /** 색기력 도입부. 없으면 구 리포트 */
+  saekgi: SaekgiBlockView | null;
   stars: CharmStarView[];
   fiveElements: FiveElementsView;
   currentLuck: CurrentLuckView | null;

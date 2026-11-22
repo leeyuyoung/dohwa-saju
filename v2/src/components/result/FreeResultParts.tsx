@@ -4,7 +4,7 @@ import { UnlockTap } from "@/components/payment/UnlockTap";
 import { OrnateFrameCard } from "@/components/result/OrnateFrameCard";
 import { LockIcon } from "@/components/result/ResultParts";
 import { Reveal } from "@/components/ui/Reveal";
-import { REPORT_PARTS_V2 } from "@/lib/constants/reportChapters.v2";
+import { REPORT_PARTS_V2, REPORT_SAEKGI_V2 } from "@/lib/constants/reportChapters.v2";
 import { REPORT_CHAPTERS, type ReportChapterKey, withPartner } from "@/lib/constants/result";
 import type { DohwaView } from "@/types/result";
 
@@ -27,7 +27,7 @@ const radarPoint = (index: number, total: number, ratio: number) => {
 
 const toPath = (points: (readonly [number, number])[]) => points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
 
-/** 도화 지수와 네 갈래 매력을 다각형 하나로 보여준다. */
+/** 색기력과 관능·유혹·요염을 다각형 하나로 보여준다. */
 export function DohwaRadarCard({ dohwa }: { dohwa: DohwaView }) {
   const total = dohwa.indices.length;
   const ratios = dohwa.indices.map((index) => Math.min(1, Math.max(0.12, (index.score - RADAR_FLOOR) / (100 - RADAR_FLOOR))));
@@ -39,7 +39,7 @@ export function DohwaRadarCard({ dohwa }: { dohwa: DohwaView }) {
 
       <div className="relative flex items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <p className="text-xs text-mist">사람을 홀리는 힘</p>
+          <p className="text-xs text-mist">색기력</p>
           <p className="font-serif leading-none">
             <span className="text-blossom-glow text-[56px] font-light">{dohwa.score}</span>
             <span className="ml-1 text-lg text-mist">점</span>
@@ -51,7 +51,7 @@ export function DohwaRadarCard({ dohwa }: { dohwa: DohwaView }) {
       </div>
       <p className="relative mt-3 font-serif text-[14px] leading-relaxed text-paper/90">“{dohwa.grade.line}”</p>
 
-      <svg viewBox={`0 0 ${RADAR_SIZE} ${RADAR_SIZE}`} className="relative mx-auto mt-2 w-full max-w-[300px]" role="img" aria-label="네 갈래 매력 지수">
+      <svg viewBox={`0 0 ${RADAR_SIZE} ${RADAR_SIZE}`} className="relative mx-auto mt-2 w-full max-w-[300px]" role="img" aria-label="관능·유혹·요염">
         {[0.25, 0.5, 0.75, 1].map((ring) => (
           <polygon
             key={ring}
@@ -237,7 +237,7 @@ function CheckMark() {
 
 /** 유료 리포트 캡처 콜라주 가운데에 분량 카피를 올린다. */
 export function ReportVolume() {
-  const chapters = REPORT_PARTS_V2.length;
+  const chapters = REPORT_PARTS_V2.length; // 색기력 도입부 + PART 1~5
 
   return (
     <UnlockTap className="block w-full" label="상세 리포트 열기">
@@ -256,7 +256,7 @@ export function ReportVolume() {
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-5 text-center">
             <p className="font-serif text-[clamp(1.05rem,4.6vw,1.3rem)] leading-snug tracking-[0.02em] text-paper [text-shadow:0_2px_18px_rgb(0_0_0_/_0.55)]">
-              총 <span className="text-blossom-glow">{chapters}개 PART</span>의 심층 분석
+              색기력 + <span className="text-blossom-glow">{chapters}개 PART</span>의 심층 분석
             </p>
             <p className="font-eerie text-[clamp(2.1rem,11vw,2.7rem)] leading-none tracking-[0.04em] text-blossom-glow [text-shadow:0_2px_22px_rgb(0_0_0_/_0.6)]">
               미친 분량
@@ -363,6 +363,21 @@ export function ReportToc({ gender }: { gender: "female" | "male" }) {
         <h2 className="font-serif text-[20px] text-paper">본편은 이제부터.</h2>
       </Reveal>
       <ol className="flex flex-col gap-2.5">
+        <li>
+          <Reveal amount={0.55}>
+            <div className="overflow-hidden rounded-2xl border border-line/70 bg-night/70 p-3.5">
+              <span className="flex min-w-0 flex-col gap-1">
+                <span className="text-[11px] tracking-[0.2em] text-gold-soft">색기력</span>
+                <span className="font-serif text-[16px] leading-snug text-paper break-keep">
+                  {withPartnerPlain(REPORT_SAEKGI_V2.title, gender)}
+                </span>
+                <span className="text-[12.5px] leading-snug text-mist break-keep">
+                  {withPartnerPlain(REPORT_SAEKGI_V2.question, gender)}
+                </span>
+              </span>
+            </div>
+          </Reveal>
+        </li>
         {REPORT_PARTS_V2.map((part) => (
           <li key={part.key}>
             <Reveal amount={0.55}>

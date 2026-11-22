@@ -17,14 +17,14 @@ export function buildReportEmail({
   product?: ProductId;
 }) {
   if (product === PRODUCT_NEWYEAR) return buildNewYearEmail({ name, reportUrl });
-  const subject = `[${SERVICE.name}] ${name}, 도화살 리포트 완성됐어`;
+  const subject = `[${SERVICE.name}] ${name}, 색기력 리포트 완성됐어`;
   const safeName = escapeHtml(name);
   const safeUrl = escapeHtml(reportUrl);
 
   const text = [
     `${name}, 기다렸지?`,
     "",
-    "네 사주로만 쓴 연애·매력 리포트가 완성됐다.",
+    "네 사주로만 쓴 색기·연애 리포트가 완성됐다.",
     "아래 링크에서 언제든 다시 열어 보거라.",
     "",
     reportUrl,
@@ -43,12 +43,12 @@ export function buildReportEmail({
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#17132b;border:1px solid #4a1a3a;border-radius:16px;">
         <tr><td style="padding:40px 32px;font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#f5ede6;">
-          <p style="margin:0 0 8px;font-size:12px;color:#e8899b;">도화살 리포트</p>
+          <p style="margin:0 0 8px;font-size:12px;color:#e8899b;">색기력 리포트</p>
           <h1 style="margin:0 0 24px;font-size:22px;font-weight:400;line-height:1.5;color:#f5ede6;">
-            <span style="color:#f4b8c2;">${safeName}</span>,<br>도화살 리포트 완성됐어
+            <span style="color:#f4b8c2;">${safeName}</span>,<br>색기력 리포트 완성됐어
           </h1>
           <p style="margin:0 0 28px;font-size:14px;line-height:1.8;color:#bcb0c4;">
-            네 사주로만 쓴 연애·매력 리포트가 완성됐다.<br>
+            네 사주로만 쓴 색기·연애 리포트가 완성됐다.<br>
             아래 버튼을 누르면 언제든 다시 볼 수 있지.
           </p>
           <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:999px;background:#9c3f62;">

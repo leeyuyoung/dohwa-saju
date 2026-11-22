@@ -156,7 +156,7 @@ export default function AboutPage() {
                 <span className="font-serif text-gold-soft">무료</span>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-mist">
-                만세력 여덟 글자, 도화 지수와 다섯 가지 매력 지표, 나의 도화 유형
+                만세력 여덟 글자, 색기력과 관능·유혹·요염, 나의 도화 유형
               </p>
             </div>
           </Reveal>

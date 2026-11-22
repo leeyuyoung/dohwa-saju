@@ -20,7 +20,7 @@ export function ReportScreenV2({ report }: { report: FullReportViewV2 }) {
           <p className="text-[11px] tracking-[0.28em] text-cinnabar/90">{report.analyzedAt}</p>
           <h1 className="font-eerie text-[clamp(1.9rem,8vw,2.6rem)] leading-tight text-paper">
             {report.name}
-            <span className="mt-2 block font-serif text-[1.05rem] font-light tracking-normal text-blossom">의 매력 리포트</span>
+            <span className="mt-2 block font-serif text-[1.05rem] font-light tracking-normal text-blossom">의 색기·연애 리포트</span>
           </h1>
           <Reveal duration={1.4}>
             <p className="max-w-md font-serif text-[17px] font-light leading-[1.9] text-paper/95">“{report.intro}”</p>
@@ -45,9 +45,35 @@ export function ReportScreenV2({ report }: { report: FullReportViewV2 }) {
           </section>
         </Reveal>
 
+        {report.saekgi && (
+          <Reveal duration={0.7}>
+            <article id="saekgi" className="scroll-mt-24 flex flex-col gap-8">
+              <header className="flex flex-col gap-3 border-b border-line/70 pb-6">
+                <p className="text-[11px] tracking-[0.22em] text-cinnabar">색기력</p>
+                <h2 className="font-eerie text-[clamp(1.45rem,6vw,1.9rem)] leading-snug text-paper break-keep">{report.saekgi.title}</h2>
+                <p className="text-sm text-mist">{report.saekgi.question}</p>
+                <p className="mt-1 font-serif text-[16px] font-light leading-[1.85] text-blossom-glow">{report.saekgi.headline}</p>
+              </header>
+              <div className="flex flex-col gap-4 font-serif text-[16px] font-light leading-[2] text-paper/90">
+                {report.saekgi.paragraphs.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+            </article>
+          </Reveal>
+        )}
+
         <nav aria-label="목차" className="rounded-3xl border border-line bg-night/70 px-6 py-5">
           <p className="text-xs text-cinnabar">목차</p>
           <ol className="mt-3 flex flex-col">
+            {report.saekgi && (
+              <li className="border-b border-line/50 py-3 last:border-0">
+                <a href="#saekgi" className="flex items-baseline gap-3 hover:text-blossom">
+                  <span className="w-14 shrink-0 text-xs text-cinnabar/80">색기력</span>
+                  <span className="font-serif text-[15px] break-keep">{report.saekgi.title}</span>
+                </a>
+              </li>
+            )}
             {report.parts.map((part) => (
               <li key={part.part} className="border-b border-line/50 py-3 last:border-0">
                 <a href={`#part-${part.part}`} className="flex items-baseline gap-3 hover:text-blossom">
@@ -152,9 +178,11 @@ export function ReportScreenV2({ report }: { report: FullReportViewV2 }) {
                 </div>
               )}
 
-              <p className="border-l-2 border-gold/50 pl-4 font-serif text-[16px] font-light leading-[1.85] text-gold-soft">
-                {part.closingLine}
-              </p>
+              {part.key !== "charm" && part.closingLine ? (
+                <p className="border-l-2 border-gold/50 pl-4 font-serif text-[16px] font-light leading-[1.85] text-gold-soft">
+                  {part.closingLine}
+                </p>
+              ) : null}
             </article>
           </Reveal>
         ))}

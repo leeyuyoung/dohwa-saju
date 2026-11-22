@@ -2,7 +2,8 @@ import type { EarthlyBranch, HeavenlyStem } from "manseryeok";
 import type { FiveElementKey, PillarPosition, SajuProfile } from "./profileTypes";
 
 /**
- * 도화(매력) 관련 신살과 지수를 만세력 결과만으로 계산한다. AI를 쓰지 않으므로 같은 사주는 항상 같은 값이 나온다.
+ * 색기력·신살을 만세력 결과만으로 계산한다. AI를 쓰지 않으므로 같은 사주는 항상 같은 값이 나온다.
+ * 색기력 = 관능·유혹·요염 가중합(도화 끌어당김과 등치하지 않음).
  * 도화·화개는 년지·일지의 삼합 기준, 홍염은 일간 기준 표를 쓴다.
  */
 
@@ -55,12 +56,15 @@ export type CharmStar = {
   score: number;
 };
 
-export type CharmIndexKey = "allure" | "sensual" | "mystery" | "flirt" | "popularity";
+/** 화면에 보이는 색기 3축. 히어로 색기력은 이 셋의 가중 합. */
+export type CharmIndexKey = "sensual" | "flirt" | "enchant";
 
 export type DohwaReading = {
-  /** 78~99. indices도 같은 범위 */
+  /** 히어로 색기력 78~99. indices도 같은 범위 */
   score: number;
   indices: Record<CharmIndexKey, number>;
+  /** 도화살·자오묘유 기반. 히어로가 아님 — 재료/서브 */
+  dohwaPower: number;
   stars: CharmStar[];
   /** 유형은 일간 오행으로 정한다. */
   typeKey: FiveElementKey;
@@ -145,7 +149,10 @@ export function readDohwa(profile: SajuProfile): DohwaReading {
     },
   ];
   const stars: CharmStar[] = starBases.map((star) => ({ ...star, score: starScore(profile, star.positions, star.triggers) }));
-  const starCount = (key: CharmStarKey) => stars.find((star) => star.key === key)!.positions.length;
+  const starOf = (key: CharmStarKey) => stars.find((star) => star.key === key)!;
+  const starCount = (key: CharmStarKey) => starOf(key).positions.length;
+  const positionWeight = (key: CharmStarKey) =>
+    starOf(key).positions.reduce((sum, position) => sum + STAR_POSITION_WEIGHT[position], 0);
 
   const branches = profile.pillars.map((pillar) => pillar.branch);
   const peach = branches.filter((branch) => PEACH_BRANCHES.includes(branch.korean)).length;
@@ -156,25 +163,29 @@ export function readDohwa(profile: SajuProfile): DohwaReading {
   const partner = profile.calculation.gender === "female" ? groups.관성 : groups.재성;
 
   const lifted = (raw: number) => clampScore(raw + SCORE_LIFT);
-  const indices: Record<CharmIndexKey, number> = {
-    allure: lifted(52 + starCount("dohwa") * 14 + peach * 6 + bath * 4),
-    sensual: lifted(50 + starCount("hongyeom") * 16 + (dayBranchPeach ? 6 : 0) + counts.water * 4 + counts.fire * 3),
-    mystery: lifted(48 + starCount("hwagae") * 14 + groups.인성 * 5 + counts.water * 3),
-    flirt: lifted(50 + groups.식상 * 8 + counts.fire * 4),
-    popularity: lifted(50 + partner * 7 + peach * 4 + groups.비겁 * 2),
-  };
 
-  const weighted =
-    indices.allure * 0.35 + indices.sensual * 0.25 + indices.flirt * 0.15 + indices.popularity * 0.15 + indices.mystery * 0.1;
-  const starBonus = stars.filter((star) => star.positions.length > 0).length * 3;
+  /** 관능: 홍염·수/화·일지 도화·목욕 — 분위기·결의 야함 */
+  const sensual = lifted(
+    48 + positionWeight("hongyeom") * 2 + starCount("hongyeom") * 8 + (dayBranchPeach ? 6 : 0) + counts.water * 4 + counts.fire * 3 + bath * 4,
+  );
+  /** 유혹: 식상·화·관성/재성 — 말투·거리감으로 흔듦 */
+  const flirt = lifted(48 + groups.식상 * 8 + counts.fire * 4 + partner * 3);
+  /** 요염: 화개·인성·수 + 도화살 소량 — 묘하고 은근한 아우라. 도화 없어도 성립 */
+  const enchant = lifted(48 + starCount("hwagae") * 12 + positionWeight("hwagae") + groups.인성 * 5 + counts.water * 3 + starCount("dohwa") * 4);
+
+  const indices: Record<CharmIndexKey, number> = { sensual, flirt, enchant };
+  /** 색기력 = 관능 0.4 + 유혹 0.3 + 요염 0.3 */
+  const saekgi = clampScore(sensual * 0.4 + flirt * 0.3 + enchant * 0.3);
+  const dohwaPower = lifted(52 + starCount("dohwa") * 14 + peach * 6);
 
   const displayIndices = Object.fromEntries(
     Object.entries(indices).map(([key, value]) => [key, toDisplay(value)]),
   ) as Record<CharmIndexKey, number>;
 
   return {
-    score: toDisplay(clampScore(weighted + starBonus)),
+    score: toDisplay(saekgi),
     indices: displayIndices,
+    dohwaPower: toDisplay(dohwaPower),
     stars,
     typeKey: profile.dayMaster.element,
   };

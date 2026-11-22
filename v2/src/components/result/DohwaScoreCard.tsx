@@ -47,7 +47,7 @@ function CharmBar({ score }: { score: number }) {
   );
 }
 
-/** 도화 점수와 네 매력 지수를 장식 프레임 카드로 보여준다. 박스는 바로 두고 숫자만 떠오른다. */
+/** 색기력과 관능·유혹·요염 3축을 장식 프레임 카드로 보여준다. 박스는 바로 두고 숫자만 떠오른다. */
 export function DohwaScoreCard({ result }: { result: FreeResultView }) {
   const { dohwa } = result;
 
@@ -66,7 +66,7 @@ export function DohwaScoreCard({ result }: { result: FreeResultView }) {
         <div className="mt-[2%] flex shrink-0 items-center justify-center gap-2.5">
           <Flourish />
           <h2 className="font-brush text-[clamp(15px,4.4vw,17px)] font-normal tracking-[0.08em] text-[#e9ddc9] [text-shadow:0_1px_6px_rgb(0_0_0_/_0.35)]">
-            {result.name}의 도화 점수
+            {result.name}의 색기력
           </h2>
           <Flourish flip />
         </div>

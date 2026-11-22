@@ -83,29 +83,31 @@ export const DOHWA_TYPES: Record<
   },
 };
 
-/** 도화 지수 구간. 높은 점수부터 순서대로 확인한다. */
+/** 색기력 구간. 높은 점수부터 순서대로 확인한다. */
 export const DOHWA_GRADES = [
   { min: 92, hanja: "滿開", label: "활짝 핀 꽃", line: "색기가 흘러넘치는데, 정작 어디에 써야 할지 아직 모를 때가 많지." },
-  { min: 88, hanja: "開花", label: "피어나는 꽃", line: "꽃은 한창인데 아직 반도 안 썼구나. 제대로 쓰는 순간, 시선은 전부 네 거다." },
+  { min: 88, hanja: "開花", label: "피어나는 꽃", line: "야함이 한창인데 아직 반도 안 썼구나. 제대로 쓰는 순간, 시선은 전부 네 거다." },
   { min: 85, hanja: "半開", label: "반쯤 핀 꽃", line: "반만 꺼냈는데도 이 정도라니. 나머지 반을 쓰는 순간, 판이 뒤집히지." },
   { min: 0, hanja: "含苞", label: "꽃봉오리", line: "꽁꽁 숨겨 둔 색기가 가득하구나. 꺼내는 법만 알면, 다들 몰라봤던 걸 후회할 거다." },
 ] as const;
 
 export const gradeOf = (score: number) => DOHWA_GRADES.find((grade) => score >= grade.min)!;
 
-/** 화면에 보여주는 매력 지수. 인기력은 도화 점수 계산에만 쓰고 따로 보여주지 않는다. */
+/**
+ * 화면에 보이는 색기 3축.
+ * 히어로 숫자(색기력)는 관능×0.4 + 유혹×0.3 + 요염×0.3. 도화살과 등치하지 않는다.
+ */
 export const CHARM_INDICES: { key: CharmIndexKey; label: string; hanja: string }[] = [
-  { key: "allure", label: "색기력", hanja: "桃" },
-  { key: "sensual", label: "관능미", hanja: "艶" },
-  { key: "flirt", label: "유혹력", hanja: "誘" },
-  { key: "mystery", label: "신비력", hanja: "秘" },
+  { key: "sensual", label: "관능", hanja: "艶" },
+  { key: "flirt", label: "유혹", hanja: "誘" },
+  { key: "enchant", label: "요염", hanja: "妖" },
 ];
 
 /** meaning은 살 이름을 모르는 사람도 바로 알아듣는 한 줄 풀이 */
 export const CHARM_STAR_LABELS: Record<CharmStarKey, { name: string; hanja: string; meaning: string }> = {
   dohwa: { name: "도화살", hanja: "桃花", meaning: "사람을 끌어당기는 꽃향기" },
   hongyeom: { name: "홍염살", hanja: "紅艶", meaning: "눈을 못 떼게 하는 뜨거운 색기" },
-  hwagae: { name: "화개살", hanja: "華蓋", meaning: "고독해서 더 빛나는 예술가의 아우라" },
+  hwagae: { name: "화개살", hanja: "華蓋", meaning: "묘하고 은근한 요염의 아우라" },
 };
 
 import { LOVE_TIMELINE_YEARS_V1, REPORT_CHAPTERS_V1, type ReportChapterKeyV1 } from "./reportChapters.v1";

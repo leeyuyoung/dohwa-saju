@@ -58,7 +58,7 @@ export default async function CheckoutPage({ params }: PageProps<"/checkout/[tok
 
       <p className="mt-6 text-center">
         <Link href={`/result/${token}`} className="text-xs text-mist-dim underline-offset-4 hover:text-mist hover:underline">
-          내 도화 지수로 돌아가기
+          내 색기력으로 돌아가기
         </Link>
       </p>
     </PageShell>
