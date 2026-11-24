@@ -22,12 +22,22 @@ type AnalysisRow = {
   status: string;
   emailSentAt: number | null;
   emailError: string | null;
+  reportError: string | null;
+  reportRetryCount?: number;
   birth: { solar: string; lunar: string; time: string };
 };
 
 function formatEmailStatus(row: AnalysisRow) {
   if (row.emailSentAt) return { label: `발송 ${formatWhen(row.emailSentAt)}`, detail: null as string | null };
   if (row.emailError) return { label: "실패", detail: row.emailError };
+  if (row.reportError) {
+    const retries =
+      typeof row.reportRetryCount === "number" && row.reportRetryCount > 0
+        ? ` (자동재시도 ${row.reportRetryCount}회)`
+        : "";
+    return { label: "생성실패", detail: `${row.reportError}${retries}` };
+  }
+  if (row.status === "failed" && row.paidAt) return { label: "생성실패", detail: null };
   if (row.paidAt) return { label: "미발송", detail: null };
   return { label: "—", detail: null };
 }
@@ -480,7 +490,15 @@ export function AdminDashboard({
                           </td>
                           <td className="px-3 py-2 break-all text-mist">{row.email ?? "—"}</td>
                           <td className="max-w-[11rem] px-3 py-2 text-mist">
-                            <span className={row.emailError ? "text-fire" : row.emailSentAt ? "text-paper" : ""}>
+                            <span
+                              className={
+                                row.emailError || row.reportError || (row.status === "failed" && row.paidAt)
+                                  ? "text-fire"
+                                  : row.emailSentAt
+                                    ? "text-paper"
+                                    : ""
+                              }
+                            >
                               {mail.label}
                             </span>
                             {mail.detail && (

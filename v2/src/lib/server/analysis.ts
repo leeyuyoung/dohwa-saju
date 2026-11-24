@@ -18,6 +18,14 @@ import { getAnalysisStore, type AnalysisRecord, type StoredAiReport } from "./st
 const STALE_GENERATION_MS = 10 * 60 * 1000;
 /** 미결제 분석은 이 기간이 지나면 삭제한다. 개인정보 보관 최소화. */
 const UNPAID_ANALYSIS_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/** 결제 후 이 시간이 지나도 메일이 없으면 복구 대상. 첫 생성(최대 ~4분)보다 길어야 한다. */
+const PAID_EMAIL_GRACE_MS = 5 * 60 * 1000;
+/** 크론이 자동으로 돌리는 재생성 상한(결제 1건당). */
+const MAX_AUTO_REPORT_RETRIES = 2;
+/** 크론 한 번에 재생성하는 최대 건수. 건당 AI 호출이 길어 제한한다. */
+const MAX_REGENS_PER_SWEEP = 2;
+/** 크론 한 번에 메일만 재시도하는 최대 건수. */
+const MAX_EMAILS_PER_SWEEP = 10;
 
 export const TOKEN_PATTERN = /^[A-Za-z0-9_-]{22}$/;
 const newToken = () => randomBytes(16).toString("base64url");
@@ -57,6 +65,8 @@ export async function createAnalysis(input: AnalysisInput, product: ProductId = 
     email: null,
     emailSentAt: null,
     emailError: null,
+    reportError: null,
+    reportRetryCount: 0,
     phone: null,
     marketingOptIn: null,
     relationshipStatus: input.relationshipStatus,
@@ -123,11 +133,11 @@ export async function startReportGeneration(token: string): Promise<void> {
 }
 
 /** 리포트를 한 번 생성해 저장하고 메일을 보낸다. 실패해도 예외를 밖으로 던지지 않고 상태만 바꾼다. */
-async function runReportGeneration(token: string): Promise<void> {
+async function runReportGeneration(token: string): Promise<boolean> {
   const store = getAnalysisStore();
   try {
     const record = await store.get(token);
-    if (!record) return;
+    if (!record) return false;
     const report =
       productOf(record) === "newyear2027"
         ? await generateNewYearReport(record.profile)
@@ -136,15 +146,98 @@ async function runReportGeneration(token: string): Promise<void> {
       status: "ready",
       report,
       reportVersion: productOf(record) === "newyear2027" ? null : CURRENT_REPORT_VERSION,
+      reportError: null,
     });
     const latest = await store.get(token);
     if (latest?.paidAt) await sendReportEmail(latest);
+    return true;
   } catch (error) {
-    // 사용자 입력이 섞이지 않도록 오류 코드와 메시지만 남긴다.
-    const detail = error instanceof AiReportError ? error.message : String(error);
+    // 사용자 입력이 섞이지 않도록 오류 코드와 메시지만 남긴다. 관리자에서 원인을 본다.
+    const detail =
+      error instanceof AiReportError
+        ? `${error.code}: ${error.message.replace(/^\[ai-report\]\s*[A-Z_]+:\s*/, "").slice(0, 400)}`
+        : String(error).slice(0, 400);
     console.error(`[analysis] ${token.slice(0, 6)}… report generation failed: ${detail}`);
     await store
-      .update(token, { status: "failed" })
+      .update(token, { status: "failed", reportError: detail })
       .catch((storeError) => console.error(`[analysis] could not mark failed: ${String(storeError)}`));
+    return false;
   }
+}
+
+export type ReportRecoveryResult = {
+  emailed: string[];
+  regenerated: string[];
+  skipped: number;
+};
+
+/**
+ * 결제됐는데 메일이 안 간 건을 훑어, 리포트가 있으면 메일만 보내고
+ * failed·미완성·멈춘 generating이면 자동 재생성(건당 최대 2회) 후 메일을 보낸다.
+ * Vercel Cron 등에서 await로 호출한다.
+ */
+export async function recoverStuckPaidReports(now = Date.now()): Promise<ReportRecoveryResult> {
+  const store = getAnalysisStore();
+  const rows = await store.listAnalyses();
+  const graceBefore = now - PAID_EMAIL_GRACE_MS;
+  const staleBefore = now - STALE_GENERATION_MS;
+  const candidates = rows.filter(
+    (row) => row.paidAt !== null && row.paidAt <= graceBefore && row.emailSentAt === null,
+  );
+
+  const result: ReportRecoveryResult = { emailed: [], regenerated: [], skipped: 0 };
+  let regenBudget = MAX_REGENS_PER_SWEEP;
+  let emailBudget = MAX_EMAILS_PER_SWEEP;
+
+  for (const summary of candidates) {
+    const record = await store.get(summary.token);
+    if (!record || record.paidAt === null || record.emailSentAt !== null) {
+      result.skipped += 1;
+      continue;
+    }
+
+    const report = storedReport(record);
+    if (report) {
+      if (emailBudget <= 0) {
+        result.skipped += 1;
+        continue;
+      }
+      emailBudget -= 1;
+      const ok = await sendReportEmail(record);
+      if (ok) result.emailed.push(record.token);
+      else result.skipped += 1;
+      continue;
+    }
+
+    const generatingFresh = record.status === "generating" && record.updatedAt >= staleBefore;
+    if (generatingFresh) {
+      result.skipped += 1;
+      continue;
+    }
+    if (record.reportRetryCount >= MAX_AUTO_REPORT_RETRIES) {
+      result.skipped += 1;
+      continue;
+    }
+    if (regenBudget <= 0) {
+      result.skipped += 1;
+      continue;
+    }
+
+    regenBudget -= 1;
+    await store.update(record.token, {
+      report: null,
+      reportVersion: null,
+      reportRetryCount: record.reportRetryCount + 1,
+    });
+    const claimed = await store.claimReportGeneration(record.token, staleBefore);
+    if (!claimed) {
+      result.skipped += 1;
+      continue;
+    }
+    const ok = await runReportGeneration(record.token);
+    if (ok) result.regenerated.push(record.token);
+    else result.skipped += 1;
+  }
+
+  return result;
 }

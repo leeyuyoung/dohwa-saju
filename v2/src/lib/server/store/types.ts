@@ -43,6 +43,10 @@ export type AnalysisRecord = {
   emailSentAt: number | null;
   /** 마지막 메일 발송 실패/스킵 사유. 성공하면 null. */
   emailError: string | null;
+  /** 유료 리포트 AI 생성 실패 사유(코드·메시지). 성공하면 null. */
+  reportError: string | null;
+  /** 결제 후 자동 재생성 시도 횟수. 상한 초과 시 크론이 더 이상 돌리지 않는다. */
+  reportRetryCount: number;
 };
 
 export type OrderStatus = "pending" | "paid" | "canceled";

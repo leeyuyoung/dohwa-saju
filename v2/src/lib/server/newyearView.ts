@@ -183,6 +183,8 @@ function sampleRecord(report: AiNewYearReport | null, paidAt: number | null): An
     paidAt,
     emailSentAt: null,
     emailError: null,
+    reportError: null,
+    reportRetryCount: 0,
   };
 }
 

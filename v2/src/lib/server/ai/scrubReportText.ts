@@ -1,7 +1,7 @@
 import "server-only";
 
-/** 스키마 필드명이 문단으로 그대로 새는 경우. */
-const SCHEMA_KEY_ONLY = /^(closingLine|headline|intro|conclusion|paragraphs|sections|keywords|name)$/i;
+/** 스키마 필드명이 문단으로 그대로 새는 경우. `headline?` 같은 꼬리표도 포함. */
+const SCHEMA_KEY_ONLY = /^(closingLine|headline|intro|conclusion|paragraphs|sections|keywords|name)\s*\??$/i;
 
 /** 문장 끝·따옴표 앞에서만 바꿔, 단어 중간은 건드리지 않는다. */
 const END = "(?=[.!?…~\\s」』\"'”’]|$)";
@@ -29,8 +29,8 @@ function scrubSpeechTone(value: string): string {
     .replace(/네는/g, "너는");
 }
 
-/** JSON 구조 조각만으로 이뤄진 문단(예: ]}], ). */
-const JSON_DEBRIS_ONLY = /^[\s\[\]{},:"'\\]+$/;
+/** JSON·괄호 구조 조각만으로 이뤄진 문단(예: ]}], · 】 ). */
+const JSON_DEBRIS_ONLY = /^[\s\[\]{}【】",:\\']+$/;
 
 /** 프롬프트 태그·영문 키가 본문에 새면 사용자에게 보이지 않게 고친다. */
 export function scrubReportLeakage(value: string): string {
@@ -43,8 +43,10 @@ export function scrubReportLeakage(value: string): string {
       .replace(/\bmeetingWindow\b/gi, "만남이 열리기 쉬운 시기")
       .replace(/\bclosingLine\b/gi, "")
       .replace(/\bPART\s*([1-5])\b/gi, "파트 $1")
-      /** 문단 끝에 붙는 JSON 꼬리 */
+      /** 문단 끝에 붙는 JSON·전각 괄호 꼬리 */
       .replace(/\s*"?\s*\]\s*\}\s*\]\s*,?\s*$/g, "")
+      .replace(/[【】]+$/g, "")
+      .replace(/[【】]/g, "")
       .replace(/\s{2,}/g, " ")
       .trim(),
   );

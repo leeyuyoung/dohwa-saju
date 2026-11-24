@@ -32,6 +32,8 @@ type Row = {
   paid_at: string | null;
   email_sent_at: string | null;
   email_error: string | null;
+  report_error: string | null;
+  report_retry_count: number | null;
 };
 
 type Patch = Partial<Omit<AnalysisRecord, "token" | "createdAt">>;
@@ -109,6 +111,8 @@ function toRow(record: AnalysisRecord): Row {
     paid_at: record.paidAt === null ? null : toIso(record.paidAt),
     email_sent_at: record.emailSentAt === null ? null : toIso(record.emailSentAt),
     email_error: record.emailError,
+    report_error: record.reportError,
+    report_retry_count: record.reportRetryCount,
   };
 }
 
@@ -133,6 +137,8 @@ function fromRow(row: Row): AnalysisRecord {
     paidAt: row.paid_at === null ? null : Date.parse(row.paid_at),
     emailSentAt: row.email_sent_at == null ? null : Date.parse(row.email_sent_at),
     emailError: row.email_error ?? null,
+    reportError: row.report_error ?? null,
+    reportRetryCount: row.report_retry_count ?? 0,
   };
 }
 
@@ -152,6 +158,8 @@ function patchToRow(patch: Patch): Partial<Row> {
   if (patch.paidAt !== undefined) row.paid_at = patch.paidAt === null ? null : toIso(patch.paidAt);
   if (patch.emailSentAt !== undefined) row.email_sent_at = patch.emailSentAt === null ? null : toIso(patch.emailSentAt);
   if (patch.emailError !== undefined) row.email_error = patch.emailError;
+  if (patch.reportError !== undefined) row.report_error = patch.reportError;
+  if (patch.reportRetryCount !== undefined) row.report_retry_count = patch.reportRetryCount;
   return row;
 }
 
@@ -235,7 +243,7 @@ export class SupabaseAnalysisStore implements AnalysisStore {
     ].join("&");
     const response = await this.request(`${TABLE}?${filters}`, {
       method: "PATCH",
-      body: JSON.stringify({ status: "generating", updated_at: toIso(Date.now()) }),
+      body: JSON.stringify({ status: "generating", updated_at: toIso(Date.now()), report_error: null }),
       prefer: "return=representation",
     });
     const rows = (await response.json()) as { token: string }[];
@@ -301,6 +309,8 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       "paid_at",
       "email_sent_at",
       "email_error",
+      "report_error",
+      "report_retry_count",
     ].join(",");
     const pageSize = 1000;
     const records: AnalysisRecord[] = [];

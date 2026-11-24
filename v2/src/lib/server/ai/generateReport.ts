@@ -8,7 +8,8 @@ import { scrubDeep } from "./scrubReportText";
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const REQUEST_TIMEOUT_MS = 240_000;
 const MAX_OUTPUT_TOKENS = 32_000;
-const MAX_ATTEMPTS = 2;
+/** 스키마 미달·일시 오류가 잦아 2회로는 부족하다. 결제 후 실패를 줄이기 위해 5회. */
+const MAX_ATTEMPTS = 5;
 
 export type AiReportErrorCode = "CONFIG" | "UPSTREAM" | "TIMEOUT" | "INVALID_OUTPUT" | "REFUSED";
 
