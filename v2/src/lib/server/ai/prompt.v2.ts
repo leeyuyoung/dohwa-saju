@@ -10,7 +10,7 @@ import {
 } from "@/lib/constants/reportChapters.v2";
 import { CHARM_INDICES, DOHWA_TYPES, gradeOf, withPartner } from "@/lib/constants/result";
 import { readDohwa, type CharmIndexKey, type SajuProfile } from "@/lib/saju";
-import { SAEKGI_AXIS_COPY } from "@/lib/saju/freeResultCopy";
+import { SAEKGI_AXIS_COPY, SAEKGI_OPENING_BY_AXIS } from "@/lib/saju/freeResultCopy";
 import { ELEMENT_KOREAN } from "@/lib/saju/tables";
 import { relationshipLabel, type RelationshipStatus } from "@/lib/validation/analysisInput";
 import { meetingWindowFromProfile } from "./meetingWindow";
@@ -93,7 +93,7 @@ export const REPORT_INSTRUCTIONS_V2 = `당신은 '도화신당'의 도화선녀�
 
 [출력 형식 — JSON 필드만, 소제목 문자열은 쓰지 말고 paragraphs 본문만]
 - intro: 도입부. 상한 ${INTRO_TARGET_CHARS_V2}자. 새 내용이 없으면 더 짧게. 비슷한 말로 채우지 말 것. 이 사주의 눈에 띄는 특징·일간/오행·주목점·흥미 포인트. 일반 인사·누구에게나 되는 칭찬으로 시작하지 않는다.
-- saekgi: 원국 아래 색기력 도입부. paragraphs만. headline·closingLine 없음(제목 아래 핑크 한 줄 금지). 도발적·상대 반응 중심. 본문은 topAxis·점수·신살 위치에 맞춰 사주마다 다르게. 무료 티저 문장 복붙 금지. 신살 ○○점 금지(위치만). PART1과 역할 분리(여기는 색기·상대 반응, PART1은 도화·홍염·얼굴·매력 유형).
+- saekgi: 원국 아래 색기력 도입부. paragraphs만. headline·closingLine 없음(제목 아래 핑크 한 줄 금지). 문단1 첫 문장=<dohwa>.saekgiOpeningLine 그대로(축별 고정 문구). 이어 도발적·상대 반응 중심. 무료 티저 문장 복붙 금지. 신살 ○○점 금지(위치만). PART1과 역할 분리(여기는 색기·상대 반응, PART1은 도화·홍염·얼굴·매력 유형).
 - part1~part5: 아래 가이드. 각 part에 headline(그 PART를 찌르는 한 문장). part1은 closingLine 없음. part2~5는 closingLine(한 줄 정리).
 - part3만 keywords 배열 3개(name + paragraphs). sections 없음.
 - 그 외 part는 sections를 소절 수만큼, 가이드에 적힌 순서 그대로. part5 sections[0]=인연 남자, [1]=만나는 때(시기·장소만), [2]=어필 분위기(시기 금지), [3]=오해 습관. 순서를 바꾸거나 내용을 엇갈리게 쓰지 않는다.
@@ -125,6 +125,8 @@ function dohwaPayload(profile: SajuProfile) {
     scoreLabel: "색기력",
     grade: gradeOf(reading.score).label,
     topAxis: topAxis.label,
+    /** saekgi 문단1 첫 문장. 그대로 출력. */
+    saekgiOpeningLine: SAEKGI_OPENING_BY_AXIS[topAxis.key](reading.score),
     /** 무료 티저 톤 참고용. 문장 복붙 금지 — 사주에 맞게 더 길고 도발적으로 새로 쓸 것 */
     freeTeaserTone: SAEKGI_AXIS_COPY[topAxis.key],
     type: `${type.name}(${type.hanja}) · ${type.alias}`,

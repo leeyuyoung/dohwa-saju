@@ -23,6 +23,13 @@ export const SAEKGI_AXIS_COPY: Record<CharmIndexKey, [string, string]> = {
   ],
 };
 
+/** 유료 saekgi 문단1 첫 문장. 1등 축·점수만 바꾸고 문장은 고정. */
+export const SAEKGI_OPENING_BY_AXIS: Record<CharmIndexKey, (score: number) => string> = {
+  sensual: (score) => `색기력은 ${score}점. 성숙하면서도 자연스럽게 시선을 사로잡는 관능적인 매력을 타고났어.`,
+  flirt: (score) => `색기력은 ${score}점. 자신도 모르게 상대의 마음을 흔드는 매혹적인 매력을 타고났어.`,
+  enchant: (score) => `색기력은 ${score}점. 은근하면서도 사람을 홀리는 요염한 매력을 타고났어.`,
+};
+
 export type FreeSaekgiTeaser = {
   score: number;
   axisKey: CharmIndexKey;
