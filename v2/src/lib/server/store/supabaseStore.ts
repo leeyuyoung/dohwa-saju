@@ -34,6 +34,7 @@ type Row = {
   email_error: string | null;
   report_error: string | null;
   report_retry_count: number | null;
+  report_alert_sent_at: string | null;
 };
 
 type Patch = Partial<Omit<AnalysisRecord, "token" | "createdAt">>;
@@ -113,6 +114,7 @@ function toRow(record: AnalysisRecord): Row {
     email_error: record.emailError,
     report_error: record.reportError,
     report_retry_count: record.reportRetryCount,
+    report_alert_sent_at: record.reportAlertSentAt === null ? null : toIso(record.reportAlertSentAt),
   };
 }
 
@@ -139,6 +141,7 @@ function fromRow(row: Row): AnalysisRecord {
     emailError: row.email_error ?? null,
     reportError: row.report_error ?? null,
     reportRetryCount: row.report_retry_count ?? 0,
+    reportAlertSentAt: row.report_alert_sent_at == null ? null : Date.parse(row.report_alert_sent_at),
   };
 }
 
@@ -160,6 +163,9 @@ function patchToRow(patch: Patch): Partial<Row> {
   if (patch.emailError !== undefined) row.email_error = patch.emailError;
   if (patch.reportError !== undefined) row.report_error = patch.reportError;
   if (patch.reportRetryCount !== undefined) row.report_retry_count = patch.reportRetryCount;
+  if (patch.reportAlertSentAt !== undefined) {
+    row.report_alert_sent_at = patch.reportAlertSentAt === null ? null : toIso(patch.reportAlertSentAt);
+  }
   return row;
 }
 
@@ -311,6 +317,7 @@ export class SupabaseAnalysisStore implements AnalysisStore {
       "email_error",
       "report_error",
       "report_retry_count",
+      "report_alert_sent_at",
     ].join(",");
     const pageSize = 1000;
     const records: AnalysisRecord[] = [];

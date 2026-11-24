@@ -47,6 +47,8 @@ export type AnalysisRecord = {
   reportError: string | null;
   /** 결제 후 자동 재생성 시도 횟수. 상한 초과 시 크론이 더 이상 돌리지 않는다. */
   reportRetryCount: number;
+  /** 자동 재시도 소진 후 운영자 알림 메일 발송 시각. 없으면 null. */
+  reportAlertSentAt: number | null;
 };
 
 export type OrderStatus = "pending" | "paid" | "canceled";

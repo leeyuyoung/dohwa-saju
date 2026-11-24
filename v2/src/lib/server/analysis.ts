@@ -12,6 +12,7 @@ import { aiReportSchemaV1, type AiReportV1 } from "./ai/reportSchema.v1";
 import { aiReportSchemaV2, type AiReportV2 } from "./ai/reportSchema.v2";
 import { aiNewYearSchema, type AiNewYearReport } from "./ai/reportSchema.newyear";
 import { sendReportEmail } from "./email/sendReportEmail";
+import { sendReportFailureAlert } from "./email/sendReportFailureAlert";
 import { getAnalysisStore, type AnalysisRecord, type StoredAiReport } from "./store";
 
 /** 이 시간보다 오래 generating이면 생성이 중단된 것으로 보고 다시 시작할 수 있다. 생성 제한 시간(300초)보다 길어야 한다. */
@@ -67,6 +68,7 @@ export async function createAnalysis(input: AnalysisInput, product: ProductId = 
     emailError: null,
     reportError: null,
     reportRetryCount: 0,
+    reportAlertSentAt: null,
     phone: null,
     marketingOptIn: null,
     relationshipStatus: input.relationshipStatus,
@@ -147,6 +149,7 @@ async function runReportGeneration(token: string): Promise<boolean> {
       report,
       reportVersion: productOf(record) === "newyear2027" ? null : CURRENT_REPORT_VERSION,
       reportError: null,
+      reportAlertSentAt: null,
     });
     const latest = await store.get(token);
     if (latest?.paidAt) await sendReportEmail(latest);
@@ -168,6 +171,7 @@ async function runReportGeneration(token: string): Promise<boolean> {
 export type ReportRecoveryResult = {
   emailed: string[];
   regenerated: string[];
+  alerted: string[];
   skipped: number;
 };
 
@@ -185,7 +189,7 @@ export async function recoverStuckPaidReports(now = Date.now()): Promise<ReportR
     (row) => row.paidAt !== null && row.paidAt <= graceBefore && row.emailSentAt === null,
   );
 
-  const result: ReportRecoveryResult = { emailed: [], regenerated: [], skipped: 0 };
+  const result: ReportRecoveryResult = { emailed: [], regenerated: [], alerted: [], skipped: 0 };
   let regenBudget = MAX_REGENS_PER_SWEEP;
   let emailBudget = MAX_EMAILS_PER_SWEEP;
 
@@ -215,7 +219,9 @@ export async function recoverStuckPaidReports(now = Date.now()): Promise<ReportR
       continue;
     }
     if (record.reportRetryCount >= MAX_AUTO_REPORT_RETRIES) {
-      result.skipped += 1;
+      const latest = await store.get(record.token);
+      if (latest && (await sendReportFailureAlert(latest))) result.alerted.push(record.token);
+      else result.skipped += 1;
       continue;
     }
     if (regenBudget <= 0) {
@@ -224,10 +230,11 @@ export async function recoverStuckPaidReports(now = Date.now()): Promise<ReportR
     }
 
     regenBudget -= 1;
+    const nextRetry = record.reportRetryCount + 1;
     await store.update(record.token, {
       report: null,
       reportVersion: null,
-      reportRetryCount: record.reportRetryCount + 1,
+      reportRetryCount: nextRetry,
     });
     const claimed = await store.claimReportGeneration(record.token, staleBefore);
     if (!claimed) {
@@ -235,8 +242,17 @@ export async function recoverStuckPaidReports(now = Date.now()): Promise<ReportR
       continue;
     }
     const ok = await runReportGeneration(record.token);
-    if (ok) result.regenerated.push(record.token);
-    else result.skipped += 1;
+    if (ok) {
+      result.regenerated.push(record.token);
+      continue;
+    }
+    if (nextRetry >= MAX_AUTO_REPORT_RETRIES) {
+      const latest = await store.get(record.token);
+      if (latest && (await sendReportFailureAlert(latest))) result.alerted.push(record.token);
+      else result.skipped += 1;
+    } else {
+      result.skipped += 1;
+    }
   }
 
   return result;
