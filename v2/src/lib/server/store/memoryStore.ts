@@ -45,7 +45,13 @@ export class MemoryAnalysisStore implements AnalysisStore {
     const record = this.records.get(token);
     if (!record || record.paidAt === null || record.report !== null) return false;
     if (record.status === "generating" && record.updatedAt >= staleBefore) return false;
-    this.records.set(token, { ...record, status: "generating", reportError: null, updatedAt: Date.now() });
+    this.records.set(token, {
+      ...record,
+      status: "generating",
+      reportError: null,
+      reportAlertSentAt: null,
+      updatedAt: Date.now(),
+    });
     return true;
   }
 

@@ -249,7 +249,12 @@ export class SupabaseAnalysisStore implements AnalysisStore {
     ].join("&");
     const response = await this.request(`${TABLE}?${filters}`, {
       method: "PATCH",
-      body: JSON.stringify({ status: "generating", updated_at: toIso(Date.now()), report_error: null }),
+      body: JSON.stringify({
+        status: "generating",
+        updated_at: toIso(Date.now()),
+        report_error: null,
+        report_alert_sent_at: null,
+      }),
       prefer: "return=representation",
     });
     const rows = (await response.json()) as { token: string }[];

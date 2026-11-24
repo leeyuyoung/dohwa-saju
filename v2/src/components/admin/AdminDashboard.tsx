@@ -23,20 +23,13 @@ type AnalysisRow = {
   emailSentAt: number | null;
   emailError: string | null;
   reportError: string | null;
-  reportRetryCount?: number;
   birth: { solar: string; lunar: string; time: string };
 };
 
 function formatEmailStatus(row: AnalysisRow) {
   if (row.emailSentAt) return { label: `발송 ${formatWhen(row.emailSentAt)}`, detail: null as string | null };
   if (row.emailError) return { label: "실패", detail: row.emailError };
-  if (row.reportError) {
-    const retries =
-      typeof row.reportRetryCount === "number" && row.reportRetryCount > 0
-        ? ` (자동재시도 ${row.reportRetryCount}회)`
-        : "";
-    return { label: "생성실패", detail: `${row.reportError}${retries}` };
-  }
+  if (row.reportError) return { label: "생성실패", detail: row.reportError };
   if (row.status === "failed" && row.paidAt) return { label: "생성실패", detail: null };
   if (row.paidAt) return { label: "미발송", detail: null };
   return { label: "—", detail: null };

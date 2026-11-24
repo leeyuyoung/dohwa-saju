@@ -55,7 +55,6 @@ export async function GET(request: Request) {
           emailSentAt: record.emailSentAt,
           emailError: record.emailError,
           reportError: record.reportError,
-          reportRetryCount: record.reportRetryCount,
           birth: {
             solar: `${solarDate.year}-${String(solarDate.month).padStart(2, "0")}-${String(solarDate.day).padStart(2, "0")}`,
             lunar: `${lunarDate.year}-${String(lunarDate.month).padStart(2, "0")}-${String(lunarDate.day).padStart(2, "0")}${lunarDate.isLeapMonth ? "(윤)" : ""}`,
@@ -82,7 +81,6 @@ export async function GET(request: Request) {
           emailSentAt: record.emailSentAt,
           emailError: record.emailError,
           reportError: record.reportError,
-          reportRetryCount: record.reportRetryCount,
           birth: { solar: "—", lunar: "—", time: "—" },
         },
       ];
