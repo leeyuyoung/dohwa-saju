@@ -21,8 +21,9 @@ export function ReportWaiting({
   token,
   failed,
   messages = REPORT_WRITING_MESSAGES,
-  failedTitle = "꽃을 펼치다 잠시 바람이 불었구나.",
-  failedDetail = "결제는 안전하게 끝났으니, 다시 열어보면 돼.",
+  failedTitle = "리포트를 쓰다 잠시 끊겼습니다.",
+  failedDetail = "결제는 정상입니다. 다시 열면 약 2분 걸려요. 완성되면 메일로도 보내드려요.",
+  failedContact = "문의 : yylee00@naver.com",
   retryLabel = "다시 펼치기",
   hint = "보통 1~2분 걸려요. 이 화면을 닫아도 리포트는 이메일로 보내드려요.",
 }: {
@@ -31,6 +32,7 @@ export function ReportWaiting({
   messages?: readonly string[];
   failedTitle?: string;
   failedDetail?: string;
+  failedContact?: string;
   retryLabel?: string;
   hint?: string;
 }) {
@@ -142,9 +144,10 @@ export function ReportWaiting({
             <p className="font-serif text-base leading-relaxed text-paper">
               {failedTitle}
               <br />
-              <span className="text-mist">{failedDetail}</span>
+              <span className="text-sm text-mist">{failedDetail}</span>
             </p>
             <Button onClick={retry}>{retryLabel}</Button>
+            {failedContact ? <p className="text-xs text-mist">{failedContact}</p> : null}
             {retryError && (
               <p role="alert" className="text-xs text-cinnabar">
                 {retryError}

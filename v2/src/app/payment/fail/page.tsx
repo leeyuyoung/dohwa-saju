@@ -18,7 +18,7 @@ export default async function PaymentFailPage({ searchParams }: PageProps<"/paym
     ? "결제를 취소하셨습니다."
     : typeof message === "string" && message.trim()
       ? message.slice(0, MAX_MESSAGE_LENGTH)
-      : "결제가 완료되지 않았습니다.";
+      : null;
   const resultHref = typeof token === "string" && TOKEN_PATTERN.test(token) ? `/result/${token}` : null;
 
   return (
@@ -26,7 +26,7 @@ export default async function PaymentFailPage({ searchParams }: PageProps<"/paym
       <div className="flex flex-1 flex-col items-center justify-center gap-8 py-20 text-center">
         <div className="flex flex-col gap-3">
           <h1 className="font-serif text-2xl font-light">결제가 이루어지지 않았습니다</h1>
-          <p className="text-sm leading-relaxed text-mist">{reason}</p>
+          {reason ? <p className="text-sm leading-relaxed text-mist">{reason}</p> : null}
           <p className="text-xs text-mist-dim">비용은 청구되지 않았습니다.</p>
         </div>
         <div className="flex w-full max-w-xs flex-col gap-3">
