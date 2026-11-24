@@ -39,7 +39,7 @@ export const DETAILED_REPORT_MID_PRICE = 27900;
 export const DETAILED_REPORT_SECRET_COUPON = 1000;
 export const DETAILED_REPORT_COUPON_PRICE = DETAILED_REPORT_PRICE - DETAILED_REPORT_SECRET_COUPON;
 /** 주문명·결제 시트 상품명. */
-export const DETAILED_REPORT_ORDER_NAME = "도화신당 색기·연애 리포트";
+export const DETAILED_REPORT_ORDER_NAME = "도화신당 매력 리포트";
 
 /** 서버가 받을 수 있는 결제 금액. 클라이언트 임의 금액은 거부한다. */
 export const DETAILED_REPORT_ALLOWED_AMOUNTS = [DETAILED_REPORT_PRICE] as const;
