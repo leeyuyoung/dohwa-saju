@@ -163,7 +163,7 @@ export function NewYearResultScreen({
             isSheep
               ? "/images/fatenavi2/mery-duo.png"
               : isPremium
-                ? "/images/fatenavi4/hero-zodiac.jpg?v=6"
+                ? "/images/fatenavi4/hero-zodiac.jpg?v=8"
                 : "/images/fatenavi3/intro.jpg"
           }
           alt=""

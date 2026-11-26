@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function FateNavi3ReportSampleRedirect() {
+export default function FateNavi2ReportSampleRedirect() {
   redirect("/FateNavi/report/sample");
 }

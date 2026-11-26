@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { themeOf } from "@/lib/constants/fatenaviTheme";
 
-const theme = themeOf("hanji");
+const theme = themeOf("sheep");
 
 export const metadata: Metadata = {
   title: {
@@ -10,6 +10,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FateNavi3Layout({ children }: { children: React.ReactNode }) {
+export default function FateNavi2Layout({ children }: { children: React.ReactNode }) {
   return children;
 }

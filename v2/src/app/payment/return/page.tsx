@@ -28,7 +28,7 @@ export default async function PaymentReturnPage({ searchParams }: { searchParams
     <div className="flex flex-1 flex-col items-center justify-center gap-8 py-20 text-center">
       <h1 className="font-serif text-2xl font-light">결제 정보를 확인할 수 없습니다</h1>
       <div className="w-full max-w-xs">
-        <ButtonLink href={newyear ? "/FateNavi3" : "/"} variant="ghost">
+        <ButtonLink href={newyear ? "/FateNavi" : "/"} variant="ghost">
           처음으로
         </ButtonLink>
       </div>

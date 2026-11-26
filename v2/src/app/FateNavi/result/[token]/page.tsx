@@ -1,7 +1,34 @@
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
+import { NewYearResultScreen } from "@/components/newyear/NewYearResultScreen";
+import { NewYearShell } from "@/components/newyear/NewYearShell";
+import { PRODUCT_NEWYEAR, productOf } from "@/lib/constants/newyear";
+import { TOKEN_PATTERN } from "@/lib/server/analysis";
+import { toNewYearFreeView } from "@/lib/server/newyearView";
+import { isPayappConfigured } from "@/lib/server/payments";
+import { getAnalysisStore } from "@/lib/server/store";
 
-/** 버전1 결과 제거. 공통 진입은 FateNavi3 결과로 보낸다. */
-export default async function FateNaviResultRedirect({ params }: { params: Promise<{ token: string }> }) {
+export const metadata: Metadata = {
+  title: "인생 설계서 미리보기",
+  robots: { index: false, follow: false },
+};
+
+export default async function FateNavi3ResultPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  redirect(`/FateNavi3/result/${token}`);
+  if (!TOKEN_PATTERN.test(token)) notFound();
+  const record = await getAnalysisStore().get(token);
+  if (!record) notFound();
+  if (productOf(record) !== PRODUCT_NEWYEAR) redirect(`/result/${token}`);
+
+  return (
+    <NewYearShell theme="hanji" showFooter>
+      <NewYearResultScreen
+        theme="hanji"
+        result={toNewYearFreeView(record)}
+        token={token}
+        paid={record.paidAt !== null}
+        paymentsReady={isPayappConfigured()}
+      />
+    </NewYearShell>
+  );
 }

@@ -19,7 +19,7 @@ export default async function NewYearCheckoutPage({ params }: { params: Promise<
   if (!record) notFound();
   if (productOf(record) !== PRODUCT_NEWYEAR) redirect(record.paidAt ? `/report/${token}` : `/checkout/${token}`);
   if (record.paidAt !== null) redirect(`/FateNavi/report/${token}`);
-  if (!NEWYEAR_CHECKOUT_OPEN) redirect(`/FateNavi3/result/${token}`);
+  if (!NEWYEAR_CHECKOUT_OPEN) redirect(`/FateNavi/result/${token}`);
 
   return (
     <NewYearShell theme="hanji" tone="ink">
@@ -37,7 +37,7 @@ export default async function NewYearCheckoutPage({ params }: { params: Promise<
       </section>
       <CheckoutWidget token={token} amount={NEWYEAR_REPORT_PRICE} legalBase="/FateNavi/legal" tone="ink" />
       <p className="mt-6 text-center">
-        <Link href={`/FateNavi3/result/${token}`} className="text-xs text-mist-dim underline-offset-4 hover:text-mist hover:underline">
+        <Link href={`/FateNavi/result/${token}`} className="text-xs text-mist-dim underline-offset-4 hover:text-mist hover:underline">
           무료 결과로 돌아가기
         </Link>
       </p>

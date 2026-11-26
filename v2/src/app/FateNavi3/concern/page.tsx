@@ -7,12 +7,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function FateNavi3ConcernPage() {
+export default function FateNavi2ConcernPage() {
   return (
-    <NewYearShell theme="hanji" tone="ink">
-      <div className="pt-0">
-        <NewYearConcernForm theme="hanji" />
-      </div>
+    <NewYearShell theme="sheep">
+      <NewYearConcernForm theme="sheep" />
     </NewYearShell>
   );
 }

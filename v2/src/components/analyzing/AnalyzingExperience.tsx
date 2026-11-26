@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { StickyFormCta } from "@/components/newyear/StickyFormCta";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { MythicButtonLink } from "@/components/ui/MythicButtonLink";
 import { PortraitVideo } from "@/components/ui/PortraitVideo";
@@ -261,7 +262,7 @@ export function AnalyzingExperience({
           )}
         </div>
         {(phase.kind === "ready" || phase.kind === "error" || phase.kind === "missing") && (
-          <div className="ny-sticky-cta">
+          <StickyFormCta>
             {phase.kind === "ready" && (
               <button type="button" className="ny-cta" onClick={() => router.replace(resultHref(phase.token))}>
                 {readyCopy.cta}
@@ -282,7 +283,7 @@ export function AnalyzingExperience({
                 {missingCopy.cta}
               </a>
             )}
-          </div>
+          </StickyFormCta>
         )}
       </div>
     );

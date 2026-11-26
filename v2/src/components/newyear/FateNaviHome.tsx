@@ -3,6 +3,53 @@ import { HanjiIntroVideo } from "@/components/newyear/HanjiIntroVideo";
 import { NewYearShell } from "@/components/newyear/NewYearShell";
 import { ReadingCountBubble } from "@/components/newyear/ReadingCountBubble";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
+import { NEWYEAR_LEGAL_LINKS } from "@/lib/constants/legal";
+
+const PREMIUM_REVIEWS = [
+  {
+    name: "이세O",
+    body: "요즘 인생 현타와서 홀린 듯이 질렀습니다. 솔직히 반신반의했는데 결제하고 스크롤 내리다가 너무 용해서 기절할 뻔했네요. 뜬구름 잡는 소리 안 하고 팩폭 제대로 때려주네요. 제 타고난 기질 보면서 뜨끔한 부분이 한두 군데가 아니었습니다. 다른 사주들은 제 고민 적는 곳이 없는데 이건 적는 칸이 있어서 그거에 대해 딱 알려주니까 방향 잡기가 훨씬 수월하네요. 이 가격에 이 정도 퀄리티면 돈 전혀 안 아깝습니다.",
+    quoteBefore: "이 가격에 이 정도 퀄리티면 ",
+    quoteEmph: "돈 전혀 안 아깝습니다.",
+    quoteAfter: "",
+  },
+  {
+    name: "강이O",
+    body: "결혼한 지 7년이 넘었고 남편과의 관계도 예전 같지 않고, 자녀 문제가 제일 고민이었어요. 직접 고민 입력하는 칸이 있는데, 자녀에 대해 물어볼 수 있어서 좋았어요.. 아직은 자녀를 갖기보다 조금 더 기다리는 방향으로 가려구요. 조심해야 할 시기가 같이 나와서 오히려 신뢰가 갔습니다. 단순히 올해 운세만 보는 것과는 확실히 다른 느낌입니다.",
+    quoteBefore: "단순히 올해 운세만 보는 것과는 ",
+    quoteEmph: "확실히 다른 느낌입니다.",
+    quoteAfter: "",
+  },
+  {
+    name: "김미O",
+    body: "서른 넘어가니까 인생의 갈림길에 서 있는 느낌이 들고 주변에 털어놓기도 애매해서 신청해 봤는데, 진짜 제대로 돈 값 합니다 !! 분량도 많고 정확해요. 특히 제가 요즘 제일 고민하던 부분에 대해 현실적인 액션 플랜을 콕 집어줘서 너무 좋았어요. 위로만 해주는 게 아니라 진짜 길을 알려주는 느낌이라 두고두고 보려구요.",
+    quoteBefore: "위로만 해주는 게 아니라 ",
+    quoteEmph: "진짜 길을 알려주는 느낌",
+    quoteAfter: "이라 두고두고 보려구요.",
+  },
+  {
+    name: "이은O",
+    body: "예전에 유명한 철학관 가서 10만 원 내고 20분 듣고 온 적 있는데, 나오자마자 다 까먹어서 아까웠거든요. 근데 이건 계속 볼 수 있어서 좋네요. 재물운, 직업운, 결혼운까지 빠지는 거 없이 디테일하고, 무엇보다 제 약점을 어떻게 보완해야 하는지 실행 포인트를 정확히 알려줘서 소름 돋았습니다. 고민 많으신 30대 분들 한 번쯤 꼭 보시는 거 추천해요!",
+    quoteBefore: "제 약점을 어떻게 보완해야 하는지 ",
+    quoteEmph: "실행 포인트를 정확히 알려줘서 소름",
+    quoteAfter: " 돋았습니다.",
+  },
+] as const;
+
+const PREMIUM_KAKAO_REVIEWS = Array.from({ length: 11 }, (_, i) => {
+  const n = String(i + 1).padStart(2, "0");
+  return `/images/fatenavi4/kakao-reviews/review-${n}.jpg`;
+});
+
+/** 2열·3열·2열 리듬으로 나열 (합 11) */
+const PREMIUM_KAKAO_ROWS: { cols: 2 | 3; images: string[] }[] = [
+  { cols: 2, images: PREMIUM_KAKAO_REVIEWS.slice(0, 2) },
+  { cols: 3, images: PREMIUM_KAKAO_REVIEWS.slice(2, 5) },
+  { cols: 2, images: PREMIUM_KAKAO_REVIEWS.slice(5, 7) },
+  { cols: 2, images: PREMIUM_KAKAO_REVIEWS.slice(7, 9) },
+  { cols: 2, images: PREMIUM_KAKAO_REVIEWS.slice(9, 11) },
+];
+
 export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
   const config = themeOf(theme);
   const stickyCta = (
@@ -52,7 +99,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             <span className="ny-premium-hero-corner ny-premium-hero-corner-br" aria-hidden />
             <div className="ny-premium-hero-art">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/fatenavi4/hero-zodiac.jpg?v=6" alt="" />
+              <img src="/images/fatenavi4/hero-zodiac.jpg?v=8" alt="" />
               <p className="ny-premium-ribbon">태어나서부터 100세까지</p>
             </div>
             <p className="ny-premium-hero-kicker">PREMIUM</p>
@@ -89,6 +136,71 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             </ul>
             <p className="ny-premium-note">좋은 말만 하지 않습니다. 길을 알려드립니다.</p>
           </section>
+
+          <section className="ny-premium-kakao" aria-label="카톡 실제 후기">
+            <h2 className="ny-premium-kakao-title">실제 후기</h2>
+            <div className="ny-premium-kakao-list">
+              {PREMIUM_KAKAO_ROWS.map((row, rowIndex) => (
+                <ul
+                  key={rowIndex}
+                  className={`ny-premium-kakao-row ny-premium-kakao-row-${row.cols}`}
+                >
+                  {row.images.map((src, index) => (
+                    <li key={src} className="ny-premium-kakao-item">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={`카톡 후기 ${rowIndex * 4 + index + 1}`}
+                        className="ny-premium-kakao-img"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </section>
+
+          <section className="ny-premium-reviews" aria-label="이용 후기">
+            <ul className="ny-premium-review-list">
+              {PREMIUM_REVIEWS.map((review) => (
+                <li key={review.name} className="ny-premium-review">
+                  <div className="ny-premium-review-card">
+                    <div className="ny-premium-review-head">
+                      <span className="ny-premium-review-avatar" aria-hidden>
+                        {review.name.slice(0, 1)}
+                      </span>
+                      <p className="ny-premium-review-name">{review.name} 님</p>
+                      <span className="ny-premium-review-badge">적극 추천</span>
+                    </div>
+                    <p className="ny-premium-review-stars" aria-label="별점 5점">
+                      ★★★★★
+                    </p>
+                    <p className="ny-premium-review-body">{review.body}</p>
+                  </div>
+                  <blockquote className="ny-premium-review-quote">
+                    {review.quoteBefore}
+                    <em>{review.quoteEmph}</em>
+                    {review.quoteAfter}
+                  </blockquote>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <footer className="ny-premium-legal">
+            <p>
+              본 서비스의 해석은 사주 명리학의 전통적 해석 체계를 바탕으로 한 참고용 콘텐츠이며, 의료·법률·투자 등
+              전문적인 판단을 대신하지 않습니다.
+            </p>
+            <nav className="ny-premium-legal-nav" aria-label="약관 및 사업자 정보">
+              {NEWYEAR_LEGAL_LINKS.map((link, index) => (
+                <span key={link.href} className="ny-premium-legal-item">
+                  {index > 0 ? <span aria-hidden>·</span> : null}
+                  <Link href={link.href}>{link.label}</Link>
+                </span>
+              ))}
+            </nav>
+          </footer>
         </div>
       </NewYearShell>
     );

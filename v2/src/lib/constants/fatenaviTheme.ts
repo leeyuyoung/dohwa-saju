@@ -14,19 +14,9 @@ export type FateNaviTheme = {
 };
 
 export const FATENAVI_THEMES: Record<FateNaviThemeId, FateNaviTheme> = {
-  sheep: {
-    id: "sheep",
-    basePath: "/FateNavi2",
-    shellClass: "ny-sheep",
-    brand: "메리운세",
-    orderName: "메리운세",
-    slogan: "어휴, 올해도 버티느라 고생 많았어!",
-    ctaStart: "2027년 레벨업 하기",
-    introNote: "",
-  },
   hanji: {
     id: "hanji",
-    basePath: "/FateNavi3",
+    basePath: "/FateNavi",
     shellClass: "ny-hanji",
     brand: "운명내비",
     orderName: "운명내비 종합사주",
@@ -36,13 +26,23 @@ export const FATENAVI_THEMES: Record<FateNaviThemeId, FateNaviTheme> = {
   },
   premium: {
     id: "premium",
-    basePath: "/FateNavi4",
+    basePath: "/FateNavi2",
     shellClass: "ny-premium",
     brand: "프리미엄 종합사주",
     orderName: "프리미엄 종합사주",
     slogan: "말도 안 되는 방대한 분량, 1:1 맞춤 프리미엄 사주",
     ctaStart: "프리미엄 사주 신청하기",
     introNote: "크림·프리미엄 랜딩 버전",
+  },
+  sheep: {
+    id: "sheep",
+    basePath: "/FateNavi3",
+    shellClass: "ny-sheep",
+    brand: "메리운세",
+    orderName: "메리운세",
+    slogan: "어휴, 올해도 버티느라 고생 많았어!",
+    ctaStart: "2027년 레벨업 하기",
+    introNote: "",
   },
 };
 

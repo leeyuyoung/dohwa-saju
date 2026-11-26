@@ -33,7 +33,7 @@ export default async function NewYearReportPage({ params }: { params: Promise<{ 
         </NewYearShell>
       );
     }
-    redirect(`/FateNavi3/result/${token}`);
+    redirect(`/FateNavi/result/${token}`);
   }
 
   const report = toNewYearReportView(record);

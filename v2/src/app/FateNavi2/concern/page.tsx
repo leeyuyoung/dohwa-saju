@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function FateNavi2ConcernPage() {
   return (
-    <NewYearShell theme="sheep">
-      <NewYearConcernForm theme="sheep" />
+    <NewYearShell theme="premium" tone="ink">
+      <NewYearConcernForm theme="premium" />
     </NewYearShell>
   );
 }

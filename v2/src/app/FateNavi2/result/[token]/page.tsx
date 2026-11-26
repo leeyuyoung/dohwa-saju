@@ -21,9 +21,9 @@ export default async function FateNavi2ResultPage({ params }: { params: Promise<
   if (productOf(record) !== PRODUCT_NEWYEAR) redirect(`/result/${token}`);
 
   return (
-    <NewYearShell theme="sheep" showFooter>
+    <NewYearShell theme="premium" showFooter>
       <NewYearResultScreen
-        theme="sheep"
+        theme="premium"
         result={toNewYearFreeView(record)}
         token={token}
         paid={record.paidAt !== null}

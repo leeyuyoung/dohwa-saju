@@ -1,12 +1,12 @@
 ---
-description: Default to FateNavi3; leave FateNavi2/4 unless asked
+description: Default to FateNavi (hanji); leave 2/3 unless asked
 alwaysApply: true
 ---
 
 # FateNavi scope
 
-- Default scope is **FateNavi3** (`theme: "hanji"`, `app/FateNavi3/**`).
-- Do **not** change FateNavi2 or FateNavi4 (`/FateNavi2`, `/FateNavi4`, sheep/premium) unless the user explicitly asks.
-- Shared routes under `/FateNavi` (checkout, report, legal, admin, API) are common infrastructure — keep them; version-1 theme UI is removed.
-- Shared components (`NewYearForm`, `NewYearResultScreen`, etc.): prefer `theme === "hanji"` branching or FateNavi3-specific files over editing 2/4 pages.
-- When the user says to update 2 or 4, only then touch those routes/themes.
+- Default scope is **FateNavi** (`theme: "hanji"`, `app/FateNavi/**` flow UI + shared checkout/report/legal/admin).
+- Do **not** change FateNavi2 or FateNavi3 (`/FateNavi2` premium, `/FateNavi3` sheep) unless the user explicitly asks.
+- Shared routes under `/FateNavi` (checkout, report, legal, admin, API) are common infrastructure — keep them.
+- Shared components (`NewYearForm`, `NewYearResultScreen`, etc.): prefer `theme === "hanji"` branching or FateNavi-specific files over editing 2/3 pages.
+- When the user says to update 2 or 3, only then touch those routes/themes.

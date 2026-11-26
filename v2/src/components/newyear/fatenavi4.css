@@ -1,136 +1,160 @@
-/* FateNavi4 — 크림·프리미엄 랜딩 톤 */
+/* FateNavi2 — 수묵·한지 프리미엄 톤 (히어로 양 이미지) */
 
 .ny-premium {
-  --bg-light: #f3ead7;
-  --bg-dark: #2a2118;
-  --ny-bg: #f3ead7;
-  --ny-card: #fffdf8;
-  --ny-ink: #2a2118;
-  --ny-muted: rgb(42 33 24 / 0.62);
-  --ny-line: rgb(42 33 24 / 0.16);
-  --route: #9a7b3c;
-  --ny-warn: #9a7b3c;
-  --ny-seal: #9b2d1f;
-  --ny-seal-deep: #7a2016;
-  --good: #3f6b4a;
-  --ny-go: #3f6b4a;
-  --bad: #9b2d1f;
-  --ny-stop: #9b2d1f;
-  --text: #2a2118;
-  --text-sub: rgb(42 33 24 / 0.62);
-  --line: rgb(42 33 24 / 0.16);
+  --bg-light: #f5f3ee;
+  --bg-dark: #1c1c1c;
+  --ny-bg: #f5f3ee;
+  --ny-card: #faf9f6;
+  --ny-ink: #1c1c1c;
+  --ny-muted: rgb(28 28 28 / 0.58);
+  --ny-line: rgb(28 28 28 / 0.14);
+  --route: #d4521c;
+  --ny-warn: #d4521c;
+  --ny-seal: #d4521c;
+  --ny-seal-deep: #b84316;
+  --good: #4a6350;
+  --ny-go: #4a6350;
+  --bad: #b84316;
+  --ny-stop: #b84316;
+  --text: #1c1c1c;
+  --text-sub: rgb(28 28 28 / 0.58);
+  --line: rgb(28 28 28 / 0.14);
   background:
-    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.55), transparent 48%),
-    #f3ead7;
-  color: #2a2118;
+    radial-gradient(ellipse at 78% 8%, rgb(226 110 45 / 0.08), transparent 36%),
+    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.7), transparent 48%),
+    #f5f3ee;
+  color: #1c1c1c;
 }
 
-/* 인트로 랜딩만: 히어로 이미지와 맞는 상단 그라데이션 */
+/* 인트로 랜딩: 수묵 한지·먹 분위기 */
 .ny-premium:has(.ny-premium-landing) {
   background:
-    radial-gradient(ellipse at 50% 6%, rgb(42 33 24 / 0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 18%, rgb(196 160 90 / 0.1) 0%, transparent 52%),
-    radial-gradient(ellipse at 50% 0%, rgb(255 252 245 / 0.85), transparent 48%),
-    linear-gradient(180deg, #9a8770 0%, #d4c4a8 7%, #efe6d4 18%, #f3ead7 32%, #f3ead7 100%);
+    radial-gradient(ellipse at 82% 4%, rgb(226 90 35 / 0.12) 0%, transparent 28%),
+    radial-gradient(ellipse at 18% 0%, rgb(28 28 28 / 0.05) 0%, transparent 34%),
+    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.9), transparent 50%),
+    linear-gradient(180deg, #ebe8e2 0%, #f5f3ee 14%, #f5f3ee 100%);
 }
 
 .ny-premium .ny-frame {
   background: transparent;
 }
 
+.ny-premium .ny-header {
+  padding: 0.55rem 1rem 0.2rem;
+}
+
+.ny-premium .ny-main:has(.ny-form) {
+  padding-top: 0.75rem;
+  padding-bottom: 5.75rem;
+}
+
+.ny-premium .ny-form {
+  gap: 2.15rem;
+}
+
+.ny-premium .ny-form > section {
+  gap: 0.85rem;
+}
+
 .ny-premium .ny-brand,
 .ny-premium .ny-title,
 .ny-premium .ny-sub {
   font-family: var(--font-serif), "Noto Serif KR", serif;
-  color: #2a2118;
+  color: #1c1c1c;
 }
 
 .ny-premium .ny-en,
 .ny-premium .ny-kicker {
-  color: #9a7b3c;
+  color: #d4521c;
   letter-spacing: 0.18em;
 }
 
 .ny-premium .ny-body,
 .ny-premium .ny-caption {
-  color: rgb(42 33 24 / 0.68);
+  color: rgb(28 28 28 / 0.64);
+}
+
+.ny-premium .ny-field,
+.ny-premium .ny-choice {
+  height: 48px;
 }
 
 .ny-premium .ny-field,
 .ny-premium .ny-choice,
 .ny-premium .ny-textarea {
-  border: 1px solid rgb(42 33 24 / 0.18);
+  border: 1px solid rgb(28 28 28 / 0.16);
   border-radius: 12px;
-  background: #fffdf8;
-  color: #2a2118;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
+  background: #faf9f6;
+  color: #1c1c1c;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.75);
 }
 
 .ny-premium .ny-field::placeholder,
 .ny-premium .ny-textarea::placeholder {
-  color: rgb(42 33 24 / 0.35);
+  color: rgb(28 28 28 / 0.34);
 }
 
 .ny-premium .ny-choice.is-on {
-  background: #2a2118;
-  border-color: #2a2118;
-  color: #fff8f0;
+  background: #1c1c1c;
+  border-color: #1c1c1c;
+  color: #f5f3ee;
 }
 
 .ny-premium .ny-form-label {
-  color: #2a2118;
+  color: #1c1c1c;
 }
 
 .ny-premium.ny-ink,
 .ny-premium.ny-ink .ny-frame {
   background:
-    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.55), transparent 48%),
-    #f3ead7;
+    radial-gradient(ellipse at 78% 0%, rgb(226 110 45 / 0.07), transparent 40%),
+    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.65), transparent 48%),
+    #f5f3ee;
 }
 
 .ny-premium .ny-form .text-white {
-  color: #2a2118;
+  color: #1c1c1c;
 }
 
 .ny-premium .ny-form .text-white\/80 {
-  color: rgb(42 33 24 / 0.8);
+  color: rgb(28 28 28 / 0.8);
 }
 
 .ny-premium .ny-form .text-white\/45 {
-  color: rgb(42 33 24 / 0.45);
+  color: rgb(28 28 28 / 0.45);
 }
 
 .ny-premium .ny-form .border-white {
-  border-color: #2a2118;
-  background: #2a2118;
+  border-color: #1c1c1c;
+  background: #1c1c1c;
 }
 
 .ny-premium .ny-form .border-white\/35 {
-  border-color: rgb(42 33 24 / 0.35);
+  border-color: rgb(28 28 28 / 0.35);
 }
 
 .ny-premium .ny-form .border-white.bg-white {
-  border-color: #2a2118;
-  background: #2a2118;
+  border-color: #1c1c1c;
+  background: #1c1c1c;
 }
 
 .ny-premium .ny-form .border-white.bg-white .text-black {
-  color: #fff8f0;
+  color: #f5f3ee;
 }
 
 .ny-premium .ny-form-error {
-  color: #9b2d1f;
+  color: #b84316;
 }
 
 .ny-premium .ny-btn,
 .ny-premium .ny-cta {
   border: none;
   border-radius: 14px;
-  background: linear-gradient(180deg, #3a2f24 0%, #2a2118 55%, #1c1611 100%);
+  background: linear-gradient(180deg, #2e2e2e 0%, #1c1c1c 55%, #111 100%);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.12),
-    0 12px 24px rgb(42 33 24 / 0.22);
-  color: #fff8f0;
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 12px 24px rgb(28 28 28 / 0.2);
+  color: #f5f3ee;
   font-family: var(--font-serif), "Noto Serif KR", serif;
   font-weight: 700;
   text-shadow: none;
@@ -144,7 +168,24 @@
 }
 
 .ny-premium .ny-sticky-cta {
-  background: linear-gradient(180deg, transparent, rgb(243 234 215 / 0.96) 28%);
+  position: fixed;
+  right: auto;
+  bottom: 0;
+  left: 50%;
+  z-index: 40;
+  width: min(100%, var(--ny-col));
+  transform: translateX(-50%);
+  padding: 0.25rem 0.55rem calc(0.25rem + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent, rgb(245 243 238 / 0.96) 28%);
+  pointer-events: none;
+}
+
+.ny-premium .ny-sticky-cta > * {
+  pointer-events: auto;
+}
+
+.ny-premium:has(.ny-premium-landing) .ny-sticky-cta {
+  background: linear-gradient(180deg, rgb(245 243 238 / 0) 0%, rgb(245 243 238 / 0.92) 40%, #f5f3ee 70%);
 }
 
 .ny-premium .ny-paper,
@@ -153,43 +194,47 @@
 .ny-premium .ny-compare,
 .ny-premium .ny-lock,
 .ny-premium .ny-route-card {
-  border: 1px solid rgb(42 33 24 / 0.14);
+  border: 1px solid rgb(28 28 28 / 0.12);
   border-radius: 16px;
-  background: #fffdf8;
-  box-shadow: 0 10px 24px rgb(42 33 24 / 0.08);
+  background: #faf9f6;
+  box-shadow: 0 10px 24px rgb(28 28 28 / 0.07);
 }
 
 .ny-premium .ny-chapter-num,
 .ny-premium .ny-section-num {
   border: none;
   border-radius: 999px;
-  background: #2a2118;
-  color: #fff8f0;
+  background: #1c1c1c;
+  color: #f5f3ee;
 }
 
 .ny-premium .ny-footer {
-  color: rgb(42 33 24 / 0.5);
+  color: rgb(28 28 28 / 0.48);
 }
 
 /* 랜딩 */
+.ny-premium:has(.ny-premium-landing) .ny-main {
+  padding-bottom: 5.75rem;
+}
+
 .ny-premium-landing {
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
-  padding: 0.4rem 0 1rem;
+  padding: 0.4rem 0 0;
 }
 
 .ny-premium-hero {
   position: relative;
   overflow: hidden;
   padding: 0 1.25rem 1.65rem;
-  border: 1.25px solid rgb(42 33 24 / 0.5);
+  border: 1.25px solid rgb(28 28 28 / 0.42);
   border-radius: 0;
   background:
-    radial-gradient(ellipse at 50% 40%, rgb(255 252 240 / 0.55) 0%, transparent 58%),
-    linear-gradient(180deg, #ffffff 0%, #fffdf6 50%, #fbf3e4 100%);
-  box-shadow: 0 14px 28px rgb(42 33 24 / 0.08);
-  outline: 1px solid rgb(42 33 24 / 0.35);
+    radial-gradient(ellipse at 82% 12%, rgb(226 90 35 / 0.1) 0%, transparent 42%),
+    linear-gradient(180deg, #ffffff 0%, #faf9f6 52%, #f3f1eb 100%);
+  box-shadow: 0 14px 28px rgb(28 28 28 / 0.07);
+  outline: 1px solid rgb(28 28 28 / 0.28);
   outline-offset: -5px;
   text-align: center;
 }
@@ -200,7 +245,7 @@
   width: 16px;
   height: 16px;
   pointer-events: none;
-  border: 1.6px solid rgb(42 33 24 / 0.75);
+  border: 1.6px solid rgb(28 28 28 / 0.7);
 }
 
 .ny-premium-hero-corner::after {
@@ -208,7 +253,7 @@
   position: absolute;
   width: 6px;
   height: 6px;
-  background: rgb(42 33 24 / 0.75);
+  background: rgb(28 28 28 / 0.7);
   transform: rotate(45deg);
 }
 
@@ -262,15 +307,15 @@
 
 .ny-premium-ribbon {
   position: absolute;
-  top: 1.35rem;
+  top: 0.85rem;
   left: 50%;
   z-index: 3;
   display: inline-block;
   margin: 0;
   padding: 0.35rem 1.35rem;
   transform: translateX(-50%);
-  background: #1c1611;
-  color: #fff8f0;
+  background: #1c1c1c;
+  color: #f5f3ee;
   font-family: var(--font-brush), var(--font-classic-kr), "Song Myung", serif;
   font-size: 0.84rem;
   letter-spacing: 0.02em;
@@ -283,26 +328,27 @@
   z-index: 1;
   width: calc(100% + 2.5rem);
   max-width: none;
-  margin: 0 -1.25rem -0.85rem;
+  margin: 0 -1.25rem 0;
   overflow: hidden;
-  background: transparent;
+  padding-top: 1.85rem;
+  background: #f1ede6;
 }
 
 .ny-premium-hero-art img {
   display: block;
   width: 100%;
   height: auto;
-  opacity: 0.72;
+  opacity: 0.92;
   -webkit-mask-image: linear-gradient(
     180deg,
     #000 0%,
-    #000 88%,
+    #000 90%,
     transparent 100%
   );
   mask-image: linear-gradient(
     180deg,
     #000 0%,
-    #000 88%,
+    #000 90%,
     transparent 100%
   );
 }
@@ -315,7 +361,7 @@
   justify-content: center;
   gap: 0.75rem;
   margin: 0 0 0.2rem;
-  color: #9a7b3c;
+  color: #d4521c;
   font-family: var(--font-serif), serif;
   font-size: 0.95rem;
   font-weight: 700;
@@ -329,12 +375,12 @@
   flex: 1 1 auto;
   max-width: 5.5rem;
   height: 0.5px;
-  background: #9a7b3c;
+  background: rgb(212 82 28 / 0.55);
 }
 
 .ny-premium-hero-title {
   margin: 0 0 0.85rem;
-  color: #1c1611;
+  color: #1c1c1c;
   font-family: var(--font-serif), "Noto Serif KR", serif;
   font-size: clamp(2rem, 9vw, 2.55rem);
   font-weight: 700;
@@ -344,7 +390,7 @@
 
 .ny-premium-price {
   margin: 0;
-  color: #2a2118;
+  color: #1c1c1c;
   font-family: var(--font-serif), serif;
   font-size: 1.05rem;
   font-weight: 700;
@@ -353,20 +399,20 @@
 
 .ny-premium-price s {
   margin-right: 0.35rem;
-  color: rgb(42 33 24 / 0.4);
+  color: rgb(28 28 28 / 0.38);
   font-weight: 500;
 }
 
 .ny-premium-section {
   padding: 1.2rem 1rem 1.35rem;
-  border: 1.5px solid #2a2118;
+  border: 1.5px solid #1c1c1c;
   border-radius: 8px;
-  background: #fffdf8;
+  background: #faf9f6;
 }
 
 .ny-premium-section-title {
   margin: 0 0 0.45rem;
-  color: #9a7b3c;
+  color: #d4521c;
   font-family: var(--font-serif), serif;
   font-size: 1.2rem;
   font-weight: 700;
@@ -375,7 +421,7 @@
 
 .ny-premium-section-lead {
   margin: 0 0 1rem;
-  color: #2a2118;
+  color: #1c1c1c;
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.5;
@@ -394,9 +440,9 @@
   flex-direction: column;
   gap: 0.35rem;
   padding: 0.7rem 0.45rem;
-  border: 1px solid rgb(42 33 24 / 0.16);
+  border: 1px solid rgb(28 28 28 / 0.14);
   border-radius: 10px;
-  background: #f7f0e4;
+  background: #f0eee9;
   text-align: center;
 }
 
@@ -405,8 +451,8 @@
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 999px;
-  background: #2a2118;
-  color: #fff8f0;
+  background: #1c1c1c;
+  color: #f5f3ee;
   font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.5rem;
@@ -414,7 +460,7 @@
 
 .ny-premium-feature-label {
   margin: 0;
-  color: #2a2118;
+  color: #1c1c1c;
   font-size: 0.78rem;
   font-weight: 700;
   line-height: 1.35;
@@ -430,37 +476,266 @@
 }
 
 .ny-premium-bullets li {
-  color: #2a2118;
+  color: #1c1c1c;
   font-size: 0.9rem;
   font-weight: 700;
   text-align: center;
 }
 
 .ny-premium-bullets li::before {
-  content: "☆";
+  content: "★";
   margin-right: 0.25rem;
-  color: #9b2d1f;
+  color: #d4521c;
 }
 
 .ny-premium-note {
   margin: 0.9rem 0 0;
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
-  background: rgb(232 137 155 / 0.16);
-  color: #7a3a48;
+  background: rgb(212 82 28 / 0.1);
+  color: #9a3a14;
   font-size: 0.85rem;
   font-weight: 700;
   text-align: center;
 }
 
+.ny-premium-kakao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.15rem 0 0.2rem;
+}
+
+.ny-premium-kakao-title {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ny-premium-kakao-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ny-premium-kakao-row {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ny-premium-kakao-row-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ny-premium-kakao-row-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ny-premium-kakao-row-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ny-premium-kakao-item {
+  overflow: hidden;
+  border-radius: 8px;
+  background: #b7c7d6;
+  box-shadow: 0 5px 12px rgb(28 28 28 / 0.06);
+}
+
+.ny-premium-kakao-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ny-premium-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.2rem 0 0;
+}
+
+.ny-premium-legal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.95rem;
+  padding: 0.5rem 0.15rem 0.95rem;
+  color: rgb(28 28 28 / 0.48);
+  font-size: 0.72rem;
+  line-height: 1.55;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.ny-premium-legal p {
+  margin: 0;
+}
+
+.ny-premium-legal-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.45rem;
+}
+
+.ny-premium-legal-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.ny-premium-legal a {
+  color: rgb(28 28 28 / 0.55);
+  text-decoration: none;
+}
+
+.ny-premium-legal a:hover {
+  color: #1c1c1c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ny-premium-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ny-premium-review {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.ny-premium-review-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 0.95rem 1.15rem;
+  border: 1px solid rgb(28 28 28 / 0.1);
+  border-radius: 14px;
+  background: #ebe9e4;
+  box-shadow: 0 8px 18px rgb(28 28 28 / 0.05);
+  filter: blur(1.2px) brightness(0.88) saturate(0.92);
+  opacity: 0.95;
+  user-select: none;
+  pointer-events: none;
+}
+
+.ny-premium-review-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.ny-premium-review-avatar {
+  display: inline-flex;
+  width: 1.45rem;
+  height: 1.45rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(160deg, #c8c4bc, #8f8a82);
+  color: #f5f3ee;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ny-premium-review-name {
+  flex: 1;
+  margin: 0;
+  color: #1c1c1c;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.ny-premium-review-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.48rem;
+  border-radius: 999px;
+  background: #1c1c1c;
+  color: #f5f3ee;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.ny-premium-review-stars {
+  margin: -0.1rem 0 0;
+  color: #e0a020;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.ny-premium-review-body {
+  margin: 0;
+  color: rgb(28 28 28 / 0.88);
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1.6;
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ny-premium-review-quote {
+  position: absolute;
+  left: 0.55rem;
+  right: 0.55rem;
+  top: 48%;
+  z-index: 2;
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  transform: translateY(-50%);
+  border: 1px solid rgb(28 28 28 / 0.08);
+  border-radius: 12px;
+  background: #fff;
+  color: #1c1c1c;
+  font-size: 0.9rem;
+  font-weight: 800;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  box-shadow: 0 8px 20px rgb(28 28 28 / 0.12);
+  word-break: keep-all;
+}
+
+.ny-premium-review-quote em {
+  font-style: normal;
+  color: #a33b39;
+  text-decoration: underline;
+  text-decoration-color: #a33b39;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
 .ny-premium .ny-loading-title {
-  color: #2a2118;
+  color: #1c1c1c;
   font-family: var(--font-serif), serif;
   text-shadow: none;
 }
 
 .ny-premium .ny-loading-caption {
-  color: rgb(42 33 24 / 0.45);
+  color: rgb(28 28 28 / 0.45);
   font-family: var(--font-serif), serif;
 }
 
@@ -479,7 +754,7 @@
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  color: rgb(42 33 24 / 0.45);
+  color: rgb(28 28 28 / 0.45);
   font-family: var(--font-serif), serif;
   font-size: 0.92rem;
   letter-spacing: -0.01em;
@@ -488,7 +763,7 @@
 }
 
 .ny-premium .ny-loading-checklist-item.is-done {
-  color: #2a2118;
+  color: #1c1c1c;
 }
 
 .ny-premium .ny-loading-checklist-mark {
@@ -498,7 +773,7 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgb(154 123 60 / 0.4);
+  border: 1px solid rgb(212 82 28 / 0.35);
   border-radius: 999px;
   color: transparent;
   font-size: 0.72rem;
@@ -508,32 +783,35 @@
 }
 
 .ny-premium .ny-loading-checklist-item.is-done .ny-loading-checklist-mark {
-  border-color: #9a7b3c;
-  background: rgb(154 123 60 / 0.16);
-  color: #9a7b3c;
+  border-color: #d4521c;
+  background: rgb(212 82 28 / 0.12);
+  color: #d4521c;
 }
 
 .ny-premium .ny-loading-bar {
-  background: rgb(42 33 24 / 0.12);
+  background: rgb(28 28 28 / 0.12);
 }
 
 .ny-premium .ny-loading-bar-fill {
-  background: linear-gradient(90deg, #c9a86a, #9a7b3c);
+  background: linear-gradient(90deg, #e07a3a, #d4521c);
 }
 
 .ny-premium .ny-loading-media {
-  background: #f3ead7;
+  background: #f5f3ee;
 }
 
 .ny-premium .ny-loading-img {
   object-fit: cover;
-  filter: saturate(0.85) brightness(1.05);
+  object-position: center 42%;
+  filter: none;
+  transform: none;
+  animation: none;
 }
 
 .ny-premium .ny-loading-scrim {
   background:
-    linear-gradient(180deg, rgb(243 234 215 / 0.55) 0%, transparent 28%),
-    linear-gradient(0deg, rgb(243 234 215 / 0.92) 0%, transparent 34%);
+    linear-gradient(180deg, rgb(245 243 238 / 0.28) 0%, transparent 22%),
+    linear-gradient(0deg, rgb(245 243 238 / 0.72) 0%, transparent 38%);
 }
 
 .ny-premium .ny-loading-compass,
@@ -541,28 +819,211 @@
   display: none;
 }
 
+/* 무료 결과 — 수묵 한지 라이트 톤 (어두운 기본 무료 스타일 덮기) */
+.ny-premium .ny-free {
+  --good: #4a6350;
+  --bad: #b84316;
+  --route: #d4521c;
+  --ny-go: #4a6350;
+  --ny-warn: #d4521c;
+  --ny-stop: #b84316;
+  --ny-seal: #d4521c;
+  --ny-seal-deep: #b84316;
+  --ny-gold: #d4521c;
+  --ny-wood: #3f5f44;
+  --ny-fire: #a04a3a;
+  --ny-earth: #7a6232;
+  --ny-metal: #5c5a54;
+  --ny-water: #3d5870;
+  --ny-muted: rgb(28 28 28 / 0.58);
+  --ny-line: rgb(28 28 28 / 0.14);
+  --ny-card: #faf9f6;
+  --ny-ink: #1c1c1c;
+  padding-bottom: 4rem;
+}
+
+.ny-premium .ny-free-hero {
+  margin: -0.5rem -1rem 0.75rem;
+  min-height: 18rem;
+  background:
+    radial-gradient(ellipse at 82% 18%, rgb(226 90 35 / 0.12), transparent 42%),
+    linear-gradient(180deg, #faf9f6, #f1ede6);
+}
+
+.ny-premium .ny-free-hero-img {
+  object-fit: cover;
+  object-position: center 42%;
+  filter: saturate(0.92) brightness(1.04) contrast(1.02);
+}
+
+.ny-premium .ny-free-hero-scrim {
+  background:
+    linear-gradient(180deg, rgb(245 243 238 / 0.35) 0%, transparent 28%),
+    linear-gradient(0deg, rgb(245 243 238 / 0.96) 0%, rgb(245 243 238 / 0.55) 38%, transparent 62%);
+}
+
 .ny-premium .ny-free-brand {
-  color: #9a7b3c;
+  color: #d4521c;
+  font-family: var(--font-serif), serif;
 }
 
 .ny-premium .ny-free-title {
-  color: #2a2118;
+  color: #1c1c1c;
+  font-family: var(--font-serif), serif;
+  font-weight: 700;
   text-shadow: none;
 }
 
 .ny-premium .ny-free-meta,
 .ny-premium .ny-free-note {
-  color: rgb(42 33 24 / 0.55);
+  color: rgb(28 28 28 / 0.72);
 }
 
-.ny-premium .ny-free-hero-scrim {
+.ny-premium .ny-free .ny-title,
+.ny-premium .ny-free .ny-sub {
+  color: #1c1c1c;
+  font-family: var(--font-serif), serif;
+  font-weight: 700;
+}
+
+.ny-premium .ny-free .ny-en,
+.ny-premium .ny-free .ny-em,
+.ny-premium .ny-free .ny-kicker {
+  color: #d4521c;
+}
+
+.ny-premium .ny-free .ny-body,
+.ny-premium .ny-free .ny-caption {
+  color: rgb(28 28 28 / 0.7);
+}
+
+.ny-premium .ny-free .ny-paper,
+.ny-premium .ny-free .ny-card,
+.ny-premium .ny-free .ny-segment,
+.ny-premium .ny-free .ny-compare,
+.ny-premium .ny-free .ny-lock,
+.ny-premium .ny-free .ny-route-card {
+  border: 1px solid rgb(28 28 28 / 0.12);
+  border-radius: 14px;
+  background: #faf9f6;
+  box-shadow: 0 8px 20px rgb(28 28 28 / 0.06);
+}
+
+.ny-premium .ny-free .ny-section-dark {
   background:
-    linear-gradient(180deg, rgb(243 234 215 / 0.2) 0%, transparent 30%),
-    linear-gradient(0deg, rgb(243 234 215 / 0.92) 0%, transparent 42%);
+    linear-gradient(180deg, rgb(250 249 246 / 0.98), rgb(241 237 230 / 0.98));
+  border-top: 1px solid rgb(28 28 28 / 0.1);
+  border-bottom: 1px solid rgb(28 28 28 / 0.1);
+  color: #1c1c1c;
+}
+
+.ny-premium .ny-free .ny-section-dark .ny-title,
+.ny-premium .ny-free .ny-section-dark .ny-sub,
+.ny-premium .ny-free .ny-section-dark .ny-body,
+.ny-premium .ny-free .ny-section-dark .ny-caption,
+.ny-premium .ny-free .ny-section-dark .text-white {
+  color: #1c1c1c;
+}
+
+.ny-premium .ny-free .ny-section-dark .ny-body,
+.ny-premium .ny-free .ny-section-dark .ny-caption {
+  color: rgb(28 28 28 / 0.7);
+}
+
+.ny-premium .ny-free .ny-section-dark .ny-en,
+.ny-premium .ny-free .ny-section-dark .ny-em {
+  color: #d4521c;
+}
+
+.ny-premium .ny-free .ny-age-row {
+  color: rgb(28 28 28 / 0.38);
+}
+
+.ny-premium .ny-free .ny-age-row.is-hot {
+  color: #1c1c1c;
+}
+
+.ny-premium .ny-free .ny-signal-legend span {
+  color: rgb(28 28 28 / 0.62);
+}
+
+.ny-premium .ny-free .ny-hanja {
+  color: #1c1c1c !important;
+}
+
+.ny-premium .ny-free .ny-hanja[data-el="목"] { background: #b7c8b4; }
+.ny-premium .ny-free .ny-hanja[data-el="화"] { background: #e2b0a4; }
+.ny-premium .ny-free .ny-hanja[data-el="토"] { background: #ddc89a; }
+.ny-premium .ny-free .ny-hanja[data-el="금"] { background: #e4e1db; }
+.ny-premium .ny-free .ny-hanja[data-el="수"] { background: #b4c2d0; }
+
+.ny-premium .ny-free .ny-hanja-empty {
+  border: 1.5px dashed rgb(28 28 28 / 0.22);
+  background: rgb(250 249 246 / 0.7) !important;
+}
+
+.ny-premium .ny-free [data-el="목"]:not(.ny-hanja) { color: var(--ny-wood); }
+.ny-premium .ny-free [data-el="화"]:not(.ny-hanja) { color: var(--ny-fire); }
+.ny-premium .ny-free [data-el="토"]:not(.ny-hanja) { color: var(--ny-earth); }
+.ny-premium .ny-free [data-el="금"]:not(.ny-hanja) { color: var(--ny-metal); }
+.ny-premium .ny-free [data-el="수"]:not(.ny-hanja) { color: var(--ny-water); }
+
+.ny-premium .ny-free .ny-footer,
+.ny-premium .ny-free .ny-footer a {
+  color: rgb(28 28 28 / 0.55);
+}
+
+/* 무료 페이지의 text-white 유틸 — 밝은 배경에서 먹색으로 */
+.ny-premium .ny-free .text-white {
+  color: #1c1c1c !important;
+}
+
+.ny-premium .ny-free .text-white\/70,
+.ny-premium .ny-free .text-white\/45,
+.ny-premium .ny-free [class*="text-white/"] {
+  color: rgb(28 28 28 / 0.62) !important;
+}
+
+.ny-premium .ny-free .border-white\/10,
+.ny-premium .ny-free [class*="border-white/"] {
+  border-color: rgb(28 28 28 / 0.12) !important;
+}
+
+.ny-premium .ny-free .ny-compare {
+  background: #faf9f6;
+  border: 1px solid rgb(28 28 28 / 0.12);
+}
+
+.ny-premium .ny-free .ny-compare-head,
+.ny-premium .ny-free .ny-compare-foot {
+  background: #f0eee9;
+  color: rgb(28 28 28 / 0.65);
+}
+
+.ny-premium .ny-free .ny-compare-row {
+  border-top-color: rgb(28 28 28 / 0.1);
+  color: rgb(28 28 28 / 0.7);
+}
+
+.ny-premium .ny-free .ny-compare-label,
+.ny-premium .ny-free .ny-compare .is-focus {
+  color: #1c1c1c;
+}
+
+.ny-premium .ny-free .ny-route-node {
+  color: rgb(28 28 28 / 0.42);
+}
+
+.ny-premium .ny-free .ny-route-node.is-on {
+  color: #1c1c1c;
+}
+
+.ny-premium .ny-free .ny-lock-body {
+  color: rgb(28 28 28 / 0.7);
 }
 
 .ny-premium .ny-form-bottom {
-  padding-bottom: 7.5rem;
+  padding-bottom: 6rem;
 }
 
 .ny-premium:has(.ny-loading) {
@@ -578,22 +1039,22 @@
 }
 
 .ny-premium .ny-poster-above {
-  color: rgb(42 33 24 / 0.7);
+  color: rgb(28 28 28 / 0.68);
   text-shadow: none;
 }
 
 .ny-premium .ny-cta-bubble {
-  background: rgb(42 33 24 / 0.82);
-  color: rgb(255 248 240 / 0.95);
-  box-shadow: 0 6px 16px rgb(42 33 24 / 0.14);
+  background: rgb(28 28 28 / 0.84);
+  color: rgb(245 243 238 / 0.96);
+  box-shadow: 0 6px 16px rgb(28 28 28 / 0.14);
 }
 
 .ny-premium .ny-cta-bubble-num {
-  color: #c9a86a;
+  color: #e8894a;
 }
 
-.ny-premium .ny-hanja[data-el="목"] { background: #c5d4b8; color: #2a2118; }
-.ny-premium .ny-hanja[data-el="화"] { background: #e4b4a8; color: #2a2118; }
-.ny-premium .ny-hanja[data-el="토"] { background: #e6d0a4; color: #2a2118; }
-.ny-premium .ny-hanja[data-el="금"] { background: #ebe4d8; color: #2a2118; }
-.ny-premium .ny-hanja[data-el="수"] { background: #b8c6d4; color: #2a2118; }
+.ny-premium .ny-hanja[data-el="목"] { background: #c5d0c0; color: #1c1c1c; }
+.ny-premium .ny-hanja[data-el="화"] { background: #e8b8a4; color: #1c1c1c; }
+.ny-premium .ny-hanja[data-el="토"] { background: #ddd4c4; color: #1c1c1c; }
+.ny-premium .ny-hanja[data-el="금"] { background: #e8e6e1; color: #1c1c1c; }
+.ny-premium .ny-hanja[data-el="수"] { background: #b8c2cc; color: #1c1c1c; }

@@ -4,15 +4,15 @@ import { NewYearShell } from "@/components/newyear/NewYearShell";
 import { sampleNewYearFreeView } from "@/lib/server/newyearView";
 
 export const metadata: Metadata = {
-  title: "레벨업 가이드 예시",
+  title: "인생 설계서 예시",
   robots: { index: false, follow: false },
 };
 
 export default function FateNavi2ResultSamplePage() {
   return (
-    <NewYearShell theme="sheep" showFooter>
+    <NewYearShell theme="premium" showFooter>
       <NewYearResultScreen
-        theme="sheep"
+        theme="premium"
         result={sampleNewYearFreeView()}
         token="sample"
         paid={false}

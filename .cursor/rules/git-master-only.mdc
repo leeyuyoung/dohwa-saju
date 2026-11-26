@@ -1,0 +1,11 @@
+---
+description: Commit and push only on master; no design branch workflow
+alwaysApply: true
+---
+
+# Git: master only
+
+- Work, commit, and push on `master` only.
+- Do not create or use a `design` (or other feature) branch unless the user explicitly asks.
+- When the user says commit/push, push `origin master` so production gets the change.
+- Do not merge `design` → `master` as a routine; stay on `master`.

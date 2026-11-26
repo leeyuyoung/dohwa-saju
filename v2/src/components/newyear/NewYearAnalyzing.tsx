@@ -35,7 +35,7 @@ export function NewYearAnalyzing({ theme = "hanji" }: { theme?: FateNaviThemeId 
   const loadingImageSrc = isSheep
     ? "/images/fatenavi2/mery-red.png"
     : isPremium
-      ? "/images/fatenavi4/hero-zodiac.jpg?v=6"
+      ? "/images/fatenavi4/loading-ink.jpg"
       : "/images/fatenavi3/intro.jpg";
 
   const loadingCaption = isSheep

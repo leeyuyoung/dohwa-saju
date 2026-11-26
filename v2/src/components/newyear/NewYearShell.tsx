@@ -66,8 +66,9 @@ export function NewYearShell({
             </nav>
           </footer>
         )}
-        {stickyCta ? <div className="ny-sticky-cta">{stickyCta}</div> : null}
       </div>
+      {/* frame(overflow:hidden) 밖에서 뷰포트 하단에 고정 — 인트로·입력·결과 공통 */}
+      {stickyCta ? <div className="ny-sticky-cta">{stickyCta}</div> : null}
     </div>
   );
 }

@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { NEWYEAR_ORDER_NAME } from "@/lib/constants/newyear";
+import { themeOf } from "@/lib/constants/fatenaviTheme";
+
+const theme = themeOf("hanji");
 
 export const metadata: Metadata = {
   title: {
-    default: NEWYEAR_ORDER_NAME,
+    default: theme.orderName,
     template: "%s",
   },
 };
 
-export default function NewYearLayout({ children }: { children: React.ReactNode }) {
+export default function FateNavi3Layout({ children }: { children: React.ReactNode }) {
   return children;
 }
