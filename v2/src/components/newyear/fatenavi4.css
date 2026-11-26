@@ -1492,3 +1492,8 @@
 .ny-premium .ny-hanja[data-el="토"] { background: #ddd4c4; color: #1c1c1c; }
 .ny-premium .ny-hanja[data-el="금"] { background: #e8e6e1; color: #1c1c1c; }
 .ny-premium .ny-hanja[data-el="수"] { background: #b8c2cc; color: #1c1c1c; }
+
+/* 제출 테이블용: 모바일 컬럼(--ny-col) 대신 넓은 프레임 */
+.ny-premium:has(.ny-admin) .ny-frame {
+  width: min(100%, 120rem);
+}

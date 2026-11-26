@@ -291,7 +291,7 @@ export function AdminDashboard({
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-10 px-5 py-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-[116rem] flex-col gap-10 px-5 py-10">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-serif text-xl text-paper">{isNewYear ? "운명내비 종합사주" : "운영 현황"}</h1>
