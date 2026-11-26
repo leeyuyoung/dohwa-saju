@@ -34,6 +34,14 @@ const partWithSections = (sectionCount: number, closing: "required" | "optional"
     closingLine: closing === "optional" ? text(120).optional() : text(120),
   });
 
+/** 구 결제분 4소절 읽기용. 문단 수는 느슨하게. */
+const partWithLegacyFourSections = (closing: "required" | "optional" = "required") =>
+  z.object({
+    headline: text(160),
+    sections: z.array(sectionBlockLoose).length(4),
+    closingLine: closing === "optional" ? text(120).optional() : text(120),
+  });
+
 const part1Meta = REPORT_PARTS_V2.find((part) => part.part === 1)!;
 const part2Meta = REPORT_PARTS_V2.find((part) => part.part === 2)!;
 const part4Meta = REPORT_PARTS_V2.find((part) => part.part === 4)!;
@@ -92,7 +100,59 @@ const reportObjectSchema = z.object({
   intro: text(700),
   /** 원국 아래 색기력 도입부. 구 저장본에는 없을 수 있다. */
   saekgi: saekgiBlock.optional(),
-  /** PART1은 하단 한 줄 요약 없음. 구 저장본에 closingLine이 있을 수만 있음. */
+  /** PART1은 하단 한 줄 요약 없음. 신규 3소절(엄격) 또는 구 결제 4소절. */
+  part1: z.union([partWithSections(part1Meta.sections.length, "optional"), partWithLegacyFourSections("optional")]),
+  part2: z.union([partWithSections(part2Meta.sections.length), partWithLegacyFourSections()]),
+  part3: z.object({
+    headline: text(160),
+    keywords: z
+      .array(
+        z.object({
+          name: text(20),
+          paragraphs,
+        }),
+      )
+      .length(KEYWORD_COUNT_V2.min),
+    closingLine: text(160),
+  }),
+  /** PART4: 신규 3소절 또는 구 결제 4소절. */
+  part4: z.union([partWithSections(part4Meta.sections.length), partWithLegacyFourSections()]),
+  part5: z.object({
+    headline: text(160),
+    sections: z.array(sectionBlockLoose).length(part5Meta.sections.length),
+    closingLine: text(120),
+  }),
+  conclusion: text(600),
+});
+
+function preprocessReportV2(raw: unknown): unknown {
+  if (!raw || typeof raw !== "object") return raw;
+  const scrubbed = scrubDeep(raw) as {
+    part5?: { sections?: { paragraphs: string[] }[]; headline?: string; closingLine?: string };
+  };
+  if (scrubbed.part5?.sections) {
+    scrubbed.part5 = {
+      ...scrubbed.part5,
+      sections: normalizePart5Sections(scrubbed.part5.sections),
+    };
+  }
+  return scrubbed;
+}
+
+/** v2 유료 리포트 JSON. loveTimeline 없음. 레거시 4소절·saekgi 생략 읽기 호환 포함. */
+export const aiReportSchemaV2 = z.preprocess(preprocessReportV2, reportObjectSchema);
+
+/**
+ * 신규 생성 최종 수용용 엄격 스키마.
+ * saekgi 필수, PART1·2·4는 3소절, 모든 문단 블록은 min 2. 레거시 유니온 없음.
+ */
+const reportObjectSchemaStrict = z.object({
+  intro: text(700),
+  saekgi: z.object({
+    headline: text(160).optional(),
+    paragraphs,
+    closingLine: text(120).optional(),
+  }),
   part1: partWithSections(part1Meta.sections.length, "optional"),
   part2: partWithSections(part2Meta.sections.length),
   part3: z.object({
@@ -110,28 +170,16 @@ const reportObjectSchema = z.object({
   part4: partWithSections(part4Meta.sections.length),
   part5: z.object({
     headline: text(160),
-    sections: z.array(sectionBlockLoose).length(part5Meta.sections.length),
+    sections: z.array(sectionBlock).length(part5Meta.sections.length),
     closingLine: text(120),
   }),
   conclusion: text(600),
 });
 
-/** v2 유료 리포트 JSON. loveTimeline 없음. */
-export const aiReportSchemaV2 = z.preprocess((raw) => {
-  if (!raw || typeof raw !== "object") return raw;
-  const scrubbed = scrubDeep(raw) as {
-    part5?: { sections?: { paragraphs: string[] }[]; headline?: string; closingLine?: string };
-  };
-  if (scrubbed.part5?.sections) {
-    scrubbed.part5 = {
-      ...scrubbed.part5,
-      sections: normalizePart5Sections(scrubbed.part5.sections),
-    };
-  }
-  return scrubbed;
-}, reportObjectSchema);
+export const aiReportSchemaV2Strict = z.preprocess(preprocessReportV2, reportObjectSchemaStrict);
 
 export type AiReportV2 = z.infer<typeof reportObjectSchema>;
+export type AiReportV2Strict = z.infer<typeof reportObjectSchemaStrict>;
 
 const sectionSchema = {
   type: "object",
@@ -160,7 +208,8 @@ const partSchema = (sectionCount: number, withClosingLine = true) =>
   }) as const;
 
 /**
- * OpenAI Structured Outputs용 JSON Schema (v2). 신규는 항상 4소절 part5.
+ * OpenAI Structured Outputs용 JSON Schema (v2).
+ * 신규 생성: PART1·2·4는 3소절, PART5는 4소절.
  */
 const saekgiSchema = {
   type: "object",

@@ -1,7 +1,13 @@
 import "server-only";
 
 import { REPORT_CHAPTERS_V1 } from "@/lib/constants/reportChapters.v1";
-import { REPORT_PARTS_V2, REPORT_SAEKGI_V2 } from "@/lib/constants/reportChapters.v2";
+import {
+  REPORT_PART1_LEGACY_SECTION_TITLES,
+  REPORT_PART2_LEGACY_SECTION_TITLES,
+  REPORT_PART4_LEGACY_SECTION_TITLES,
+  REPORT_PARTS_V2,
+  REPORT_SAEKGI_V2,
+} from "@/lib/constants/reportChapters.v2";
 import { resolveReportVersion } from "@/lib/constants/reportVersion";
 import { CHARM_INDICES, DOHWA_TYPES, gradeOf, withPartner } from "@/lib/constants/result";
 import { buildSajuProfile, calculateSaju, readDohwa, type DohwaReading, type SajuProfile } from "@/lib/saju";
@@ -234,6 +240,17 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
           sections: [],
         };
       }
+      /** 구 결제분(4소절)은 LEGACY 제목, 신규(3소절)는 현재 목차 제목. */
+      const sectionTitles =
+        body.sections.length > meta.sections.length
+          ? meta.key === "charm"
+            ? REPORT_PART1_LEGACY_SECTION_TITLES
+            : meta.key === "impression"
+              ? REPORT_PART2_LEGACY_SECTION_TITLES
+              : meta.key === "hidden"
+                ? REPORT_PART4_LEGACY_SECTION_TITLES
+                : meta.sections.map((section) => section.title)
+          : meta.sections.map((section) => section.title);
       return {
         part: meta.part,
         key: meta.key,
@@ -241,9 +258,9 @@ export function toFullReportViewV2(record: AnalysisRecord): FullReportViewV2 | n
         question: withPartner(meta.question, gender),
         headline: displayLine(body.headline),
         closingLine: "closingLine" in body && body.closingLine ? displayLine(body.closingLine) : "",
-        sections: meta.sections.map((section, sectionIndex) => ({
-          title: withPartner(section.title, gender),
-          paragraphs: displayLines(body.sections[sectionIndex].paragraphs),
+        sections: body.sections.map((section, sectionIndex) => ({
+          title: withPartner(sectionTitles[sectionIndex] ?? `소절 ${sectionIndex + 1}`, gender),
+          paragraphs: displayLines(section.paragraphs),
         })),
       };
     }),

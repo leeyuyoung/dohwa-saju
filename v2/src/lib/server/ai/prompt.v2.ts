@@ -93,10 +93,10 @@ export const REPORT_INSTRUCTIONS_V2 = `당신은 '도화신당'의 도화선녀�
 
 [출력 형식 — JSON 필드만, 소제목 문자열은 쓰지 말고 paragraphs 본문만]
 - intro: 도입부. 상한 ${INTRO_TARGET_CHARS_V2}자. 새 내용이 없으면 더 짧게. 비슷한 말로 채우지 말 것. 이 사주의 눈에 띄는 특징·일간/오행·주목점·흥미 포인트. 일반 인사·누구에게나 되는 칭찬으로 시작하지 않는다.
-- saekgi: 원국 아래 색기력 도입부. paragraphs만. headline·closingLine 없음(제목 아래 핑크 한 줄 금지). 문단1 첫 문장=<dohwa>.saekgiOpeningLine 그대로(축별 고정 문구). 이어 도발적·상대 반응 중심. 무료 티저 문장 복붙 금지. 신살 ○○점 금지(위치만). PART1과 역할 분리(여기는 색기·상대 반응, PART1은 도화·홍염·얼굴·매력 유형).
+- saekgi: 원국 아래 색기력 도입부. paragraphs만. headline·closingLine 없음(제목 아래 핑크 한 줄 금지). 문단1 첫 문장=<dohwa>.saekgiOpeningLine 그대로(축별 고정 문구). 이어 도발적·상대 반응 중심. 무료 티저 문장 복붙 금지. 신살 ○○점 금지(위치만). PART1과 역할 분리(여기는 색기·상대 반응, PART1은 도화·홍염·얼굴).
 - part1~part5: 아래 가이드. 각 part에 headline(그 PART를 찌르는 한 문장). part1은 closingLine 없음. part2~5는 closingLine(한 줄 정리).
 - part3만 keywords 배열 3개(name + paragraphs). sections 없음.
-- 그 외 part는 sections를 소절 수만큼, 가이드에 적힌 순서 그대로. part5 sections[0]=인연 남자, [1]=만나는 때(시기·장소만), [2]=어필 분위기(시기 금지), [3]=오해 습관. 순서를 바꾸거나 내용을 엇갈리게 쓰지 않는다.
+- 그 외 part는 sections를 소절 수만큼, 가이드에 적힌 순서 그대로. part1·part2·part4는 각 3소절(PART1·2의 4번째 소절·매력 유형·기억에 남는 매력, PART4의 '남들은 알아보지만 나는 모르는 매력' 소절은 쓰지 않는다). part5 sections[0]=인연 남자, [1]=만나는 때(시기·장소만), [2]=어필 분위기(시기 금지), [3]=오해 습관. 순서를 바꾸거나 내용을 엇갈리게 쓰지 않는다.
 - 각 section의 paragraphs는 2~5개 문단, 문단마다 3~5문장. 흐름은 근거→장면→활용. 분량 채우려고 비슷한 문장을 늘리지 않는다.
 - conclusion: 상한 ${CONCLUSION_TARGET_CHARS_V2}자. 새 내용이 없으면 더 짧게. 비슷한 말로 채우지 말 것. ${REPORT_CONCLUSION_GUIDE_V2}
 - 리포트 전체 본문 합계 상한 약 ${REPORT_BODY_TARGET_CHARS_V2}자. 파트 상한을 넘기지 말고, 새 내용이 없으면 더 짧게. 비슷한 말로 채우지 말 것.

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { SajuProfile } from "@/lib/saju";
 import { REPORT_INSTRUCTIONS_V2, buildReportInputV2, type ReportContext } from "./prompt.v2";
+import { repairIncompleteReportV2, validateReportForFinalOutputV2 } from "./repairReport.v2";
 import { AI_REPORT_JSON_SCHEMA_V2, aiReportSchemaV2, type AiReportV2 } from "./reportSchema.v2";
 import { scrubDeep } from "./scrubReportText";
 
@@ -112,14 +113,25 @@ export async function generateReport(profile: SajuProfile, context: ReportContex
     schemaName: "saju_report_v2",
     schema: AI_REPORT_JSON_SCHEMA_V2,
     parse(json) {
-      const parsed = aiReportSchemaV2.safeParse(scrubDeep(json));
-      if (!parsed.success) {
-        throw new AiReportError(
-          "INVALID_OUTPUT",
-          parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`).join("; "),
-        );
+      const scrubbed = scrubDeep(json);
+
+      // Happy path: 엄격 스키마에 맞으면 보정 없이 최종 검증만 통과시킨다.
+      const parsed = aiReportSchemaV2.safeParse(scrubbed);
+      if (parsed.success) {
+        const valid = validateReportForFinalOutputV2(parsed.data);
+        if (valid.ok) return valid.data;
       }
-      return parsed.data;
+
+      // Error path: 불완전·스키마 미달일 때만 서버 구조 보정 후 재검증.
+      const repaired = repairIncompleteReportV2(scrubbed);
+      const repairedValid = validateReportForFinalOutputV2(repaired, scrubbed);
+      if (repairedValid.ok) return repairedValid.data;
+
+      const reasons = [
+        ...(parsed.success ? [] : parsed.error.issues.map((issue) => `${issue.path.join(".")} ${issue.message}`)),
+        ...repairedValid.reasons,
+      ];
+      throw new AiReportError("INVALID_OUTPUT", reasons.join("; ") || "final validation failed");
     },
   });
 }
