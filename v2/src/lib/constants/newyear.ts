@@ -57,3 +57,44 @@ export const NEWYEAR_CHAPTERS = [
   { key: "detours", title: "정체 구간과 우회로", blurb: "나쁜 운과 해결책", en: "Detours" },
   { key: "manual", title: "운전 수칙", blurb: "성공법칙·행동 원칙·체크리스트", en: "Driver Manual" },
 ] as const;
+
+/** FateNavi2 랜딩·미리보기용 18장 목차. 실제 AI 생성 장은 NEWYEAR_CHAPTERS. */
+export const PREMIUM_TOC_PARTS = [
+  {
+    part: 1,
+    title: "평생 종합사주",
+    chapters: [
+      "나의 타고난 사주",
+      "타고난 성격과 기질",
+      "나의 평생 운명과 100년 인생",
+      "대운 정밀 분석",
+      "재물운 정밀 분석",
+      "직업운과 사회적 성공",
+      "연애운과 결혼운",
+      "가족운과 자녀운",
+      "인간관계와 귀인운",
+      "건강운과 신체적 취약점",
+      "앞으로의 10년과 미래 운세",
+    ],
+  },
+  {
+    part: 2,
+    title: "2027년 정미년 신년운세",
+    chapters: [
+      "2027년 정미년 종합운",
+      "2027년 분야별 정밀 운세",
+      "2027년 월별 운세",
+      "2027년 기회와 주의 시기",
+    ],
+  },
+  {
+    part: 3,
+    title: "현재 고민 맞춤 해석",
+    chapters: ["지금 나에게 필요한 사주 해답"],
+  },
+  {
+    part: 4,
+    title: "나를 위한 인생 전략",
+    chapters: ["평생 운을 활용하는 방법"],
+  },
+] as const;

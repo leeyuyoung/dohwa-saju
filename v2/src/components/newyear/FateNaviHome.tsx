@@ -4,7 +4,11 @@ import { NewYearShell } from "@/components/newyear/NewYearShell";
 import { ReadingCountBubble } from "@/components/newyear/ReadingCountBubble";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
 import { NEWYEAR_LEGAL_LINKS } from "@/lib/constants/legal";
-import { NEWYEAR_LIST_PRICE, NEWYEAR_REPORT_PRICE } from "@/lib/constants/newyear";
+import {
+  NEWYEAR_LIST_PRICE,
+  NEWYEAR_REPORT_PRICE,
+  PREMIUM_TOC_PARTS,
+} from "@/lib/constants/newyear";
 import { formatPrice } from "@/lib/constants/service";
 
 const PREMIUM_REVIEWS = [
@@ -16,25 +20,18 @@ const PREMIUM_REVIEWS = [
     quoteAfter: "",
   },
   {
-    name: "강이O",
-    body: "결혼한 지 7년이 넘었고 남편과의 관계도 예전 같지 않고, 자녀 문제가 제일 고민이었어요. 직접 고민 입력하는 칸이 있는데, 자녀에 대해 물어볼 수 있어서 좋았어요.. 아직은 자녀를 갖기보다 조금 더 기다리는 방향으로 가려구요. 조심해야 할 시기가 같이 나와서 오히려 신뢰가 갔습니다. 단순히 올해 운세만 보는 것과는 확실히 다른 느낌입니다.",
-    quoteBefore: "단순히 올해 운세만 보는 것과는 ",
-    quoteEmph: "확실히 다른 느낌입니다.",
-    quoteAfter: "",
-  },
-  {
     name: "김미O",
-    body: "서른 넘어가니까 인생의 갈림길에 서 있는 느낌이 들고 주변에 털어놓기도 애매해서 신청해 봤는데, 진짜 제대로 돈 값 합니다 !! 분량도 많고 정확해요. 특히 제가 요즘 제일 고민하던 부분에 대해 현실적인 액션 플랜을 콕 집어줘서 너무 좋았어요. 위로만 해주는 게 아니라 진짜 길을 알려주는 느낌이라 두고두고 보려구요.",
-    quoteBefore: "위로만 해주는 게 아니라 ",
-    quoteEmph: "진짜 길을 알려주는 느낌",
-    quoteAfter: "이라 두고두고 보려구요.",
+    body: "서른 넘어가니까 인생의 갈림길에 서 있는 느낌이 들고 주변에 털어놓기도 애매해서 신청해 봤는데, 진짜 제대로 돈 값 합니다 !! 분량도 많고 정확해요. 특히 제가 요즘 제일 고민하던 부분에 대해 현실적인 액션 플랜을 콕 집어줘서 너무 좋았어요. 전 남자친구랑 헤어진 이유까지 설명되네요. 제 기질에 다 이유가 있었네요. 두고두고 보려구요.",
+    quoteBefore: "전 남자친구랑 헤어진 이유까지 설명되네요. ",
+    quoteEmph: "제 기질에 다 이유가 있었네요.",
+    quoteAfter: " 두고두고 보려구요.",
   },
   {
     name: "이은O",
-    body: "예전에 유명한 철학관 가서 10만 원 내고 20분 듣고 온 적 있는데, 나오자마자 다 까먹어서 아까웠거든요. 근데 이건 계속 볼 수 있어서 좋네요. 재물운, 직업운, 결혼운까지 빠지는 거 없이 디테일하고, 무엇보다 제 약점을 어떻게 보완해야 하는지 실행 포인트를 정확히 알려줘서 소름 돋았습니다. 고민 많으신 30대 분들 한 번쯤 꼭 보시는 거 추천해요!",
-    quoteBefore: "제 약점을 어떻게 보완해야 하는지 ",
-    quoteEmph: "실행 포인트를 정확히 알려줘서 소름",
-    quoteAfter: " 돋았습니다.",
+    body: "예전에 유명한 철학관 가서 10만 원 내고 20분 듣고 온 적 있는데, 나오자마자 다 까먹어서 아까웠거든요. 근데 이건 계속 볼 수 있어서 좋네요. 재물운, 직업운, 결혼운까지 빠지는 거 없이 디테일하고, 무엇보다 투자 망했던 시기까지 맞춰서 소름 돋았어요. 앞으로 돈 들어오는 시기도 알았으니 조심하려구요. 고민 많으신 30대 분들 한 번쯤 꼭 보시는 거 추천해요!",
+    quoteBefore: "",
+    quoteEmph: "투자 망했던 시기까지 맞춰서 소름 돋았어요.",
+    quoteAfter: " 앞으로 돈 들어오는 시기도 알았으니 조심하려구요.",
   },
 ] as const;
 
@@ -140,9 +137,39 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             <ul className="ny-premium-bullets">
               <li>타고난 기질과 강점·약점</li>
               <li>100년 인생 흐름과 갈림길</li>
+              <li>2027년은 월별로까지</li>
               <li>지금 고민에 맞춘 실행 포인트</li>
             </ul>
             <p className="ny-premium-note">좋은 말만 하지 않습니다. 길을 알려드립니다.</p>
+          </section>
+
+          <section className="ny-premium-compare" aria-label="비교">
+            <h2 className="ny-premium-compare-title">한 번 듣고 끝내시겠어요?</h2>
+            <div className="ny-premium-compare-grid">
+              <article className="ny-premium-compare-card is-before">
+                <p className="ny-premium-compare-label">일반 철학관</p>
+                <p className="ny-premium-compare-price">10만~30만 원</p>
+                <ul>
+                  <li>원국·대운까지는 안 감</li>
+                  <li>한정된 시간</li>
+                  <li>속 깊은 질문은 꺼내기 어렵고</li>
+                  <li>시간 지나면 까먹음</li>
+                </ul>
+              </article>
+              <article className="ny-premium-compare-card is-after">
+                <p className="ny-premium-compare-label">프리미엄 종합사주</p>
+                <p className="ny-premium-compare-price">
+                  <s>{formatPrice(NEWYEAR_LIST_PRICE)}</s>
+                  {formatPrice(NEWYEAR_REPORT_PRICE)}
+                </p>
+                <ul>
+                  <li>원국부터 실행 포인트까지</li>
+                  <li>100세 인생 분석</li>
+                  <li>적어 주신 고민까지 반영</li>
+                  <li>이메일로 평생 소장</li>
+                </ul>
+              </article>
+            </div>
           </section>
 
           <section className="ny-premium-trust" aria-label="해석 근거">
@@ -150,33 +177,33 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
               <span className="ny-premium-trust-mark">혼자</span> 만들지 않았습니다.
             </p>
             <p className="ny-premium-trust-lead">
-              현장 경험이 깊은
-              <br />
-              <span className="ny-premium-trust-chip">현직 역술인</span>과 함께 설계
+              <span className="ny-premium-trust-chip">현직 역술인</span>들과 함께 설계
             </p>
+            <div className="ny-premium-trust-art">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/fatenavi4/trust-astronomy.jpg" alt="" />
+            </div>
             <div className="ny-premium-trust-body">
               <p>
-                사주 원국·대운·세운의 읽기 순서부터, 흉운을 어떻게 말할지의{" "}
-                <strong>판단 기준</strong>까지 역술인 선생님들과 맞춰 가며 쌓았습니다.
+                <span className="ny-premium-trust-em">명리학적 해석 체계</span>를 바탕으로
+                <br />
+                역술인들의 <span className="ny-premium-trust-em">해석 방식과 판단 기준</span>을
+                <br />
+                <span className="ny-premium-trust-em">설계 단계부터</span> 반영했습니다.
               </p>
+              <div className="ny-premium-trust-seal">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/fatenavi4/trust-seal.png" alt="정통" />
+              </div>
               <p>
-                십성·신살·합冲刑害 같은 <strong>전문 명리 요소</strong>를 빠뜨리지 않되, 상담실에서
-                쓰이던 말로 풀어 실제 선택에 도움이 되게 다듬었습니다.
-              </p>
-              <p>
-                여러 차례의 <strong>교차 검토와 문장 검증</strong>을 거쳐, 덕담이 아니라 근거 있는
-                풀이가 나오도록 고정했습니다.
+                여러 차례의 <span className="ny-premium-trust-em">교차 검토와 문장 검증</span>을 거쳐
+                <br />
+                <span className="ny-premium-trust-em">근거 있는 풀이</span>가 나오도록 했습니다.
               </p>
             </div>
             <p className="ny-premium-trust-close">
-              <span className="ny-premium-trust-mark">현장의 눈</span>이 들어간 사주풀이입니다.
+              <span className="ny-premium-trust-mark">현장의 경험</span>을 알고리즘에 담았습니다.
             </p>
-            <div className="ny-premium-trust-seals" aria-hidden>
-              <span>원국</span>
-              <span>대운</span>
-              <span>세운</span>
-              <span>개운</span>
-            </div>
           </section>
 
           <section className="ny-premium-kakao" aria-label="카톡 실제 후기">
@@ -227,6 +254,43 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section className="ny-premium-toc" aria-label="목차">
+            <div className="ny-premium-toc-head">
+              <span className="ny-premium-toc-mark" aria-hidden />
+              <h2 className="ny-premium-toc-title">목차</h2>
+              <p className="ny-premium-toc-lead">총 17장 · 한 권 분량</p>
+            </div>
+
+            <div className="ny-premium-toc-parts">
+              {(() => {
+                let chapterNo = 0;
+                return PREMIUM_TOC_PARTS.map((part) => (
+                  <div key={part.part} className="ny-premium-toc-part">
+                    <h3 className="ny-premium-toc-part-title">
+                      <span className="ny-premium-toc-diamond" aria-hidden />
+                      <span>
+                        제{part.part}부. {part.title}
+                      </span>
+                    </h3>
+                    <ul className="ny-premium-toc-chapters">
+                      {part.chapters.map((title) => {
+                        chapterNo += 1;
+                        return (
+                          <li key={title}>
+                            <span className="ny-premium-toc-num">
+                              {String(chapterNo).padStart(2, "0")}
+                            </span>
+                            <span>{title}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ));
+              })()}
+            </div>
           </section>
 
           <footer className="ny-premium-legal">

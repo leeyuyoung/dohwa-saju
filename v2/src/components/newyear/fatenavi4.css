@@ -224,13 +224,14 @@
 .ny-premium-landing {
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
+  gap: 2rem;
   padding: 0.4rem 0 0;
 }
 
 .ny-premium-hero {
   position: relative;
   overflow: hidden;
+  margin-bottom: 0.55rem;
   padding: 0 1.25rem 1.65rem;
   border: 1.25px solid rgb(28 28 28 / 0.42);
   border-radius: 0;
@@ -434,7 +435,7 @@
 }
 
 .ny-premium-section-lead {
-  margin: 0 0 1rem;
+  margin: 0 0 1.35rem;
   color: #1c1c1c;
   font-size: 0.95rem;
   font-weight: 600;
@@ -446,7 +447,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.55rem;
-  margin: 0 0 1rem;
+  margin: 0 0 1.35rem;
 }
 
 .ny-premium-feature {
@@ -503,7 +504,7 @@
 }
 
 .ny-premium-note {
-  margin: 0.9rem 0 0;
+  margin: 1.35rem 0 0;
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
   background: rgb(212 82 28 / 0.1);
@@ -513,12 +514,304 @@
   text-align: center;
 }
 
+.ny-premium-toc {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: calc(100% + 2rem);
+  margin-top: 1.15rem;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding: 1.1rem 0.8rem 1.2rem;
+  border-radius: 0;
+  background:
+    radial-gradient(ellipse at 50% 12%, rgb(212 82 28 / 0.28), transparent 42%),
+    linear-gradient(165deg, #4a281c 0%, #2f1a12 48%, #1a0f0b 100%);
+  box-shadow: inset 0 0 0 1px rgb(255 236 210 / 0.08);
+}
+
+.ny-premium-toc-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.25rem 1rem 0.35rem;
+  border-radius: 3px 3px 0 0;
+  background: #faf9f6;
+  text-align: center;
+}
+
+.ny-premium-toc-mark {
+  width: 0.72rem;
+  height: 0.72rem;
+  margin-bottom: 0.15rem;
+  transform: rotate(45deg);
+  background: #d4521c;
+}
+
+.ny-premium-toc-title {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: clamp(1.4rem, 5.5vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.ny-premium-toc-lead {
+  margin: 0;
+  color: #d4521c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.ny-premium-toc-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0.85rem 1rem 1.25rem;
+  border-radius: 0 0 3px 3px;
+  background: #faf9f6;
+}
+
+.ny-premium-toc-part {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.55rem 0.15rem 1.6rem;
+  border-top: 1px solid rgb(212 82 28 / 0.18);
+}
+
+.ny-premium-toc-part:first-child {
+  border-top: none;
+  padding-top: 0.45rem;
+}
+
+.ny-premium-toc-part-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0;
+  color: #d4521c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.ny-premium-toc-diamond {
+  flex-shrink: 0;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-top: 0.4rem;
+  transform: rotate(45deg);
+  background: #d4521c;
+}
+
+.ny-premium-toc-chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  margin: 0;
+  padding: 0 0 0 1rem;
+  list-style: none;
+}
+
+.ny-premium-toc-chapters li {
+  display: grid;
+  grid-template-columns: 1.55rem 1fr;
+  gap: 0.4rem;
+  align-items: baseline;
+  color: #333;
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.ny-premium-toc-num {
+  color: #666;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.ny-premium-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1.15rem;
+  margin-bottom: 1.15rem;
+  padding: 0.35rem 0 0.55rem;
+}
+
+.ny-premium-compare-title {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: clamp(1.15rem, 4.8vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.ny-premium-compare-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.22fr);
+  align-items: stretch;
+  gap: 0;
+  padding: 0.35rem 0.1rem 0.25rem;
+  overflow: visible;
+}
+
+.ny-premium-compare-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.1rem 0.8rem 1.15rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.ny-premium-compare-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ny-premium-compare-card li {
+  margin: 0;
+  padding: 0.55rem 0 0;
+  border-top: 1px solid rgb(28 28 28 / 0.1);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.ny-premium-compare-label {
+  margin: 0;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ny-premium-compare-price {
+  margin: 0;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.ny-premium-compare-price s {
+  display: block;
+  margin-bottom: 0.1rem;
+  color: rgb(28 28 28 / 0.38);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.ny-premium-compare-card.is-before {
+  position: relative;
+  z-index: 1;
+  width: calc(100% + 1.6rem);
+  min-height: 100%;
+  margin-right: -2.4rem;
+  margin-bottom: 0;
+  padding: 1.15rem 0.7rem 1.2rem;
+  gap: 0.6rem;
+  justify-content: flex-start;
+  background: #dedad3;
+  color: rgb(28 28 28 / 0.48);
+  border: 1px solid rgb(28 28 28 / 0.1);
+  filter: grayscale(0.4);
+  box-shadow: none;
+  transform: scale(0.92);
+  transform-origin: left center;
+}
+
+.ny-premium-compare-card.is-before ul {
+  flex: 1;
+  justify-content: space-evenly;
+  gap: 0;
+  margin: 0.75rem 0 0;
+}
+
+.ny-premium-compare-card.is-before .ny-premium-compare-label {
+  font-size: 0.78rem;
+  color: rgb(28 28 28 / 0.5);
+}
+
+.ny-premium-compare-card.is-before .ny-premium-compare-price {
+  margin-top: 0.3rem;
+  font-size: 0.98rem;
+  color: rgb(28 28 28 / 0.52);
+}
+
+.ny-premium-compare-card.is-before li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+  font-size: 0.72rem;
+  font-weight: 500;
+  border-top-color: rgb(28 28 28 / 0.08);
+}
+
+.ny-premium-compare-card.is-after {
+  position: relative;
+  z-index: 2;
+  width: 95%;
+  justify-self: end;
+  margin-left: -1.3rem;
+  padding: 1.35rem 0.95rem 1.4rem;
+  gap: 0.75rem;
+  border: 1.5px solid #d4521c;
+  background:
+    radial-gradient(ellipse at 80% 0%, rgb(226 110 45 / 0.14), transparent 45%),
+    #faf9f6;
+  color: #1c1c1c;
+  box-shadow:
+    0 16px 32px rgb(28 28 28 / 0.16),
+    0 0 0 1px rgb(212 82 28 / 0.08);
+}
+
+.ny-premium-compare-card.is-after .ny-premium-compare-label {
+  color: #d4521c;
+  font-size: 0.95rem;
+}
+
+.ny-premium-compare-card.is-after .ny-premium-compare-price {
+  color: #1c1c1c;
+  font-size: 1.28rem;
+}
+
+.ny-premium-compare-card.is-after li {
+  border-top-color: rgb(212 82 28 / 0.22);
+  color: #1c1c1c;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
 .ny-premium-trust {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.1rem;
-  padding: 1.6rem 1rem 1.45rem;
+  gap: 1.45rem;
+  padding: 1.85rem 1.1rem 1.7rem;
   border: 1.5px solid #1c1c1c;
   border-radius: 8px;
   background:
@@ -568,34 +861,69 @@
   background: #1c1c1c;
   color: #f5f3ee;
   font-size: 0.95em;
+  font-weight: 700;
   line-height: 1.25;
   vertical-align: baseline;
+}
+
+.ny-premium-trust-em {
+  color: #7a2a16;
+  font-weight: 800;
+}
+
+.ny-premium-trust-art {
+  width: 100%;
+  max-width: 22rem;
+  margin: 0.35rem 0 0.25rem;
+  overflow: hidden;
+  border: 1px solid rgb(28 28 28 / 0.14);
+  border-radius: 6px;
+  background: #ebe6dc;
+}
+
+.ny-premium-trust-art img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .ny-premium-trust-body {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-width: 22rem;
-  margin: 0.15rem 0 0;
+  align-items: center;
+  gap: 1.35rem;
+  max-width: 22.5rem;
+  margin: 0.4rem 0 0;
+}
+
+.ny-premium-trust-seal {
+  width: min(34%, 5.75rem);
+  margin: -0.15rem 0;
+}
+
+.ny-premium-trust-seal img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .ny-premium-trust-body p {
   margin: 0;
-  color: rgb(28 28 28 / 0.78);
-  font-size: 0.88rem;
+  color: rgb(28 28 28 / 0.82);
+  font-size: clamp(0.95rem, 3.8vw, 1.05rem);
   font-weight: 500;
-  line-height: 1.7;
+  letter-spacing: -0.01em;
+  line-height: 1.85;
   word-break: keep-all;
 }
 
 .ny-premium-trust-body strong {
-  color: #1c1c1c;
+  color: #7a2a16;
   font-weight: 800;
 }
 
 .ny-premium-trust-close {
-  margin: 0.25rem 0 0;
+  margin: 0.45rem 0 0;
   color: #1c1c1c;
   font-family: var(--font-serif), "Noto Serif KR", serif;
   font-size: clamp(1.12rem, 4.5vw, 1.35rem);
@@ -604,35 +932,11 @@
   line-height: 1.45;
 }
 
-.ny-premium-trust-seals {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.45rem;
-  width: 100%;
-  max-width: 18rem;
-  margin-top: 0.25rem;
-}
-
-.ny-premium-trust-seals span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1;
-  border: 1.5px solid rgb(28 28 28 / 0.72);
-  border-radius: 4px;
-  background: #f3f1eb;
-  color: #1c1c1c;
-  font-family: var(--font-serif), "Noto Serif KR", serif;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  box-shadow: inset 0 0 0 3px rgb(245 243 238 / 0.9);
-}
-
 .ny-premium-kakao {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.55rem;
+  margin-top: 1.15rem;
   padding: 0.15rem 0 0.2rem;
 }
 
