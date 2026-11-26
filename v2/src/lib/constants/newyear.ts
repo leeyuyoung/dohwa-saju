@@ -30,8 +30,14 @@ export const NEWYEAR_LIST_PRICE = 89900;
  */
 export const NEWYEAR_READING_COUNT_DISPLAY = 2314;
 
-/** 배포 직전에 true로 켠다. false면 결제 화면과 결제 주문을 열지 않는다. */
+/** 배포 직전에 true로 켠다. false면 무료결과 결제 CTA·공통 checkout을 열지 않는다. */
 export const NEWYEAR_CHECKOUT_OPEN = false;
+
+/**
+ * FateNavi2 직결제(정보입력→결제→리포트)용 주문 허용.
+ * true여도 FateNavi/3 무료결과 결제 CTA는 NEWYEAR_CHECKOUT_OPEN이 연다.
+ */
+export const NEWYEAR_DIRECT_PAY_OPEN = true;
 
 /** 세운 계산 범위. AI 스키마 years 길이와 맞춘다. */
 export const NEWYEAR_YEAR_FROM = 2027;

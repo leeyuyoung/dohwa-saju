@@ -4,6 +4,8 @@ import { NewYearShell } from "@/components/newyear/NewYearShell";
 import { ReadingCountBubble } from "@/components/newyear/ReadingCountBubble";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
 import { NEWYEAR_LEGAL_LINKS } from "@/lib/constants/legal";
+import { NEWYEAR_LIST_PRICE, NEWYEAR_REPORT_PRICE } from "@/lib/constants/newyear";
+import { formatPrice } from "@/lib/constants/service";
 
 const PREMIUM_REVIEWS = [
   {
@@ -104,7 +106,13 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             </div>
             <p className="ny-premium-hero-kicker">PREMIUM</p>
             <h1 className="ny-premium-hero-title">종합사주</h1>
-            <p className="ny-premium-price">5만자 이상의 미친 분량</p>
+            <p className="ny-premium-price">
+              <span>
+                <s>{formatPrice(NEWYEAR_LIST_PRICE)}</s>
+                {formatPrice(NEWYEAR_REPORT_PRICE)}
+              </span>
+              <span className="ny-premium-price-note">5만자 이상의 미친 분량</span>
+            </p>
           </section>
 
           <section className="ny-premium-section" aria-label="구성 안내">
@@ -135,6 +143,40 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
               <li>지금 고민에 맞춘 실행 포인트</li>
             </ul>
             <p className="ny-premium-note">좋은 말만 하지 않습니다. 길을 알려드립니다.</p>
+          </section>
+
+          <section className="ny-premium-trust" aria-label="해석 근거">
+            <p className="ny-premium-trust-hook">
+              <span className="ny-premium-trust-mark">혼자</span> 만들지 않았습니다.
+            </p>
+            <p className="ny-premium-trust-lead">
+              현장 경험이 깊은
+              <br />
+              <span className="ny-premium-trust-chip">현직 역술인</span>과 함께 설계
+            </p>
+            <div className="ny-premium-trust-body">
+              <p>
+                사주 원국·대운·세운의 읽기 순서부터, 흉운을 어떻게 말할지의{" "}
+                <strong>판단 기준</strong>까지 역술인 선생님들과 맞춰 가며 쌓았습니다.
+              </p>
+              <p>
+                십성·신살·합冲刑害 같은 <strong>전문 명리 요소</strong>를 빠뜨리지 않되, 상담실에서
+                쓰이던 말로 풀어 실제 선택에 도움이 되게 다듬었습니다.
+              </p>
+              <p>
+                여러 차례의 <strong>교차 검토와 문장 검증</strong>을 거쳐, 덕담이 아니라 근거 있는
+                풀이가 나오도록 고정했습니다.
+              </p>
+            </div>
+            <p className="ny-premium-trust-close">
+              <span className="ny-premium-trust-mark">현장의 눈</span>이 들어간 사주풀이입니다.
+            </p>
+            <div className="ny-premium-trust-seals" aria-hidden>
+              <span>원국</span>
+              <span>대운</span>
+              <span>세운</span>
+              <span>개운</span>
+            </div>
           </section>
 
           <section className="ny-premium-kakao" aria-label="카톡 실제 후기">

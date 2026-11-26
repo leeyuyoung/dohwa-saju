@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { NewYearAnalyzing } from "@/components/newyear/NewYearAnalyzing";
 import { NewYearShell } from "@/components/newyear/NewYearShell";
 
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
 export default function FateNavi2AnalyzingPage() {
   return (
     <NewYearShell theme="premium" tone="ink" showHeader={false} showFooter={false}>
-      <NewYearAnalyzing theme="premium" />
+      <Suspense fallback={<div className="ny-form min-h-[40vh]" aria-hidden />}>
+        <NewYearAnalyzing theme="premium" />
+      </Suspense>
     </NewYearShell>
   );
 }

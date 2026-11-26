@@ -44,16 +44,16 @@
 }
 
 .ny-premium .ny-main:has(.ny-form) {
-  padding-top: 0.75rem;
+  padding-top: 0.55rem;
   padding-bottom: 5.75rem;
 }
 
 .ny-premium .ny-form {
-  gap: 2.15rem;
+  gap: 1.55rem;
 }
 
 .ny-premium .ny-form > section {
-  gap: 0.85rem;
+  gap: 0.6rem;
 }
 
 .ny-premium .ny-brand,
@@ -83,7 +83,7 @@
 .ny-premium .ny-choice,
 .ny-premium .ny-textarea {
   border: 1px solid rgb(28 28 28 / 0.16);
-  border-radius: 12px;
+  border-radius: 8px;
   background: #faf9f6;
   color: #1c1c1c;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.75);
@@ -102,6 +102,10 @@
 
 .ny-premium .ny-form-label {
   color: #1c1c1c;
+}
+
+.ny-premium .ny-form-hint {
+  color: rgb(28 28 28 / 0.48);
 }
 
 .ny-premium.ny-ink,
@@ -389,6 +393,10 @@
 }
 
 .ny-premium-price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
   margin: 0;
   color: #1c1c1c;
   font-family: var(--font-serif), serif;
@@ -401,6 +409,12 @@
   margin-right: 0.35rem;
   color: rgb(28 28 28 / 0.38);
   font-weight: 500;
+}
+
+.ny-premium-price-note {
+  color: rgb(28 28 28 / 0.68);
+  font-size: 0.98rem;
+  font-weight: 600;
 }
 
 .ny-premium-section {
@@ -497,6 +511,122 @@
   font-size: 0.85rem;
   font-weight: 700;
   text-align: center;
+}
+
+.ny-premium-trust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1.6rem 1rem 1.45rem;
+  border: 1.5px solid #1c1c1c;
+  border-radius: 8px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.75), transparent 55%),
+    #faf9f6;
+  text-align: center;
+}
+
+.ny-premium-trust-hook {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: clamp(1.35rem, 5.6vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+
+.ny-premium-trust-lead {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: clamp(1.05rem, 4.2vw, 1.22rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.55;
+}
+
+.ny-premium-trust-mark {
+  position: relative;
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  background-image: linear-gradient(
+    transparent 62%,
+    rgb(226 160 45 / 0.55) 62%,
+    rgb(226 160 45 / 0.55) 92%,
+    transparent 92%
+  );
+}
+
+.ny-premium-trust-chip {
+  display: inline-block;
+  margin: 0.15rem 0.05rem;
+  padding: 0.12rem 0.4rem 0.18rem;
+  border-radius: 3px;
+  background: #1c1c1c;
+  color: #f5f3ee;
+  font-size: 0.95em;
+  line-height: 1.25;
+  vertical-align: baseline;
+}
+
+.ny-premium-trust-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 22rem;
+  margin: 0.15rem 0 0;
+}
+
+.ny-premium-trust-body p {
+  margin: 0;
+  color: rgb(28 28 28 / 0.78);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.ny-premium-trust-body strong {
+  color: #1c1c1c;
+  font-weight: 800;
+}
+
+.ny-premium-trust-close {
+  margin: 0.25rem 0 0;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: clamp(1.12rem, 4.5vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.ny-premium-trust-seals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 18rem;
+  margin-top: 0.25rem;
+}
+
+.ny-premium-trust-seals span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1.5px solid rgb(28 28 28 / 0.72);
+  border-radius: 4px;
+  background: #f3f1eb;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  box-shadow: inset 0 0 0 3px rgb(245 243 238 / 0.9);
 }
 
 .ny-premium-kakao {

@@ -6,7 +6,14 @@ import {
   DETAILED_REPORT_ORDER_NAME,
   reportCheckoutAmount,
 } from "@/lib/constants/service";
-import { NEWYEAR_CHECKOUT_OPEN, NEWYEAR_ORDER_NAME, NEWYEAR_REPORT_PRICE, PRODUCT_NEWYEAR, productOf } from "@/lib/constants/newyear";
+import {
+  NEWYEAR_CHECKOUT_OPEN,
+  NEWYEAR_DIRECT_PAY_OPEN,
+  NEWYEAR_ORDER_NAME,
+  NEWYEAR_REPORT_PRICE,
+  PRODUCT_NEWYEAR,
+  productOf,
+} from "@/lib/constants/newyear";
 import { markAnalysisPaid, revokeAnalysisPaid } from "./analysis";
 import { sendMetaPurchaseEvent } from "./metaCapi";
 import { getAnalysisStore, type OrderMetaClick, type OrderRecord } from "./store";
@@ -121,7 +128,7 @@ export async function createPayappOrder(
   const record = await store.get(token);
   if (!record) throw new PaymentError(404, "결제할 리포트를 찾지 못했습니다.");
   if (record.paidAt !== null) throw new PaymentError(409, "이미 결제가 완료된 리포트입니다.");
-  if (productOf(record) === PRODUCT_NEWYEAR && !NEWYEAR_CHECKOUT_OPEN) {
+  if (productOf(record) === PRODUCT_NEWYEAR && !NEWYEAR_CHECKOUT_OPEN && !NEWYEAR_DIRECT_PAY_OPEN) {
     throw new PaymentError(503, "결제는 준비 중입니다.");
   }
   if (record.email !== email || record.phone !== phone || record.marketingOptIn !== marketingOptIn) {

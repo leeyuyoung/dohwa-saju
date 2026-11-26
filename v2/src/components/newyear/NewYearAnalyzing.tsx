@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { AnalyzingExperience } from "@/components/analyzing/AnalyzingExperience";
+import { NewYearAfterPayLoading } from "@/components/newyear/NewYearAfterPayLoading";
 import { clearPendingNewYear, loadPendingNewYear } from "@/lib/client/inputStorage";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
 
@@ -11,11 +13,16 @@ const MISSING = {
   cta: "정보 입력하기",
 };
 
+const TOKEN_RE = /^[A-Za-z0-9_-]{8,128}$/;
+
 export function NewYearAnalyzing({ theme = "hanji" }: { theme?: FateNaviThemeId }) {
+  const searchParams = useSearchParams();
   const basePath = themeOf(theme).basePath;
   const isSheep = theme === "sheep";
   const isHanji = theme === "hanji";
   const isPremium = theme === "premium";
+  const afterPay = searchParams.get("afterPay") === "1";
+  const payToken = searchParams.get("token");
   const subjectName = useMemo(() => {
     const pending = loadPendingNewYear();
     if (!pending || typeof pending !== "object") return undefined;
@@ -23,6 +30,10 @@ export function NewYearAnalyzing({ theme = "hanji" }: { theme?: FateNaviThemeId 
     return typeof name === "string" && name.trim() ? name.trim() : undefined;
   }, []);
   const resultHref = useCallback((token: string) => `${basePath}/result/${token}`, [basePath]);
+
+  if (isPremium && afterPay && payToken && TOKEN_RE.test(payToken)) {
+    return <NewYearAfterPayLoading token={payToken} />;
+  }
 
   const workingCopy = isSheep
     ? subjectName

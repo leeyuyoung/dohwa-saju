@@ -35,7 +35,7 @@ export function CheckoutWidget({ token, amount, couponApplied = false, legalBase
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [contactErrors, setContactErrors] = useState<ContactErrors>({});
-  const [marketingOptIn, setMarketingOptIn] = useState(true);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [marketingDetailOpen, setMarketingDetailOpen] = useState(false);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export function CheckoutWidget({ token, amount, couponApplied = false, legalBase
 
       <div className="flex items-center justify-between gap-3 px-0.5">
         <label className="flex min-w-0 cursor-pointer items-center gap-2">
-          <span className="relative inline-flex h-4 w-4 shrink-0 items-center justify-center">
+          <span className="relative inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center">
             <input
               type="checkbox"
               checked={marketingOptIn}
@@ -158,18 +158,40 @@ export function CheckoutWidget({ token, amount, couponApplied = false, legalBase
             />
             <span
               aria-hidden
-              className={`flex h-4 w-4 items-center justify-center rounded-full border transition-colors ${
-                marketingOptIn ? "border-paper/55 bg-paper/25" : "border-paper/35 bg-transparent"
+              className={`flex h-[18px] w-[18px] items-center justify-center rounded-full border transition-colors ${
+                marketingOptIn
+                  ? tone === "ink"
+                    ? "border-[#1c1c1c] bg-[#1c1c1c]"
+                    : "border-paper bg-paper"
+                  : tone === "ink"
+                    ? "border-[rgb(28_28_28/0.35)] bg-transparent"
+                    : "border-paper/35 bg-transparent"
               }`}
             >
-              {marketingOptIn && (
-                <svg viewBox="0 0 16 16" className="h-2 w-2 text-paper" fill="none">
-                  <path d="M3.5 8.2 6.4 11l6-6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              {marketingOptIn ? (
+                <svg
+                  viewBox="0 0 16 16"
+                  className={`h-2.5 w-2.5 ${tone === "ink" ? "text-[#f5f3ee]" : "text-ink"}`}
+                  fill="none"
+                >
+                  <path
+                    d="M3.5 8.2 6.4 11l6-6.5"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
-              )}
+              ) : null}
             </span>
           </span>
-          <span className="truncate font-gothic text-[11px] tracking-[-0.02em] text-paper">마케팅 수신 동의 (선택)</span>
+          <span
+            className={`truncate font-gothic text-[11px] tracking-[-0.02em] ${
+              tone === "ink" ? "text-[#1c1c1c]" : "text-paper"
+            }`}
+          >
+            마케팅 수신 동의 (선택)
+          </span>
         </label>
         <button
           type="button"

@@ -197,6 +197,10 @@
   color: #4a342c;
 }
 
+.ny-sheep .ny-form-hint {
+  color: rgb(74 52 44 / 0.55);
+}
+
 .ny-sheep .ny-chapter-num,
 .ny-sheep .ny-section-num {
   border: none;
