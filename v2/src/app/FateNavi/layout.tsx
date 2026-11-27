@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FateNaviFavicon } from "@/components/newyear/FateNaviFavicon";
 import { themeOf } from "@/lib/constants/fatenaviTheme";
 
 const theme = themeOf("premium");
@@ -19,6 +20,14 @@ export const metadata: Metadata = {
     template: "%s",
   },
   description,
+  icons: {
+    icon: [
+      { url: "/images/fatenavi4/favicon-premium.png?v=3", type: "image/png", sizes: "32x32" },
+      { url: "/FateNavi/favicon.ico", type: "image/x-icon", sizes: "16x16" },
+    ],
+    shortcut: "/images/fatenavi4/favicon-premium.png?v=3",
+    apple: [{ url: "/FateNavi/apple-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   openGraph: {
     title,
     description,
@@ -37,5 +46,10 @@ export const metadata: Metadata = {
 };
 
 export default function FateNaviLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <FateNaviFavicon />
+      {children}
+    </>
+  );
 }
