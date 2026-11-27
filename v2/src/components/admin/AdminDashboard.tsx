@@ -360,9 +360,7 @@ export function AdminDashboard({
 
   return (
     <Root
-      className={`ny-admin mx-auto flex min-h-[70dvh] w-full flex-col gap-10 px-5 py-10 ${
-        premium ? "max-w-[116rem]" : "max-w-5xl"
-      }`}
+      className="ny-admin mx-auto flex min-h-[70dvh] w-full max-w-[116rem] flex-col gap-10 px-5 py-10"
     >
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
