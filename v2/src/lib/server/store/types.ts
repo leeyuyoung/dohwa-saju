@@ -1,5 +1,11 @@
 import type { ProductId } from "@/lib/constants/newyear";
-import type { FunnelEvent, FunnelStep, FunnelStepCount, FunnelSummaryRange } from "@/lib/server/funnel";
+import type {
+  FunnelEvent,
+  FunnelStep,
+  FunnelStepCount,
+  FunnelSummaryOptions,
+  FunnelSummaryRange,
+} from "@/lib/server/funnel";
 import type { AiReportV1 } from "@/lib/server/ai/reportSchema.v1";
 import type { AiReportV2 } from "@/lib/server/ai/reportSchema.v2";
 import type { AiNewYearReport } from "@/lib/server/ai/reportSchema.newyear";
@@ -113,5 +119,5 @@ export interface AnalysisStore {
   /** 해당 토큰으로 이미 찍힌 단계가 있는지. */
   hasFunnelStepForToken(step: FunnelStep, token: string): Promise<boolean>;
   /** 단계별 고유 세션 수와 이탈률. range가 있으면 해당 기간만. */
-  funnelSummary(range?: FunnelSummaryRange): Promise<FunnelStepCount[]>;
+  funnelSummary(range?: FunnelSummaryRange, options?: FunnelSummaryOptions): Promise<FunnelStepCount[]>;
 }

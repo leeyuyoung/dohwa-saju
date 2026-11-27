@@ -4,13 +4,13 @@ import { NEWYEAR_LEGAL_LINKS, NEWYEAR_LEGAL_META } from "@/lib/constants/legal";
 import { formatPrice } from "@/lib/constants/service";
 
 export const metadata: Metadata = {
-  title: "2027 이용약관",
+  title: "이용약관",
   robots: { index: false, follow: false },
 };
 
 export default function NewYearTermsPage() {
   return (
-    <LegalDoc title="이용약관" brand="newyear" links={NEWYEAR_LEGAL_LINKS}>
+    <LegalDoc title="이용약관" brand="newyear" theme="premium" links={NEWYEAR_LEGAL_LINKS}>
       <p>
         본 약관은 {NEWYEAR_LEGAL_META.serviceName}(이하 “서비스”)의 이용 조건과 절차, 회사와 이용자의 권리·의무를
         정합니다.

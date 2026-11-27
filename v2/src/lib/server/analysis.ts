@@ -3,7 +3,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { after } from "next/server";
 import { buildSajuProfile, calculateSaju } from "@/lib/saju";
-import type { AnalysisInput } from "@/lib/validation/analysisInput";
+import { relationshipLabel, type AnalysisInput } from "@/lib/validation/analysisInput";
 import { PRODUCT_DOHWA, productOf, type ProductId } from "@/lib/constants/newyear";
 import { CURRENT_REPORT_VERSION, resolveReportVersion } from "@/lib/constants/reportVersion";
 import { AiReportError, generateReport } from "./ai/generateReport";
@@ -67,8 +67,14 @@ export async function createAnalysis(input: AnalysisInput, product: ProductId = 
     concern: (() => {
       const job = typeof input.job === "string" ? input.job.trim() : "";
       const concern = typeof input.concern === "string" ? input.concern.trim() : "";
-      if (!job && !concern) return null;
-      return [job ? `직업/직무: ${job}` : null, concern || null].filter(Boolean).join("\n\n");
+      const isPremiumStatus =
+        input.relationshipStatus === "unmarried" ||
+        input.relationshipStatus === "married" ||
+        input.relationshipStatus === "coupled" ||
+        input.relationshipStatus === "solo";
+      const relationship = isPremiumStatus ? `연애/결혼: ${relationshipLabel(input.relationshipStatus)}` : null;
+      if (!relationship && !job && !concern) return null;
+      return [relationship, job ? `직업/직무: ${job}` : null, concern || null].filter(Boolean).join("\n\n");
     })(),
     attribution: input.attribution
       ? {

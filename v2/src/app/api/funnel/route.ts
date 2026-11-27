@@ -1,3 +1,4 @@
+import { PRODUCT_DOHWA, PRODUCT_NEWYEAR, type ProductId } from "@/lib/constants/newyear";
 import { isFunnelStep } from "@/lib/funnelSteps";
 import { isSameOrigin, jsonError as fail, readJsonBody } from "@/lib/server/http";
 import { clientIp, consumeRateLimit } from "@/lib/server/rateLimit";
@@ -6,6 +7,10 @@ import { getAnalysisStore } from "@/lib/server/store";
 
 const IP_LIMIT = { limit: 120, windowMs: 60 * 60 * 1000 };
 const SESSION_PATTERN = /^[A-Za-z0-9_-]{8,80}$/;
+
+function parseProduct(value: unknown): ProductId {
+  return value === PRODUCT_NEWYEAR ? PRODUCT_NEWYEAR : PRODUCT_DOHWA;
+}
 
 /** sendBeacon은 Origin이 빠질 수 있어 Referer 호스트로도 같은 출처를 허용한다. */
 function isAllowedFunnelRequest(request: Request) {
@@ -23,7 +28,7 @@ function isAllowedFunnelRequest(request: Request) {
 /** 인트로 방문(세션) 수. 소셜 프루프용으로 intro 단계만 공개한다. */
 export async function GET() {
   try {
-    const summary = await getAnalysisStore().funnelSummary();
+    const summary = await getAnalysisStore().funnelSummary(undefined, { product: PRODUCT_DOHWA });
     const intro = summary.find((row) => row.step === "intro");
     const count = intro?.sessions ?? 0;
     return Response.json(
@@ -51,7 +56,7 @@ export async function POST(request: Request) {
 
   const json = await readJsonBody(request);
   if (!json || typeof json !== "object") return fail(400, "잘못된 요청입니다.");
-  const body = json as { sessionId?: unknown; step?: unknown; token?: unknown };
+  const body = json as { sessionId?: unknown; step?: unknown; token?: unknown; product?: unknown };
 
   if (typeof body.sessionId !== "string" || !SESSION_PATTERN.test(body.sessionId)) {
     return fail(400, "잘못된 요청입니다.");
@@ -66,11 +71,14 @@ export async function POST(request: Request) {
     token = body.token;
   }
 
+  const product = parseProduct(body.product);
+
   try {
     await getAnalysisStore().trackFunnelEvent({
       sessionId: body.sessionId,
       step: body.step,
       token,
+      product,
       at: Date.now(),
     });
   } catch (error) {

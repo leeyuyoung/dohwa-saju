@@ -3,13 +3,13 @@ import { LegalDoc, LegalSection } from "@/components/legal/LegalDoc";
 import { BUSINESS, NEWYEAR_LEGAL_LINKS, NEWYEAR_LEGAL_META } from "@/lib/constants/legal";
 
 export const metadata: Metadata = {
-  title: "2027 개인정보처리방침",
+  title: "개인정보처리방침",
   robots: { index: false, follow: false },
 };
 
 export default function NewYearPrivacyPage() {
   return (
-    <LegalDoc title="개인정보처리방침" brand="newyear" links={NEWYEAR_LEGAL_LINKS}>
+    <LegalDoc title="개인정보처리방침" brand="newyear" theme="premium" links={NEWYEAR_LEGAL_LINKS}>
       <p>
         {NEWYEAR_LEGAL_META.serviceName}(이하 “회사”)는 「개인정보 보호법」에 따라 이용자의 개인정보를 보호하고, 관련
         고충을 처리하기 위해 다음과 같이 개인정보처리방침을 공개합니다.

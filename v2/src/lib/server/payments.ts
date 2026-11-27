@@ -7,10 +7,15 @@ import {
   reportCheckoutAmount,
 } from "@/lib/constants/service";
 import {
+  NEWYEAR_ALLOWED_AMOUNTS,
   NEWYEAR_CHECKOUT_OPEN,
   NEWYEAR_DIRECT_PAY_OPEN,
   NEWYEAR_ORDER_NAME,
+  NEWYEAR_ORDER_NAME_DUO,
   NEWYEAR_REPORT_PRICE,
+  NEWYEAR_REPORT_PRICE_DUO,
+  type NewyearCheckoutPack,
+  PRODUCT_DOHWA,
   PRODUCT_NEWYEAR,
   productOf,
 } from "@/lib/constants/newyear";
@@ -116,6 +121,32 @@ export type CreatePayappOrderResult = {
  * 주문을 만들고 페이앱 결제 URL을 받는다.
  * var1=orderId, var2=token 으로 웹훅에서 주문을 찾는다.
  */
+export type CheckoutPartnerInput = {
+  name: string;
+  gender: "male" | "female";
+  calendarType: "solar" | "lunar";
+  isLeapMonth: boolean;
+  year: number;
+  month: number;
+  day: number;
+  hour: number | null;
+  minute: number | null;
+  birthTimeUnknown: boolean;
+  concern?: string | null;
+};
+
+function partnerConcernLine(partner: CheckoutPartnerInput) {
+  const birth = `${partner.year}.${String(partner.month).padStart(2, "0")}.${String(partner.day).padStart(2, "0")}`;
+  const calendar = partner.calendarType === "lunar" ? `음력${partner.isLeapMonth ? " 윤달" : ""}` : "양력";
+  const time = partner.birthTimeUnknown
+    ? "시간 모름"
+    : `${String(partner.hour ?? 0).padStart(2, "0")}:${String(partner.minute ?? 0).padStart(2, "0")}`;
+  const gender = partner.gender === "male" ? "남성" : "여성";
+  const base = `함께 볼 사람: ${partner.name} / ${gender} / ${calendar} ${birth} / ${time}`;
+  const concern = partner.concern?.trim();
+  return concern ? `${base}\n상대가 궁금한 점: ${concern}` : base;
+}
+
 export async function createPayappOrder(
   token: string,
   email: string,
@@ -123,6 +154,8 @@ export async function createPayappOrder(
   marketingOptIn = false,
   couponApplied = false,
   metaClick: OrderMetaClick | null = null,
+  pack: NewyearCheckoutPack = "solo",
+  partner?: CheckoutPartnerInput | null,
 ): Promise<CreatePayappOrderResult> {
   const store = getAnalysisStore();
   const record = await store.get(token);
@@ -131,20 +164,43 @@ export async function createPayappOrder(
   if (productOf(record) === PRODUCT_NEWYEAR && !NEWYEAR_CHECKOUT_OPEN && !NEWYEAR_DIRECT_PAY_OPEN) {
     throw new PaymentError(503, "결제는 준비 중입니다.");
   }
-  if (record.email !== email || record.phone !== phone || record.marketingOptIn !== marketingOptIn) {
-    await store.update(token, { email, phone, marketingOptIn });
+  const patch: {
+    email: string;
+    phone: string;
+    marketingOptIn: boolean;
+    concern?: string | null;
+  } = { email, phone, marketingOptIn };
+  if (pack === "duo" && partner) {
+    const line = partnerConcernLine(partner);
+    const previous = (record.concern ?? "").replace(/\n\n함께 볼 사람:[\s\S]*$/, "").trim();
+    patch.concern = previous ? `${previous}\n\n${line}` : line;
+  }
+  if (
+    record.email !== patch.email ||
+    record.phone !== patch.phone ||
+    record.marketingOptIn !== patch.marketingOptIn ||
+    (patch.concern !== undefined && record.concern !== patch.concern)
+  ) {
+    await store.update(token, patch);
   }
 
-  const amount =
-    productOf(record) === PRODUCT_NEWYEAR ? NEWYEAR_REPORT_PRICE : reportCheckoutAmount(couponApplied);
-  const allowed =
-    productOf(record) === PRODUCT_NEWYEAR
-      ? amount === NEWYEAR_REPORT_PRICE
-      : (DETAILED_REPORT_ALLOWED_AMOUNTS as readonly number[]).includes(amount);
+  const isNewyear = productOf(record) === PRODUCT_NEWYEAR;
+  const amount = isNewyear
+    ? pack === "duo"
+      ? NEWYEAR_REPORT_PRICE_DUO
+      : NEWYEAR_REPORT_PRICE
+    : reportCheckoutAmount(couponApplied);
+  const allowed = isNewyear
+    ? (NEWYEAR_ALLOWED_AMOUNTS as readonly number[]).includes(amount)
+    : (DETAILED_REPORT_ALLOWED_AMOUNTS as readonly number[]).includes(amount);
   if (!allowed) {
     throw new PaymentError(400, "결제 금액이 올바르지 않습니다.", `amount not allowed: ${amount}`);
   }
-  const orderName = productOf(record) === PRODUCT_NEWYEAR ? NEWYEAR_ORDER_NAME : ORDER_NAME;
+  const orderName = isNewyear
+    ? pack === "duo"
+      ? NEWYEAR_ORDER_NAME_DUO
+      : NEWYEAR_ORDER_NAME
+    : ORDER_NAME;
 
   const now = Date.now();
   await store.deleteStalePendingOrders(now - STALE_ORDER_MS).catch((error) => {
@@ -212,8 +268,10 @@ async function trackPaidFunnel(token: string, orderId: string, at = Date.now()) 
   const store = getAnalysisStore();
   try {
     if (await store.hasFunnelStepForToken("paid", token)) return;
+    const record = await store.get(token);
+    const product = record ? productOf(record) : PRODUCT_DOHWA;
     const sessionId = (await store.findFunnelSessionForToken(token)) ?? `pay_${orderId}`;
-    await store.trackFunnelEvent({ sessionId, step: "paid", token, at });
+    await store.trackFunnelEvent({ sessionId, step: "paid", token, product, at });
   } catch (error) {
     console.error("[funnel] paid track failed", error);
   }

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { themeOf } from "@/lib/constants/fatenaviTheme";
 
-const theme = themeOf("premium");
+const theme = themeOf("hanji");
 
 export const metadata: Metadata = {
   title: {
-    default: `${theme.orderName} · 프리미엄`,
+    default: theme.orderName,
     template: "%s",
   },
 };

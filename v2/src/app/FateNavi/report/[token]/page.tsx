@@ -28,18 +28,18 @@ export default async function NewYearReportPage({ params }: { params: Promise<{ 
   if (record.paidAt === null) {
     if (!NEWYEAR_CHECKOUT_OPEN) {
       return (
-        <NewYearShell theme="hanji">
+        <NewYearShell theme="premium">
           <NewYearReportScreen report={previewNewYearReportView(record)} />
         </NewYearShell>
       );
     }
-    redirect(`/FateNavi/result/${token}`);
+    redirect(`/FateNavi2/result/${token}`);
   }
 
   const report = toNewYearReportView(record);
   if (!report) {
     return (
-      <NewYearShell theme="hanji" showFooter={false}>
+      <NewYearShell theme="premium" showFooter={false}>
         <ReportWaiting
           token={token}
           failed={record.status === "failed"}
@@ -54,7 +54,7 @@ export default async function NewYearReportPage({ params }: { params: Promise<{ 
   }
 
   return (
-    <NewYearShell theme="hanji">
+    <NewYearShell theme="premium">
       <NewYearReportScreen report={report} />
     </NewYearShell>
   );

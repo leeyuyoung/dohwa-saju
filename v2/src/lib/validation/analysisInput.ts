@@ -5,6 +5,7 @@ export const MIN_BIRTH_YEAR = 1920;
 export const NAME_MAX_LENGTH = 12;
 export const LUNAR_MAX_DAY = 30;
 
+/** 도화 연애 리포트용. */
 export const RELATIONSHIP_STATUSES = [
   { value: "single", label: "없어요. 지금은 혼자예요" },
   { value: "some", label: "있는데 아직 애매한 썸이에요" },
@@ -12,15 +13,27 @@ export const RELATIONSHIP_STATUSES = [
   { value: "breakup", label: "다시 만나고 싶은 사람이 있어요" },
 ] as const;
 
-export type RelationshipStatus = (typeof RELATIONSHIP_STATUSES)[number]["value"];
+/** 운명내비 고민 입력용. 단순 선택. */
+export const PREMIUM_RELATIONSHIP_STATUSES = [
+  { value: "solo", label: "솔로" },
+  { value: "coupled", label: "연애" },
+  { value: "unmarried", label: "미혼" },
+  { value: "married", label: "기혼" },
+] as const;
 
-const RELATIONSHIP_STATUS_VALUES = RELATIONSHIP_STATUSES.map((status) => status.value) as [
-  RelationshipStatus,
-  ...RelationshipStatus[],
-];
+export type RelationshipStatus =
+  | (typeof RELATIONSHIP_STATUSES)[number]["value"]
+  | (typeof PREMIUM_RELATIONSHIP_STATUSES)[number]["value"];
+
+const RELATIONSHIP_STATUS_VALUES = [
+  ...RELATIONSHIP_STATUSES.map((status) => status.value),
+  ...PREMIUM_RELATIONSHIP_STATUSES.map((status) => status.value),
+] as [RelationshipStatus, ...RelationshipStatus[]];
 
 export const relationshipLabel = (status: RelationshipStatus) =>
-  RELATIONSHIP_STATUSES.find((item) => item.value === status)?.label ?? status;
+  RELATIONSHIP_STATUSES.find((item) => item.value === status)?.label ??
+  PREMIUM_RELATIONSHIP_STATUSES.find((item) => item.value === status)?.label ??
+  status;
 
 /** 입력 화면이 다루는 값. select/input 특성상 숫자도 문자열로 보관한다. */
 export type AnalysisFormValues = {

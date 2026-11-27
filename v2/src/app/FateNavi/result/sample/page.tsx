@@ -8,11 +8,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function FateNavi3ResultSamplePage() {
+export default function FateNaviResultSamplePage() {
   return (
-    <NewYearShell theme="hanji" showFooter>
+    <NewYearShell theme="premium" showFooter>
       <NewYearResultScreen
-        theme="hanji"
+        theme="premium"
         result={sampleNewYearFreeView()}
         token="sample"
         paid={false}

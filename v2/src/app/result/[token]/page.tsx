@@ -17,7 +17,7 @@ export default async function ResultPage({ params }: PageProps<"/result/[token]"
   if (!TOKEN_PATTERN.test(token)) notFound();
   const record = await getAnalysisStore().get(token);
   if (!record) notFound();
-  if (productOf(record) === PRODUCT_NEWYEAR) redirect(`/FateNavi/result/${token}`);
+  if (productOf(record) === PRODUCT_NEWYEAR) redirect(`/FateNavi2/result/${token}`);
   return (
     <FreeResultScreen
       result={toFreeResultView(record)}

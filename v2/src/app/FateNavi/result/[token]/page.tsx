@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function FateNavi3ResultPage({ params }: { params: Promise<{ token: string }> }) {
+export default async function FateNaviResultPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   if (!TOKEN_PATTERN.test(token)) notFound();
   const record = await getAnalysisStore().get(token);
@@ -21,9 +21,9 @@ export default async function FateNavi3ResultPage({ params }: { params: Promise<
   if (productOf(record) !== PRODUCT_NEWYEAR) redirect(`/result/${token}`);
 
   return (
-    <NewYearShell theme="hanji" showFooter>
+    <NewYearShell theme="premium" showFooter>
       <NewYearResultScreen
-        theme="hanji"
+        theme="premium"
         result={toNewYearFreeView(record)}
         token={token}
         paid={record.paidAt !== null}

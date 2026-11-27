@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function FateNavi2ResultSamplePage() {
   return (
-    <NewYearShell theme="premium" showFooter>
+    <NewYearShell theme="hanji" showFooter>
       <NewYearResultScreen
-        theme="premium"
+        theme="hanji"
         result={sampleNewYearFreeView()}
         token="sample"
         paid={false}

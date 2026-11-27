@@ -1,11 +1,23 @@
 import "server-only";
 
-import { FUNNEL_STEPS, type FunnelStep } from "@/lib/funnelSteps";
-import { buildFunnelSummary, type FunnelEvent, type FunnelSummaryRange } from "@/lib/server/funnel";
+import { PRODUCT_DOHWA, type ProductId } from "@/lib/constants/newyear";
+import type { FunnelStep } from "@/lib/funnelSteps";
+import {
+  buildFunnelSummary,
+  funnelLabelsForProduct,
+  funnelStepsForProduct,
+  type FunnelEvent,
+  type FunnelSummaryOptions,
+  type FunnelSummaryRange,
+} from "@/lib/server/funnel";
 import type { AnalysisRecord, AnalysisStore, OrderPatch, OrderRecord } from "./types";
 
 /** 개발용 보관 기간. 서버를 재시작해도 사라진다. */
 const RECORD_TTL_MS = 24 * 60 * 60 * 1000;
+
+function funnelBucketKey(product: ProductId, step: FunnelStep) {
+  return `${product}\0${step}`;
+}
 
 /**
  * 개발용 메모리 저장소. Supabase 설정이 없을 때만 쓰며, 서버 프로세스 하나에서만 유효해 배포 환경에서는 쓸 수 없다.
@@ -14,7 +26,7 @@ export class MemoryAnalysisStore implements AnalysisStore {
   readonly storeVersion = 4;
   private records = new Map<string, AnalysisRecord>();
   private orders = new Map<string, OrderRecord>();
-  private funnel = new Map<FunnelStep, Set<string>>();
+  private funnel = new Map<string, Set<string>>();
   private funnelMeta = new Map<string, FunnelEvent>();
 
   private sweep() {
@@ -91,12 +103,15 @@ export class MemoryAnalysisStore implements AnalysisStore {
   }
 
   async trackFunnelEvent(event: FunnelEvent) {
-    const key = `${event.sessionId}\0${event.step}`;
+    const product = event.product ?? PRODUCT_DOHWA;
+    const key = `${product}\0${event.sessionId}\0${event.step}`;
     if (this.funnelMeta.has(key)) return;
-    this.funnelMeta.set(key, { ...event });
-    const set = this.funnel.get(event.step) ?? new Set<string>();
+    const stored = { ...event, product };
+    this.funnelMeta.set(key, stored);
+    const bucket = funnelBucketKey(product, event.step);
+    const set = this.funnel.get(bucket) ?? new Set<string>();
     set.add(event.sessionId);
-    this.funnel.set(event.step, set);
+    this.funnel.set(bucket, set);
   }
 
   async findFunnelSessionForToken(token: string) {
@@ -115,20 +130,26 @@ export class MemoryAnalysisStore implements AnalysisStore {
     return false;
   }
 
-  async funnelSummary(range?: FunnelSummaryRange) {
+  async funnelSummary(range?: FunnelSummaryRange, options?: FunnelSummaryOptions) {
+    const product = options?.product ?? PRODUCT_DOHWA;
+    const steps = options?.steps ?? funnelStepsForProduct(product);
+    const labels = options?.labels ?? funnelLabelsForProduct(product);
+    const counts = Object.fromEntries(steps.map((step) => [step, 0])) as Record<FunnelStep, number>;
+
     if (!range?.fromMs && !range?.toMsExclusive) {
-      const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, this.funnel.get(step)?.size ?? 0])) as Record<
-        FunnelStep,
-        number
-      >;
-      return buildFunnelSummary(counts);
+      for (const step of steps) {
+        counts[step] = this.funnel.get(funnelBucketKey(product, step))?.size ?? 0;
+      }
+      return buildFunnelSummary(counts, { steps, labels, product });
     }
-    const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
+
     for (const event of this.funnelMeta.values()) {
+      if ((event.product ?? PRODUCT_DOHWA) !== product) continue;
       if (range.fromMs != null && event.at < range.fromMs) continue;
       if (range.toMsExclusive != null && event.at >= range.toMsExclusive) continue;
-      counts[event.step] += 1;
+      if (!steps.includes(event.step)) continue;
+      counts[event.step] = (counts[event.step] ?? 0) + 1;
     }
-    return buildFunnelSummary(counts);
+    return buildFunnelSummary(counts, { steps, labels, product });
   }
 }

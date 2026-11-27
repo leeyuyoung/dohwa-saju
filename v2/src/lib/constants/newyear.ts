@@ -21,8 +21,15 @@ export const NEWYEAR_PROMISES = [
 
 /** 결제·표시에 쓰는 런칭가. */
 export const NEWYEAR_REPORT_PRICE = 19900;
+/** 2인 팩 결제·표시가. */
+export const NEWYEAR_REPORT_PRICE_DUO = 34900;
 /** 화면 비교용 정가. */
 export const NEWYEAR_LIST_PRICE = 89900;
+/** 2인 팩 화면 비교용 정가. */
+export const NEWYEAR_LIST_PRICE_DUO = 179800;
+export const NEWYEAR_ORDER_NAME_DUO = "프리미엄 종합사주 2인";
+export type NewyearCheckoutPack = "solo" | "duo";
+export const NEWYEAR_ALLOWED_AMOUNTS = [NEWYEAR_REPORT_PRICE, NEWYEAR_REPORT_PRICE_DUO] as const;
 
 /**
  * CTA 위 “N명 풀이 중” 표시.
@@ -34,8 +41,8 @@ export const NEWYEAR_READING_COUNT_DISPLAY = 2314;
 export const NEWYEAR_CHECKOUT_OPEN = false;
 
 /**
- * FateNavi2 직결제(정보입력→결제→리포트)용 주문 허용.
- * true여도 FateNavi/3 무료결과 결제 CTA는 NEWYEAR_CHECKOUT_OPEN이 연다.
+ * FateNavi 직결제(정보입력→결제→리포트)용 주문 허용.
+ * true여도 FateNavi2/3 무료결과 결제 CTA는 NEWYEAR_CHECKOUT_OPEN이 연다.
  */
 export const NEWYEAR_DIRECT_PAY_OPEN = true;
 
@@ -58,7 +65,7 @@ export const NEWYEAR_CHAPTERS = [
   { key: "manual", title: "운전 수칙", blurb: "성공법칙·행동 원칙·체크리스트", en: "Driver Manual" },
 ] as const;
 
-/** FateNavi2 랜딩·미리보기용 18장 목차. 실제 AI 생성 장은 NEWYEAR_CHAPTERS. */
+/** FateNavi(프리미엄) 랜딩·미리보기용 목차. 실제 AI 생성 장은 NEWYEAR_CHAPTERS. */
 export const PREMIUM_TOC_PARTS = [
   {
     part: 1,

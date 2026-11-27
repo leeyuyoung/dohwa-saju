@@ -37,10 +37,10 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
               trackKarrotPurchase();
               trackMetaPurchase(DETAILED_REPORT_PRICE, orderId);
             }
-            // FateNavi2 직결제: 결제 확인 후 분석 로딩 → 유료 리포트
+            // FateNavi 직결제: 결제 확인 후 분석 로딩 → 유료 리포트
             router.replace(
               data.product === "newyear2027"
-                ? `/FateNavi2/analyzing?token=${encodeURIComponent(token)}&afterPay=1`
+                ? `/FateNavi/analyzing?token=${encodeURIComponent(token)}&afterPay=1`
                 : `/report/${token}`,
             );
             return;
@@ -72,7 +72,7 @@ export function PaymentReturn({ token, orderId }: { token: string; orderId: stri
           <ButtonLink
             href={
               newyear
-                ? `/FateNavi2/analyzing?token=${encodeURIComponent(token)}&afterPay=1`
+                ? `/FateNavi/analyzing?token=${encodeURIComponent(token)}&afterPay=1`
                 : `/report/${token}`
             }
           >

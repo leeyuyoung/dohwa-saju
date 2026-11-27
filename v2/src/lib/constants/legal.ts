@@ -1,4 +1,4 @@
-import { NEWYEAR_ORDER_NAME, NEWYEAR_REPORT_PRICE } from "@/lib/constants/newyear";
+import { NEWYEAR_REPORT_PRICE, NEWYEAR_REPORT_PRICE_DUO } from "@/lib/constants/newyear";
 import { DETAILED_REPORT_LIST_PRICE, DETAILED_REPORT_ORDER_NAME, DETAILED_REPORT_PRICE, SERVICE } from "@/lib/constants/service";
 
 /**
@@ -43,8 +43,9 @@ export const LEGAL_META = {
 } as const;
 
 export const NEWYEAR_LEGAL_META = {
-  serviceName: NEWYEAR_ORDER_NAME,
-  orderName: NEWYEAR_ORDER_NAME,
+  serviceName: "프리미엄 종합사주",
+  orderName: "프리미엄 종합사주",
   price: NEWYEAR_REPORT_PRICE,
+  priceDuo: NEWYEAR_REPORT_PRICE_DUO,
   effectiveDate: "2026년 11월 10일",
 } as const;

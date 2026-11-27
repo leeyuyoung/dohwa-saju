@@ -1,5 +1,11 @@
 import { PRODUCT_NEWYEAR, productOf, type ProductId } from "@/lib/constants/newyear";
-import { buildFunnelSummary, FUNNEL_STEPS, parseFunnelDateRange, type FunnelStep } from "@/lib/server/funnel";
+import {
+  buildFunnelSummary,
+  funnelLabelsForProduct,
+  funnelStepsForProduct,
+  parseFunnelDateRange,
+  type FunnelStep,
+} from "@/lib/server/funnel";
 import { isAdminConfigured, requireAdminSession } from "@/lib/server/adminAuth";
 import { jsonError as fail } from "@/lib/server/http";
 import { getAnalysisStore, type Attribution } from "@/lib/server/store";
@@ -19,14 +25,15 @@ export async function GET(request: Request) {
   const funnelRange = parseFunnelDateRange(params.get("from"), params.get("to"));
   const store = getAnalysisStore();
 
-  const funnelResult =
-    product === PRODUCT_NEWYEAR
-      ? []
-      : await store.funnelSummary(funnelRange).catch((error) => {
-          console.error("[admin/overview] funnel", error);
-          const zeros = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
-          return buildFunnelSummary(zeros);
-        });
+  const funnelSteps = funnelStepsForProduct(product);
+  const funnelLabels = funnelLabelsForProduct(product);
+  const funnelResult = await store.funnelSummary(funnelRange, { product, steps: funnelSteps, labels: funnelLabels }).catch(
+    (error) => {
+      console.error("[admin/overview] funnel", error);
+      const zeros = Object.fromEntries(funnelSteps.map((step) => [step, 0])) as Record<FunnelStep, number>;
+      return buildFunnelSummary(zeros, { steps: funnelSteps, labels: funnelLabels, product });
+    },
+  );
 
   let records;
   try {

@@ -20,7 +20,7 @@ export default async function ReportPage({ params }: PageProps<"/report/[token]"
   const record = TOKEN_PATTERN.test(token) ? await getAnalysisStore().get(token) : null;
   if (!record) notFound();
   if (productOf(record) === PRODUCT_NEWYEAR) {
-    redirect(record.paidAt ? `/FateNavi/report/${token}` : `/FateNavi/result/${token}`);
+    redirect(record.paidAt ? `/FateNavi/report/${token}` : `/FateNavi2/result/${token}`);
   }
   // 결제가 확인되지 않았으면 본문을 보내지 않고 무료 화면으로 돌려보낸다.
   if (record.paidAt === null) redirect(`/result/${token}`);

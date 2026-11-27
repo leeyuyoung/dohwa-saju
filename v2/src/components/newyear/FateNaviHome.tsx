@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FunnelBeacon } from "@/components/analytics/FunnelBeacon";
 import { HanjiIntroVideo } from "@/components/newyear/HanjiIntroVideo";
 import { NewYearShell } from "@/components/newyear/NewYearShell";
 import { ReadingCountBubble } from "@/components/newyear/ReadingCountBubble";
@@ -8,6 +9,7 @@ import {
   NEWYEAR_LIST_PRICE,
   NEWYEAR_REPORT_PRICE,
   PREMIUM_TOC_PARTS,
+  PRODUCT_NEWYEAR,
 } from "@/lib/constants/newyear";
 import { formatPrice } from "@/lib/constants/service";
 
@@ -51,6 +53,11 @@ const PREMIUM_KAKAO_ROWS: { cols: 2 | 3; images: string[] }[] = [
 
 export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
   const config = themeOf(theme);
+  /** FateNavi premium만 퍼널 수집. 2/3은 건드리지 않는다. */
+  const funnelBeacon =
+    theme === "premium" ? (
+      <FunnelBeacon step="intro" product={PRODUCT_NEWYEAR} trackPixels={false} />
+    ) : null;
   const stickyCta = (
     <div className="ny-poster-cta">
       <ReadingCountBubble />
@@ -90,6 +97,7 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
   if (theme === "premium") {
     return (
       <NewYearShell theme={theme} showHeader={false} stickyCta={stickyCta}>
+        {funnelBeacon}
         <div className="ny-premium-landing">
           <section className="ny-premium-hero" aria-label="프리미엄 종합사주">
             <span className="ny-premium-hero-corner ny-premium-hero-corner-tl" aria-hidden />
@@ -143,35 +151,6 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             <p className="ny-premium-note">좋은 말만 하지 않습니다. 길을 알려드립니다.</p>
           </section>
 
-          <section className="ny-premium-compare" aria-label="비교">
-            <h2 className="ny-premium-compare-title">한 번 듣고 끝내시겠어요?</h2>
-            <div className="ny-premium-compare-grid">
-              <article className="ny-premium-compare-card is-before">
-                <p className="ny-premium-compare-label">일반 철학관</p>
-                <p className="ny-premium-compare-price">10만~30만 원</p>
-                <ul>
-                  <li>원국·대운까지는 안 감</li>
-                  <li>한정된 시간</li>
-                  <li>속 깊은 질문은 꺼내기 어렵고</li>
-                  <li>시간 지나면 까먹음</li>
-                </ul>
-              </article>
-              <article className="ny-premium-compare-card is-after">
-                <p className="ny-premium-compare-label">프리미엄 종합사주</p>
-                <p className="ny-premium-compare-price">
-                  <s>{formatPrice(NEWYEAR_LIST_PRICE)}</s>
-                  {formatPrice(NEWYEAR_REPORT_PRICE)}
-                </p>
-                <ul>
-                  <li>원국부터 실행 포인트까지</li>
-                  <li>100세 인생 분석</li>
-                  <li>적어 주신 고민까지 반영</li>
-                  <li>이메일로 평생 소장</li>
-                </ul>
-              </article>
-            </div>
-          </section>
-
           <section className="ny-premium-trust" aria-label="해석 근거">
             <p className="ny-premium-trust-hook">
               <span className="ny-premium-trust-mark">혼자</span> 만들지 않았습니다.
@@ -204,6 +183,35 @@ export function FateNaviHome({ theme }: { theme: FateNaviThemeId }) {
             <p className="ny-premium-trust-close">
               <span className="ny-premium-trust-mark">현장의 경험</span>을 알고리즘에 담았습니다.
             </p>
+          </section>
+
+          <section className="ny-premium-compare" aria-label="비교">
+            <h2 className="ny-premium-compare-title">한 번 듣고 끝내시겠어요?</h2>
+            <div className="ny-premium-compare-grid">
+              <article className="ny-premium-compare-card is-before">
+                <p className="ny-premium-compare-label">일반 철학관</p>
+                <p className="ny-premium-compare-price">10만~30만 원</p>
+                <ul>
+                  <li>원국·대운까지는 안 감</li>
+                  <li>한정된 시간</li>
+                  <li>속 깊은 질문은 꺼내기 어렵고</li>
+                  <li>시간 지나면 까먹음</li>
+                </ul>
+              </article>
+              <article className="ny-premium-compare-card is-after">
+                <p className="ny-premium-compare-label">프리미엄 종합사주</p>
+                <p className="ny-premium-compare-price">
+                  <s>{formatPrice(NEWYEAR_LIST_PRICE)}</s>
+                  {formatPrice(NEWYEAR_REPORT_PRICE)}
+                </p>
+                <ul>
+                  <li>원국부터 실행 포인트까지</li>
+                  <li>100세 인생 분석</li>
+                  <li>적어 주신 고민까지 반영</li>
+                  <li>이메일로 평생 소장</li>
+                </ul>
+              </article>
+            </div>
           </section>
 
           <section className="ny-premium-kakao" aria-label="카톡 실제 후기">

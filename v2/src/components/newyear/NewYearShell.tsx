@@ -15,6 +15,8 @@ export function NewYearShell({
   /** ink: 입력 화면용 순흑 배경. sheep/hanji/premium은 테마 CSS가 덮는다. */
   tone = "navy",
   theme = "hanji",
+  /** 헤더(로고) 뒤에 깔 이미지. 정보입력 등에서 사용. */
+  headerBanner,
 }: {
   children: ReactNode;
   showHeader?: boolean;
@@ -22,13 +24,18 @@ export function NewYearShell({
   stickyCta?: ReactNode;
   tone?: "navy" | "ink";
   theme?: FateNaviThemeId;
+  headerBanner?: string;
 }) {
   const config = themeOf(theme);
   return (
     <div className={`ny${tone === "ink" ? " ny-ink" : ""} ${config.shellClass}`.trim()}>
       <div className="ny-frame">
         {showHeader && (
-          <header className="ny-header">
+          <header className={`ny-header${headerBanner ? " ny-header-banner" : ""}`}>
+            {headerBanner ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={headerBanner} alt="" className="ny-header-banner-img" aria-hidden />
+            ) : null}
             <Link href={config.basePath} className="ny-brand">
               {theme === "hanji" ? (
                 // eslint-disable-next-line @next/next/no-img-element

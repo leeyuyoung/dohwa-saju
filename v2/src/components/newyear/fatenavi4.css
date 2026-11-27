@@ -40,11 +40,40 @@
 }
 
 .ny-premium .ny-header {
-  padding: 0.55rem 1rem 0.2rem;
+  padding: 0.55rem 1rem 0.35rem;
+}
+
+/* 배너 헤더만 살짝 높여 object-cover crop이 보이게.
+   이미지는 absolute inset:0. 음수 마진 breakout 금지(로고 좌패딩 유지). */
+.ny-premium .ny-header-banner {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  min-height: 3.25rem; /* ~52px */
+  padding: 0.75rem 1rem;
+  background: #ebe6dc;
+}
+
+.ny-premium .ny-header-banner-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+}
+
+.ny-premium .ny-header-banner .ny-brand {
+  position: relative;
+  z-index: 1;
 }
 
 .ny-premium .ny-main:has(.ny-form) {
-  padding-top: 0.55rem;
+  padding-top: 1.35rem;
   padding-bottom: 5.75rem;
 }
 
@@ -53,7 +82,7 @@
 }
 
 .ny-premium .ny-form > section {
-  gap: 0.6rem;
+  gap: 0.28rem;
 }
 
 .ny-premium .ny-brand,
@@ -90,7 +119,8 @@
 }
 
 .ny-premium .ny-field::placeholder,
-.ny-premium .ny-textarea::placeholder {
+.ny-premium .ny-textarea::placeholder,
+.ny-premium .ny-time-part::placeholder {
   color: rgb(28 28 28 / 0.34);
 }
 
@@ -98,6 +128,13 @@
   background: #1c1c1c;
   border-color: #1c1c1c;
   color: #f5f3ee;
+  box-shadow: none;
+}
+
+.ny-premium .ny-choice.ny-choice-sm {
+  height: 40px;
+  font-size: 13px;
+  letter-spacing: -0.02em;
 }
 
 .ny-premium .ny-form-label {
@@ -647,7 +684,7 @@
   flex-direction: column;
   gap: 0.85rem;
   margin-top: 1.15rem;
-  margin-bottom: 1.15rem;
+  margin-bottom: 0.7rem;
   padding: 0.35rem 0 0.55rem;
 }
 
@@ -765,7 +802,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0;
+  min-height: 2.15rem;
+  padding: 0.2rem 0 0.05rem;
+  line-height: 1.3;
   font-size: 0.72rem;
   font-weight: 500;
   border-top-color: rgb(28 28 28 / 0.08);
@@ -936,7 +975,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.55rem;
-  margin-top: 1.15rem;
+  margin-top: 0.15rem;
   padding: 0.15rem 0 0.2rem;
 }
 
@@ -998,10 +1037,12 @@
 .ny-premium-legal {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  margin-top: 0.95rem;
-  padding: 0.5rem 0.15rem 0.95rem;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+  padding: 1rem 0.85rem 1.15rem;
+  border-top: 1px solid rgb(28 28 28 / 0.08);
   color: rgb(28 28 28 / 0.48);
+  font-family: var(--font-gothic), "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 0.72rem;
   line-height: 1.55;
   text-align: center;
@@ -1017,22 +1058,24 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem 0.45rem;
+  gap: 0.35rem 0.2rem;
 }
 
 .ny-premium-legal-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
+  color: rgb(28 28 28 / 0.28);
 }
 
 .ny-premium-legal a {
   color: rgb(28 28 28 / 0.55);
   text-decoration: none;
+  letter-spacing: -0.02em;
 }
 
 .ny-premium-legal a:hover {
-  color: #1c1c1c;
+  color: #d4521c;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -1472,6 +1515,233 @@
   min-height: calc(100dvh - 2rem);
 }
 
+/* 결제 완료 후 리포트 생성 안내 */
+.ny-premium:has(.ny-afterpay) {
+  min-height: 100dvh;
+  background: #fcfbf9;
+}
+
+.ny-premium:has(.ny-afterpay) .ny-frame {
+  min-height: 100dvh;
+  background: #fcfbf9;
+}
+
+.ny-premium:has(.ny-afterpay) .ny-main {
+  padding: 0;
+  background: #fcfbf9;
+}
+
+.ny-premium:has(.ny-afterpay.is-ready) .ny-sticky-cta {
+  background: linear-gradient(180deg, rgb(252 251 249 / 0) 0%, rgb(252 251 249 / 0.92) 40%, #fcfbf9 72%);
+}
+
+.ny-premium .ny-afterpay {
+  display: flex;
+  min-height: calc(100dvh - 1rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3.75rem 1.35rem 6.5rem;
+  text-align: left;
+  font-family: var(--font-gothic), "Pretendard", "Apple SD Gothic Neo", sans-serif;
+}
+
+.ny-premium .ny-afterpay-panel {
+  width: min(100%, 22.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ny-premium .ny-afterpay-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1.65rem;
+}
+
+.ny-premium .ny-afterpay-title {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: inherit;
+  font-size: clamp(1.45rem, 5.2vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+
+.ny-premium .ny-afterpay-lead {
+  margin: 0;
+  color: rgb(28 28 28 / 0.55);
+  font-size: 0.92rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.55;
+}
+
+.ny-premium .ny-afterpay-divider {
+  height: 1px;
+  width: 100%;
+  background: rgb(28 28 28 / 0.1);
+}
+
+.ny-premium .ny-afterpay-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  padding: 1.35rem 0 1.45rem;
+}
+
+.ny-premium .ny-afterpay-progress-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.ny-premium .ny-afterpay-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: 1.4rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  background: rgb(212 82 28 / 0.14);
+  color: #b84316;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.ny-premium .ny-afterpay-badge.is-done {
+  background: rgb(74 99 80 / 0.14);
+  color: #3f5f44;
+}
+
+.ny-premium .ny-afterpay-progress-title {
+  margin: 0;
+  color: #1c1c1c;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.ny-premium .ny-afterpay-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.ny-premium .ny-afterpay-step {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  color: rgb(28 28 28 / 0.72);
+}
+
+.ny-premium .ny-afterpay-step-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: rgb(28 28 28 / 0.38);
+}
+
+.ny-premium .ny-afterpay-step-icon-inner {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.ny-premium .ny-afterpay-step-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.ny-premium .ny-afterpay-spinner {
+  transform-origin: center;
+  animation: ny-afterpay-spin 0.85s linear infinite;
+}
+
+@keyframes ny-afterpay-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ny-premium .ny-afterpay-step.is-done .ny-afterpay-step-icon {
+  color: rgb(28 28 28 / 0.55);
+}
+
+.ny-premium .ny-afterpay-step.is-active .ny-afterpay-step-icon {
+  color: #d4521c;
+}
+
+.ny-premium .ny-afterpay-step.is-pending .ny-afterpay-step-state,
+.ny-premium .ny-afterpay-step.is-pending .ny-afterpay-step-label {
+  color: rgb(28 28 28 / 0.42);
+  font-weight: 500;
+}
+
+.ny-premium .ny-afterpay-step-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  color: rgb(28 28 28 / 0.78);
+}
+
+.ny-premium .ny-afterpay-step-state {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: rgb(28 28 28 / 0.42);
+  white-space: nowrap;
+}
+
+.ny-premium .ny-afterpay-step.is-active .ny-afterpay-step-state {
+  color: #d4521c;
+  font-weight: 600;
+}
+
+.ny-premium .ny-afterpay-step.is-active .ny-afterpay-step-label {
+  color: #1c1c1c;
+  font-weight: 600;
+}
+
+.ny-premium .ny-afterpay-delivery {
+  margin-top: 1.35rem;
+  padding: 1.15rem 1.1rem 1.2rem;
+  border-radius: 12px;
+  background: #f3f0ec;
+}
+
+.ny-premium .ny-afterpay-delivery-title {
+  margin: 0 0 0.35rem;
+  color: #1c1c1c;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.ny-premium .ny-afterpay-delivery-copy {
+  margin: 0;
+  color: rgb(28 28 28 / 0.5);
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.5;
+}
+
 .ny-premium .ny-poster-above {
   color: rgb(28 28 28 / 0.68);
   text-shadow: none;
@@ -1493,7 +1763,434 @@
 .ny-premium .ny-hanja[data-el="금"] { background: #e8e6e1; color: #1c1c1c; }
 .ny-premium .ny-hanja[data-el="수"] { background: #b8c2cc; color: #1c1c1c; }
 
-/* 제출 테이블용: 모바일 컬럼(--ny-col) 대신 넓은 프레임 */
+/* 결제 페이지 */
+.ny-premium-checkout {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: calc(100% + 2rem);
+  margin: -0.5rem -1rem 0;
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  background: #f3f0ec;
+}
+
+.ny-premium:has(.ny-premium-checkout) .ny-sticky-cta {
+  background: linear-gradient(180deg, rgb(243 240 236 / 0) 0%, rgb(243 240 236 / 0.92) 40%, #f3f0ec 72%);
+}
+
+.ny-premium:has(.ny-premium-checkout) .ny-main {
+  padding-bottom: 5.75rem;
+}
+
+.ny-premium-checkout-top {
+  background: #fff;
+}
+
+.ny-premium-checkout-bar {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  background: #fcfbf9;
+}
+
+.ny-premium-checkout-back {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  color: #1c1c1c;
+  text-decoration: none;
+}
+
+.ny-premium-checkout-back svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.ny-premium-checkout-bar-title {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: var(--font-gothic), "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.ny-premium-checkout-bar-spacer {
+  width: 2rem;
+  height: 2rem;
+}
+
+.ny-premium-checkout-hero {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 3 / 1;
+  background: #ebe6dc;
+}
+
+.ny-premium-checkout-hero img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top right;
+}
+
+.ny-premium-checkout-section {
+  width: 100%;
+  padding: 1.15rem 1rem 1.25rem;
+}
+
+.ny-premium-checkout-section-packs {
+  background: #fcfbf9;
+  border-bottom: 10px solid #f3f0ec;
+}
+
+.ny-premium-checkout-section-companion {
+  padding: 1.25rem 1rem 1.35rem;
+  background: #fcfbf9;
+  border-bottom: 10px solid #f3f0ec;
+}
+
+.ny-premium-checkout-section-companion .ny-duo-companion > div .ny-form-label {
+  color: #1c1c1c;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ny-premium-checkout-section-companion .ny-duo-companion section .ny-form-label {
+  color: #1c1c1c;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ny-premium-checkout-section-companion .ny-duo-companion > section {
+  gap: 0.28rem;
+}
+
+.ny-premium-checkout-section-companion .ny-duo-companion .ny-choice {
+  height: 43px;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+}
+
+.ny-premium-checkout-section-companion .ny-duo-companion .ny-field {
+  height: 43px;
+  min-height: 43px;
+  font-size: 14px;
+}
+
+.ny-premium-checkout-section-form {
+  padding: 0;
+  background: #f3f0ec;
+}
+
+.ny-premium-checkout-section-form .ny-checkout-flat-fields {
+  width: 100%;
+  padding: 1.25rem 1rem 1.35rem;
+  background: #fcfbf9;
+}
+
+.ny-premium-checkout-section-form .ny-checkout-flat-fields label {
+  color: #1c1c1c;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ny-premium-checkout-section-form .ny-checkout-flat-fields > div:has(input) {
+  gap: 0.28rem;
+}
+
+.ny-premium-checkout-section-form .ny-checkout-flat-fields input {
+  height: 48px;
+  border: 1px solid rgb(28 28 28 / 0.16);
+  border-radius: 10px;
+  background: #fff;
+  color: #1c1c1c;
+  box-shadow: none;
+}
+
+.ny-premium-checkout-section-form .ny-checkout-flat-fields input::placeholder {
+  color: rgb(28 28 28 / 0.34);
+}
+
+.ny-premium-checkout-section-form .ny-checkout-flat-fields input:focus {
+  border-color: rgb(28 28 28 / 0.4);
+  outline: none;
+  box-shadow: none;
+}
+
+.ny-premium-checkout-section-form .ny-checkout-flat-meta {
+  padding: 1rem 1rem 1.25rem;
+  background: #f3f0ec;
+}
+
+.ny-premium:has(.ny-premium-checkout).ny-ink,
+.ny-premium:has(.ny-premium-checkout).ny-ink .ny-frame {
+  background: #f3f0ec;
+}
+
+.ny-premium-checkout-packs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.ny-premium-checkout-pack {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem 0.95rem;
+  border: 1.5px solid rgb(28 28 28 / 0.14);
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ny-premium-checkout-pack.is-selected {
+  border-color: #d4521c;
+  box-shadow:
+    0 8px 18px rgb(212 82 28 / 0.1),
+    0 0 0 1px rgb(212 82 28 / 0.12);
+}
+
+.ny-premium-checkout-pack-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  min-width: 0;
+}
+
+.ny-premium-checkout-pack-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.ny-premium-checkout-pack-title {
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+.ny-premium-checkout-pack-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  color: rgb(28 28 28 / 0.62);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.ny-premium-checkout-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 0.08rem 0.35rem;
+  border-radius: 999px;
+  background: #d4521c;
+  color: #faf9f6;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ny-premium-checkout-pack-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.12rem;
+  flex-shrink: 0;
+}
+
+.ny-premium-checkout-pack-list {
+  color: rgb(28 28 28 / 0.45);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.ny-premium-checkout-pack-list em {
+  color: #d4521c;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.ny-premium-checkout-pack-list s {
+  font-weight: 500;
+}
+
+.ny-premium-checkout-pack-sale {
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* 약관·사업자 정보 페이지 */
+.ny-premium .ny-legal-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 0.35rem 0 3.5rem;
+}
+
+.ny-premium .ny-legal-doc-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.ny-premium .ny-legal-doc-kicker {
+  margin: 0;
+  color: #d4521c;
+  font-family: var(--font-gothic), "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.ny-premium .ny-legal-doc-title {
+  margin: 0;
+  color: #1c1c1c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: clamp(1.2rem, 4.6vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.ny-premium .ny-legal-doc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  color: rgb(28 28 28 / 0.72);
+  font-family: var(--font-gothic), "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.75;
+  word-break: keep-all;
+}
+
+.ny-premium .ny-legal-doc-body > p {
+  margin: 0;
+}
+
+.ny-premium .ny-legal-section {
+  gap: 0.55rem;
+}
+
+.ny-premium .ny-legal-section-title {
+  margin: 0;
+  color: #d4521c;
+  font-family: var(--font-serif), "Noto Serif KR", serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ny-premium .ny-legal-section-body {
+  color: rgb(28 28 28 / 0.72);
+}
+
+.ny-premium .ny-legal-section-body p {
+  margin: 0;
+}
+
+.ny-premium .ny-legal-doc .text-mist-dim,
+.ny-premium .ny-legal-doc .text-mist {
+  color: rgb(28 28 28 / 0.48);
+}
+
+.ny-premium .ny-legal-doc .text-paper,
+.ny-premium .ny-legal-doc .text-gold-soft {
+  color: #1c1c1c;
+}
+
+.ny-premium .ny-legal-doc dl {
+  margin: 0;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid rgb(28 28 28 / 0.1);
+  border-radius: 12px;
+  background: #fcfbf9;
+  font-size: 0.8rem;
+}
+
+.ny-premium .ny-legal-doc dt {
+  font-size: 0.75rem;
+}
+
+.ny-premium .ny-legal-doc-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.7rem;
+  margin-top: 0.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(28 28 28 / 0.1);
+  font-family: var(--font-gothic), "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 0.7rem;
+}
+
+.ny-premium .ny-legal-doc-nav a {
+  color: rgb(28 28 28 / 0.55);
+  text-decoration: none;
+}
+
+.ny-premium .ny-legal-doc-nav a:hover {
+  color: #d4521c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ny-premium:has(.ny-legal-doc).ny-ink,
+.ny-premium:has(.ny-legal-doc).ny-ink .ny-frame {
+  background: #f5f3ee;
+}
+
+/* Admin — 프리미엄 종합사주 톤 (크림·세리프·오렌지 액센트) */
+.ny-premium:has(.ny-admin).ny-ink,
+.ny-premium:has(.ny-admin).ny-ink .ny-frame {
+  background:
+    radial-gradient(ellipse at 78% 0%, rgb(226 110 45 / 0.06), transparent 40%),
+    radial-gradient(ellipse at 50% 0%, rgb(255 255 255 / 0.7), transparent 48%),
+    #f5f3ee;
+}
+
+/* 제출 테이블용: 모바일 컬럼(--ny-col 430px) 대신 넓은 프레임 */
 .ny-premium:has(.ny-admin) .ny-frame {
   width: min(100%, 120rem);
+}
+
+.ny-premium .ny-admin {
+  color: #1c1c1c;
+}
+
+.ny-premium .ny-admin-kicker {
+  margin: 0 0 0.35rem;
+  color: #d4521c;
+  font-family: var(--font-gothic), "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+
+.ny-premium:has(.ny-admin) .ny-main {
+  padding-top: 0.5rem;
+  padding-bottom: 2.5rem;
 }

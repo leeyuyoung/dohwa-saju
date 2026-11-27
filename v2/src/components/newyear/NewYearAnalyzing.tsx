@@ -23,6 +23,7 @@ export function NewYearAnalyzing({ theme = "hanji" }: { theme?: FateNaviThemeId 
   const isPremium = theme === "premium";
   const afterPay = searchParams.get("afterPay") === "1";
   const payToken = searchParams.get("token");
+  const demoReady = searchParams.get("demo") === "ready";
   const subjectName = useMemo(() => {
     const pending = loadPendingNewYear();
     if (!pending || typeof pending !== "object") return undefined;
@@ -32,7 +33,7 @@ export function NewYearAnalyzing({ theme = "hanji" }: { theme?: FateNaviThemeId 
   const resultHref = useCallback((token: string) => `${basePath}/result/${token}`, [basePath]);
 
   if (isPremium && afterPay && payToken && TOKEN_RE.test(payToken)) {
-    return <NewYearAfterPayLoading token={payToken} />;
+    return <NewYearAfterPayLoading token={payToken} demoReady={demoReady} />;
   }
 
   const workingCopy = isSheep

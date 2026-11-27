@@ -4,11 +4,17 @@ import { useEffect, useId, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { StickyFormCta } from "@/components/newyear/StickyFormCta";
 import { getStoredAttribution } from "@/lib/client/attribution";
+import { trackFunnel } from "@/lib/client/funnel";
 import { clearPendingNewYear, loadPendingNewYear, savePendingNewYear } from "@/lib/client/inputStorage";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
-import { NEWYEAR_REPORT_PRICE } from "@/lib/constants/newyear";
+import { NEWYEAR_REPORT_PRICE, PRODUCT_NEWYEAR } from "@/lib/constants/newyear";
 import { formatPrice } from "@/lib/constants/service";
-import { analysisInputSchema, type AnalysisInput } from "@/lib/validation/analysisInput";
+import {
+  PREMIUM_RELATIONSHIP_STATUSES,
+  analysisInputSchema,
+  type AnalysisInput,
+  type RelationshipStatus,
+} from "@/lib/validation/analysisInput";
 import { sanitizeMultiLine, sanitizeSingleLine } from "@/lib/validation/sanitize";
 
 const JOB_MAX = 40;
@@ -19,6 +25,7 @@ export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeI
   const basePath = themeOf(theme).basePath;
   const isPremium = theme === "premium";
   const [ready, setReady] = useState(false);
+  const [relationshipStatus, setRelationshipStatus] = useState<RelationshipStatus | "">("");
   const [job, setJob] = useState("");
   const [concern, setConcern] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -30,10 +37,14 @@ export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeI
       router.replace(`${basePath}/start`);
       return;
     }
+    if (PREMIUM_RELATIONSHIP_STATUSES.some((item) => item.value === pending.data.relationshipStatus)) {
+      setRelationshipStatus(pending.data.relationshipStatus);
+    }
     if (typeof pending.data.job === "string") setJob(pending.data.job);
     if (typeof pending.data.concern === "string") setConcern(pending.data.concern);
+    if (isPremium) trackFunnel("concern", null, PRODUCT_NEWYEAR);
     setReady(true);
-  }, [basePath, router]);
+  }, [basePath, isPremium, router]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,10 +54,15 @@ export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeI
       router.replace(`${basePath}/start`);
       return;
     }
+    if (isPremium && !relationshipStatus) {
+      setError("연애/결혼 상태를 선택해 주세요.");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     const next: AnalysisInput = {
       ...pending.data,
+      relationshipStatus: isPremium && relationshipStatus ? relationshipStatus : pending.data.relationshipStatus,
       job: sanitizeSingleLine(job).slice(0, JOB_MAX) || null,
       concern: sanitizeMultiLine(concern).slice(0, CONCERN_MAX) || null,
     };
@@ -73,6 +89,7 @@ export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeI
         return;
       }
       clearPendingNewYear();
+      trackFunnel("submit", data.token, PRODUCT_NEWYEAR);
       router.push(`${basePath}/checkout/${data.token}`);
     } catch {
       setError("네트워크 연결을 확인해 주세요.");
@@ -101,6 +118,31 @@ export function NewYearConcernForm({ theme = "hanji" }: { theme?: FateNaviThemeI
         onSubmit={handleSubmit}
         className="ny-form ny-form-bottom flex flex-col gap-7"
       >
+        {isPremium ? (
+          <section className="flex flex-col gap-2.5">
+            <p className="ny-form-label">연애/결혼</p>
+            <div className="grid grid-cols-4 gap-2" role="group" aria-label="연애/결혼">
+              {PREMIUM_RELATIONSHIP_STATUSES.map((option) => {
+                const selected = relationshipStatus === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => {
+                      setRelationshipStatus(option.value);
+                      setError(null);
+                    }}
+                    className={`ny-choice ny-choice-sm${selected ? " is-on" : ""}`}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ) : null}
+
         <section className="flex flex-col gap-2.5">
           <p className="ny-form-label">직업/직무</p>
           <input

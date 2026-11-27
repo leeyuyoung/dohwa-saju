@@ -4,15 +4,16 @@ import { BUSINESS, NEWYEAR_LEGAL_LINKS, NEWYEAR_LEGAL_META } from "@/lib/constan
 import { formatPrice } from "@/lib/constants/service";
 
 export const metadata: Metadata = {
-  title: "2027 환불정책",
+  title: "환불정책",
   robots: { index: false, follow: false },
 };
 
 export default function NewYearRefundPage() {
   return (
-    <LegalDoc title="환불정책" brand="newyear" links={NEWYEAR_LEGAL_LINKS}>
+    <LegalDoc title="환불정책" brand="newyear" theme="premium" links={NEWYEAR_LEGAL_LINKS}>
       <p>
-        본 환불정책은 {NEWYEAR_LEGAL_META.serviceName}({formatPrice(NEWYEAR_LEGAL_META.price)})에 적용됩니다.
+        본 환불정책은 {NEWYEAR_LEGAL_META.serviceName}(
+        {formatPrice(NEWYEAR_LEGAL_META.price)}·{formatPrice(NEWYEAR_LEGAL_META.priceDuo)})에 적용됩니다.
         「전자상거래 등에서의 소비자보호에 관한 법률」과 관련 고시를 따릅니다.
       </p>
 
@@ -33,11 +34,11 @@ export default function NewYearRefundPage() {
       <LegalSection title="3. 환불이 가능한 경우">
         <p>회사는 다음의 경우 환불을 검토합니다.</p>
         <p>1) 결제 승인 오류, 중복 결제 등 회사 또는 결제대행사의 명백한 오류</p>
-        <p>2) 결제 후에도 상당 시간 리포트 작성이 시작되지 않거나 제공할 수 없는 경우</p>
+        <p>2) 결제 확인 후 1영업일 이내 리포트 작성이 시작되지 않거나 제공할 수 없는 경우</p>
         <p>3) 법령상 청약철회가 허용되고, 위 제2조의 제한 사유에 해당하지 않는 경우</p>
       </LegalSection>
 
-      <LegalSection title="4. 환불 신청 방법">
+      <LegalSection title="4. 환불 및 오류 문의">
         <p>
           환불과 오류 문의는 {BUSINESS.contactEmail} 로 주문 시각, 결제 수단, 이용자 이메일, 증상을 적어 보내 주세요.
           회사는 접수한 뒤 확인합니다.

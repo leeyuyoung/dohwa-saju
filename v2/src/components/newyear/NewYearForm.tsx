@@ -1,10 +1,12 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { StickyFormCta } from "@/components/newyear/StickyFormCta";
+import { trackFunnel } from "@/lib/client/funnel";
 import { savePendingNewYear } from "@/lib/client/inputStorage";
 import { type FateNaviThemeId, themeOf } from "@/lib/constants/fatenaviTheme";
+import { PRODUCT_NEWYEAR } from "@/lib/constants/newyear";
 import {
   EMPTY_FORM_VALUES,
   NAME_MAX_LENGTH,
@@ -76,6 +78,7 @@ function RadioMark({ checked, light }: { checked: boolean; light?: boolean }) {
 export function NewYearForm({ theme = "hanji" }: { theme?: FateNaviThemeId }) {
   const router = useRouter();
   const basePath = themeOf(theme).basePath;
+  const trackPremiumFunnel = theme === "premium";
   /** sheep/premium만 크림 배경. hanji(FateNavi3) 폼은 어두운 바탕이라 밝은 글자. */
   const isLight = theme === "sheep" || theme === "premium";
   const muteClass = isLight ? "text-[rgb(42_33_24/0.8)]" : theme === "hanji" ? "text-[#f6ecd8]" : "text-white";
@@ -89,6 +92,10 @@ export function NewYearForm({ theme = "hanji" }: { theme?: FateNaviThemeId }) {
   const [digits, setDigits] = useState("");
   const [showErrors, setShowErrors] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (trackPremiumFunnel) trackFunnel("start", null, PRODUCT_NEWYEAR);
+  }, [trackPremiumFunnel]);
 
   const update = (patch: Partial<AnalysisFormValues>) => setValues((previous) => ({ ...previous, ...patch }));
   const baseErrors: FieldErrors = showErrors
@@ -270,7 +277,7 @@ export function NewYearForm({ theme = "hanji" }: { theme?: FateNaviThemeId }) {
               type="text"
               inputMode="numeric"
               aria-label="태어난 시 (0~23)"
-              placeholder="15"
+              placeholder="13"
               value={values.birthHour}
               onChange={(event) => update({ birthHour: onlyDigits(event.target.value) })}
               className="ny-time-part"

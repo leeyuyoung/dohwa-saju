@@ -16,17 +16,17 @@ export type FateNaviTheme = {
 export const FATENAVI_THEMES: Record<FateNaviThemeId, FateNaviTheme> = {
   hanji: {
     id: "hanji",
-    basePath: "/FateNavi",
+    basePath: "/FateNavi2",
     shellClass: "ny-hanji",
     brand: "운명내비",
     orderName: "운명내비 종합사주",
     slogan: "좋은 말만 하지 않습니다. 가야 할 길을 짚어드립니다.",
     ctaStart: "내 인생 설계서 펼치기",
-    introNote: "한지·전통 사주 버전",
+    introNote: "운명내비 버전",
   },
   premium: {
     id: "premium",
-    basePath: "/FateNavi2",
+    basePath: "/FateNavi",
     shellClass: "ny-premium",
     brand: "프리미엄 종합사주",
     orderName: "프리미엄 종합사주",

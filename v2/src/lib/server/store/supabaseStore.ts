@@ -1,8 +1,15 @@
 import "server-only";
 
-import { PRODUCT_NEWYEAR, productOf, type ProductId } from "@/lib/constants/newyear";
-import { FUNNEL_STEPS, type FunnelStep } from "@/lib/funnelSteps";
-import { buildFunnelSummary, type FunnelEvent, type FunnelSummaryRange } from "@/lib/server/funnel";
+import { PRODUCT_DOHWA, PRODUCT_NEWYEAR, productOf, type ProductId } from "@/lib/constants/newyear";
+import type { FunnelStep } from "@/lib/funnelSteps";
+import {
+  buildFunnelSummary,
+  funnelLabelsForProduct,
+  funnelStepsForProduct,
+  type FunnelEvent,
+  type FunnelSummaryOptions,
+  type FunnelSummaryRange,
+} from "@/lib/server/funnel";
 import type { SajuProfile } from "@/lib/saju";
 import type { AnalysisRecord, AnalysisStore, OrderPatch, OrderRecord } from "./types";
 
@@ -339,13 +346,15 @@ export class SupabaseAnalysisStore implements AnalysisStore {
   }
 
   async trackFunnelEvent(event: FunnelEvent) {
+    const product = event.product ?? PRODUCT_DOHWA;
     const body = {
       session_id: event.sessionId,
       step: event.step,
       token: event.token,
+      product,
       created_at: toIso(event.at),
     };
-    // 같은 session+step은 PK로 한 번만. 테이블 미생성·중복은 무시한다.
+    // 같은 session+step+product는 PK로 한 번만. 테이블 미생성·중복은 무시한다.
     try {
       await this.request(FUNNEL_TABLE, {
         method: "POST",
@@ -391,29 +400,36 @@ export class SupabaseAnalysisStore implements AnalysisStore {
     }
   }
 
-  async funnelSummary(range?: FunnelSummaryRange) {
-    const counts = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, 0])) as Record<FunnelStep, number>;
+  async funnelSummary(range?: FunnelSummaryRange, options?: FunnelSummaryOptions) {
+    const product = options?.product ?? PRODUCT_DOHWA;
+    const steps = options?.steps ?? funnelStepsForProduct(product);
+    const labels = options?.labels ?? funnelLabelsForProduct(product);
+    const counts = Object.fromEntries(steps.map((step) => [step, 0])) as Record<FunnelStep, number>;
     try {
       await Promise.all(
-        FUNNEL_STEPS.map(async (step) => {
-          counts[step] = await this.countFunnelStep(step, range);
+        steps.map(async (step) => {
+          counts[step] = await this.countFunnelStep(step, range, product);
         }),
       );
     } catch (error) {
       // funnel_events 테이블이 없으면 0으로 돌려 관리자 화면은 열리게 한다.
       console.error("[funnel] summary failed", error);
     }
-    return buildFunnelSummary(counts);
+    return buildFunnelSummary(counts, { steps, labels, product });
   }
 
-  private async countFunnelStep(step: FunnelStep, range?: FunnelSummaryRange): Promise<number> {
+  private async countFunnelStep(
+    step: FunnelStep,
+    range?: FunnelSummaryRange,
+    product: ProductId = PRODUCT_DOHWA,
+  ): Promise<number> {
     const headers: Record<string, string> = {
       apikey: this.secretKey,
       Authorization: `Bearer ${this.secretKey}`,
       Prefer: "count=exact",
       Range: "0-0",
     };
-    const filters = [`step=eq.${encodeURIComponent(step)}`];
+    const filters = [`step=eq.${encodeURIComponent(step)}`, `product=eq.${encodeURIComponent(product)}`];
     if (range?.fromMs != null) filters.push(`created_at=gte.${encodeURIComponent(toIso(range.fromMs))}`);
     if (range?.toMsExclusive != null) {
       filters.push(`created_at=lt.${encodeURIComponent(toIso(range.toMsExclusive))}`);

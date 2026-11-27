@@ -7,11 +7,42 @@ import type { OrderMetaClick } from "@/lib/server/store";
 import { checkoutContactSchema } from "@/lib/validation/analysisInput";
 
 const IP_LIMIT = { limit: 20, windowMs: 60 * 60 * 1000 };
-const bodySchema = checkoutContactSchema.extend({
-  token: z.string().regex(TOKEN_PATTERN),
-  /** 이탈 2단 비밀쿠폰. 금액은 서버가 정한다. */
-  couponApplied: z.boolean().optional().default(false),
+
+const partnerSchema = z.object({
+  name: z.string().trim().min(1, "함께 볼 사람 이름을 입력해 주세요.").max(12),
+  gender: z.enum(["male", "female"]),
+  calendarType: z.enum(["solar", "lunar"]),
+  isLeapMonth: z.boolean(),
+  year: z.number().int().min(1920).max(2100),
+  month: z.number().int().min(1).max(12),
+  day: z.number().int().min(1).max(31),
+  hour: z.number().int().min(0).max(23).nullable(),
+  minute: z.number().int().min(0).max(59).nullable(),
+  birthTimeUnknown: z.boolean(),
+  concern: z
+    .string()
+    .trim()
+    .max(80)
+    .nullable()
+    .optional()
+    .transform((value) => (value && value.length > 0 ? value : null)),
 });
+
+const bodySchema = checkoutContactSchema
+  .extend({
+    token: z.string().regex(TOKEN_PATTERN),
+    /** 이탈 2단 비밀쿠폰. 금액은 서버가 정한다. */
+    couponApplied: z.boolean().optional().default(false),
+    /** 신년/프리미엄 1인·2인 팩. 금액은 서버가 정한다. */
+    pack: z.enum(["solo", "duo"]).optional().default("solo"),
+    /** 2인 팩 상대 사주. */
+    partner: partnerSchema.optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.pack === "duo" && !value.partner) {
+      ctx.addIssue({ code: "custom", path: ["partner"], message: "함께 볼 사람 정보를 입력해 주세요." });
+    }
+  });
 
 function readCookie(header: string | null, name: string): string | undefined {
   if (!header) return undefined;
@@ -57,6 +88,8 @@ export async function POST(request: Request) {
       parsed.data.marketingOptIn,
       parsed.data.couponApplied,
       metaClickFromRequest(request),
+      parsed.data.pack,
+      parsed.data.partner,
     );
     return Response.json(
       { orderId: order.orderId, amount: order.amount, orderName, payurl },

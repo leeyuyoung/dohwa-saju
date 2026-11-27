@@ -3,13 +3,13 @@ import { LegalDoc, LegalSection } from "@/components/legal/LegalDoc";
 import { BUSINESS, NEWYEAR_LEGAL_LINKS, NEWYEAR_LEGAL_META } from "@/lib/constants/legal";
 
 export const metadata: Metadata = {
-  title: "2027 사업자 정보",
+  title: "사업자 정보",
   robots: { index: false, follow: false },
 };
 
 export default function NewYearBusinessPage() {
   return (
-    <LegalDoc title="사업자 정보" brand="newyear" links={NEWYEAR_LEGAL_LINKS}>
+    <LegalDoc title="사업자 정보" brand="newyear" theme="premium" links={NEWYEAR_LEGAL_LINKS}>
       <p>「전자상거래 등에서의 소비자보호에 관한 법률」에 따라 {NEWYEAR_LEGAL_META.serviceName}의 사업자 정보를 고지합니다.</p>
       <LegalSection title="기본 정보">
         <dl className="grid grid-cols-[7.5rem_1fr] gap-x-3 gap-y-2">
